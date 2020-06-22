@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:knowgo_simulator_desktop/simulator.dart';
 import 'package:knowgo_simulator_desktop/widgets.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(VehicleSimulatorApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => VehicleSimulator(),
+      child: VehicleSimulatorApp(),
+    ),
+  );
 }
 
 class VehicleSimulatorApp extends StatelessWidget {
@@ -28,20 +34,8 @@ class VehicleSimulatorHome extends StatefulWidget {
 }
 
 class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
-  double odometer = 0.0;
-  double fuelConsumed = 0.0;
-  double fuelLevel = 100.0;
-
   @override
   Widget build(BuildContext context) {
-    if (vehicleSimulator.events.length > 0) {
-      final last = vehicleSimulator.events.last;
-
-      odometer = last.odometer;
-      fuelConsumed = last.fuelConsumedSinceRestart;
-      fuelLevel = last.fuelLevel;
-    }
-
     return Scaffold(
       appBar: AppBar(
         title: Text('KnowGo Vehicle Simulator'),
@@ -60,7 +54,7 @@ class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
                   ),
                   Expanded(
                     flex: 1,
-                    child: VehicleSettings(vehicleSimulator.state),
+                    child: VehicleSettings(),
                   ),
                 ],
               ),
@@ -75,7 +69,7 @@ class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
                   ),
                   Expanded(
                     flex: 1,
-                    child: VehicleStats(vehicleSimulator.state),
+                    child: VehicleStats(),
                   ),
                 ],
               ),

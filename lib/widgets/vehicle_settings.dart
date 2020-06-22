@@ -1,20 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:knowgo_simulator_desktop/simulator.dart';
-import 'package:knowgo/api.dart' as knowgo;
+import 'package:provider/provider.dart';
 
 class VehicleSettings extends StatefulWidget {
-  final knowgo.Event vehicleState;
-
-  VehicleSettings(this.vehicleState);
+  VehicleSettings();
 
   @override
   _VehicleSettingsState createState() => _VehicleSettingsState();
 }
 
 class _VehicleSettingsState extends State<VehicleSettings> {
-  var simulatorRunning = vehicleSimulator.state?.ignitionStatus == 'run' ? true : false;
+  var simulatorRunning = false;
 
-  Widget simulatorButton() {
+  Widget simulatorButton(VehicleSimulator vehicleSimulator) {
     if (simulatorRunning == false) {
       return RaisedButton.icon(
         onPressed: () async {
@@ -40,7 +38,8 @@ class _VehicleSettingsState extends State<VehicleSettings> {
 
   @override
   Widget build(BuildContext context) {
-    var acceleratorPosition = widget.vehicleState?.acceleratorPedalPosition ?? 0.0;
+    var vehicleSimulator = context.watch<VehicleSimulator>();
+    var acceleratorPosition = vehicleSimulator.state.acceleratorPedalPosition ?? 0.0;
 
     return Card(
       child: Container(
@@ -58,16 +57,16 @@ class _VehicleSettingsState extends State<VehicleSettings> {
               label: '${acceleratorPosition.toString()}',
               onChanged: (value) {
                 setState(() {
-                  widget.vehicleState.acceleratorPedalPosition = value;
+                  vehicleSimulator.state.acceleratorPedalPosition = value;
                 });
               },
               onChangeEnd: (value) async {
-                var update = widget.vehicleState;
+                var update = vehicleSimulator.state;
                 update.acceleratorPedalPosition = value;
                 await vehicleSimulator.update(update);
               },
             ),
-            simulatorButton(),
+            simulatorButton(vehicleSimulator),
           ],
         ),
       ),

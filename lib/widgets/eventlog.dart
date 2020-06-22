@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:knowgo_simulator_desktop/simulator.dart';
-import 'dart:async';
+import 'package:provider/provider.dart';
 
 class EventLog extends StatefulWidget {
   @override
@@ -9,22 +9,9 @@ class EventLog extends StatefulWidget {
 }
 
 class _EventLogState extends State<EventLog> {
-  Timer _tick;
-
-  void initState() {
-    super.initState();
-    _tick = Timer.periodic(Duration(seconds: 1), (timer) {
-      setState(() {});
-    });
-  }
-
-  void dispose() {
-    super.dispose();
-    _tick.cancel();
-  }
-
   @override
   Widget build(BuildContext context) {
+    var events = context.watch<VehicleSimulator>().events;
     return Card(
       child: Container(
         padding: EdgeInsets.only(top: 10, left: 10),
@@ -38,10 +25,10 @@ class _EventLogState extends State<EventLog> {
               child: SingleChildScrollView(
                 child: ListView.builder(
                   shrinkWrap: true,
-                  itemCount: vehicleSimulator.events.length,
+                  itemCount: events.length,
                   itemBuilder: (BuildContext context, int index) {
-                    var last = vehicleSimulator.events.length - index - 1;
-                    var jsonStr = jsonEncode(vehicleSimulator.events[last]);
+                    var last = events.length - index - 1;
+                    var jsonStr = jsonEncode(events[last]);
                     return Text(jsonStr);
                   },
                 ),

@@ -1,59 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:knowgo_simulator_desktop/simulator.dart';
-import 'package:knowgo/api.dart' as knowgo;
-import 'dart:async';
+import 'package:provider/provider.dart';
 
 class VehicleStats extends StatefulWidget {
-  final knowgo.Event vehicleState;
-
-  VehicleStats(this.vehicleState);
+  VehicleStats();
 
   @override
   _VehicleStatsState createState() => _VehicleStatsState();
 }
 
 class _VehicleStatsState extends State<VehicleStats> {
-  Timer _tick;
-
-  void initState() {
-    super.initState();
-    _tick = Timer.periodic(Duration(seconds: 1), (timer) {
-      if (widget.vehicleState.fuelLevel != null && widget.vehicleState.fuelLevel <= 0.0) {
-        vehicleSimulator.stop();
-        setState(() {
-          vehicleSimulator.state.ignitionStatus = 'off';
-        });
-      }
-      setState(() {});
-    });
-  }
-
-  void dispose() {
-    super.dispose();
-    _tick.cancel();
-  }
-
-  Widget fuelLevelIndicator() {
-    if (widget.vehicleState != null && widget.vehicleState.fuelLevel != null) {
-      return LinearProgressIndicator(value: widget.vehicleState.fuelLevel / 100.0);
+  Widget fuelLevelIndicator(VehicleSimulator vehicleSimulator) {
+    if (vehicleSimulator.state != null && vehicleSimulator.state.fuelLevel != null) {
+      return LinearProgressIndicator(value: vehicleSimulator.state.fuelLevel / 100.0);
     } else {
       return LinearProgressIndicator();
     }
   }
 
-  Widget fuelConsumptionIndicator() {
-    if (widget.vehicleState != null &&
-        widget.vehicleState.fuelConsumedSinceRestart != null &&
-        widget.vehicleState.fuelLevel != null) {
-      var fuelConsumed = widget.vehicleState.fuelConsumedSinceRestart / widget.vehicleState.fuelLevel;
+  Widget fuelConsumptionIndicator(VehicleSimulator vehicleSimulator) {
+    if (vehicleSimulator.state != null &&
+        vehicleSimulator.state.fuelConsumedSinceRestart != null &&
+        vehicleSimulator.state.fuelLevel != null) {
+      var fuelConsumed = vehicleSimulator.state.fuelConsumedSinceRestart / vehicleSimulator.state.fuelLevel;
       return LinearProgressIndicator(value: fuelConsumed);
     } else {
       return LinearProgressIndicator();
     }
   }
 
-  Widget generateStatWidgets() {
+  Widget generateStatWidgets(VehicleSimulator vehicleSimulator) {
     if (vehicleSimulator.running == false) {
       return Column(
         children: <Widget>[
@@ -71,12 +48,12 @@ class _VehicleStatsState extends State<VehicleStats> {
               'Vehicle Stats', style: TextStyle(fontWeight: FontWeight.bold))),
           SizedBox(height: 10),
           Text('Generated VIN: ${vehicleSimulator.info?.VIN}'),
-          Text('Odometer: ${widget.vehicleState.odometer.toString()}'),
-          Text('Vehicle Speed: ${widget.vehicleState.vehicleSpeed.toString()}'),
+          Text('Odometer: ${vehicleSimulator.state.odometer.toString()}'),
+          Text('Vehicle Speed: ${vehicleSimulator.state.vehicleSpeed.toString()}'),
           Text('Fuel Consumed:'),
-          fuelConsumptionIndicator(),
+          fuelConsumptionIndicator(vehicleSimulator),
           Text('Fuel Level:'),
-          fuelLevelIndicator(),
+          fuelLevelIndicator(vehicleSimulator),
         ],
       );
     }
@@ -84,10 +61,11 @@ class _VehicleStatsState extends State<VehicleStats> {
 
   @override
   Widget build(BuildContext context) {
+    var vehicleSimulator = context.watch<VehicleSimulator>();
     return Card(
       child: Container(
         padding: EdgeInsets.all(10.0),
-        child: generateStatWidgets(),
+        child: generateStatWidgets(vehicleSimulator),
       ),
     );
   }

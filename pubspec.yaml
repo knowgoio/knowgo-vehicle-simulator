@@ -10,8 +10,13 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  knowgo_vehicle_simulator:
-    path: /home/pmundt/IdeaProjects/knowgo-vehicle-simulator
+  provider: ^4.1.3
+  vin_decoder: ^0.1.2
+  random_string:
+  vector_math: ^2.0.8
+  uuid: ^2.1.0
+  #knowgo_vehicle_simulator:
+  #  path: /home/pmundt/IdeaProjects/knowgo-vehicle-simulator
   knowgo:
     git:
       url: git@bitbucket.org:adaptant/knowgo-client-dart.git
