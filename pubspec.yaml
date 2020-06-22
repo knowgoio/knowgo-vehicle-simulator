@@ -15,8 +15,6 @@ dependencies:
   random_string:
   vector_math: ^2.0.8
   uuid: ^2.1.0
-  #knowgo_vehicle_simulator:
-  #  path: /home/pmundt/IdeaProjects/knowgo-vehicle-simulator
   knowgo:
     git:
       url: git@bitbucket.org:adaptant/knowgo-client-dart.git
