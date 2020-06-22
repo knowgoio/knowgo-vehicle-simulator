@@ -52,9 +52,10 @@ class _VehicleStatsState extends State<VehicleStats> {
                   style: TextStyle(fontWeight: FontWeight.bold))),
           SizedBox(height: 10),
           Text('Generated VIN: ${vehicleSimulator.info?.VIN}'),
-          Text('Odometer: ${vehicleSimulator.state.odometer.toString()}'),
           Text(
-              'Vehicle Speed: ${vehicleSimulator.state.vehicleSpeed.toString()}'),
+              'Odometer: ${vehicleSimulator.state.odometer.toStringAsFixed(2)} km'),
+          Text(
+              'Vehicle Speed: ${vehicleSimulator.state.vehicleSpeed.toStringAsFixed(2)} km/h'),
           Text('Gear: ${vehicleSimulator.state.transmissionGearPosition}'),
           Text('Fuel Consumed:'),
           fuelConsumptionIndicator(vehicleSimulator),
