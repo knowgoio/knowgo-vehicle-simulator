@@ -10,7 +10,35 @@ class VehicleSettings extends StatefulWidget {
 }
 
 class _VehicleSettingsState extends State<VehicleSettings> {
+  final calculator = VehicleDataCalculator();
   var simulatorRunning = false;
+
+  Widget gearShiftButtons(VehicleSimulator vehicleSimulator) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        RaisedButton.icon(
+          onPressed: () async {
+            var update = vehicleSimulator.state;
+            update.transmissionGearPosition = calculator.nextGear(update);
+            await vehicleSimulator.update(update);
+          },
+          icon: Icon(Icons.arrow_upward),
+          label: Text('Shift up'),
+        ),
+        RaisedButton.icon(
+          onPressed: () async {
+            var update = vehicleSimulator.state;
+            update.transmissionGearPosition = calculator.prevGear(update);
+            await vehicleSimulator.update(update);
+          },
+          icon: Icon(Icons.arrow_downward),
+          label: Text('Shift down'),
+        ),
+      ],
+    );
+  }
 
   Widget simulatorButton(VehicleSimulator vehicleSimulator) {
     if (simulatorRunning == false) {
@@ -68,6 +96,7 @@ class _VehicleSettingsState extends State<VehicleSettings> {
                 await vehicleSimulator.update(update);
               },
             ),
+            gearShiftButtons(vehicleSimulator),
             simulatorButton(vehicleSimulator),
           ],
         ),

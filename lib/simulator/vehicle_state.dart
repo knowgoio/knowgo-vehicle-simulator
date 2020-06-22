@@ -18,7 +18,7 @@ void initVehicleInfo(knowgo.Auto auto) {
 void initVehicleState(knowgo.Event state) {
   var generator = VehicleDataGenerator();
 
-  state.transmissionGearPosition = 'second';
+  state.transmissionGearPosition = 'first';
   state.ignitionStatus = 'run';
   state.latitude = 48.020250;
   state.longitude = 11.584850;

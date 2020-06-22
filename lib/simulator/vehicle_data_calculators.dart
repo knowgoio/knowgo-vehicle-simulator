@@ -17,6 +17,28 @@ class VehicleDataCalculator {
     return _gears.indexOf(gearPosition);
   }
 
+  String nextGear(knowgo.Event state) {
+    var gear = _gearNumber(state.transmissionGearPosition);
+
+    // If we're already in the highest gear, go no further
+    if (gear == _gears.length) {
+      return _gears[gear];
+    }
+
+    return _gears[gear + 1];
+  }
+
+  String prevGear(knowgo.Event state) {
+    var gear = _gearNumber(state.transmissionGearPosition);
+
+    // Go no lower than first
+    if (gear <= 1) {
+      return _gears[1];
+    }
+
+    return _gears[gear - 1];
+  }
+
   int _tankCapacity(knowgo.Auto auto) {
     final numRegex = RegExp(r'[0-9]');
     final capacity = numRegex.matchAsPrefix(auto.fuelCapacity).group(0);

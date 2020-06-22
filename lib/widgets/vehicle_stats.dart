@@ -55,6 +55,7 @@ class _VehicleStatsState extends State<VehicleStats> {
           Text('Odometer: ${vehicleSimulator.state.odometer.toString()}'),
           Text(
               'Vehicle Speed: ${vehicleSimulator.state.vehicleSpeed.toString()}'),
+          Text('Gear: ${vehicleSimulator.state.transmissionGearPosition}'),
           Text('Fuel Consumed:'),
           fuelConsumptionIndicator(vehicleSimulator),
           Text('Fuel Level:'),
