@@ -10,7 +10,6 @@ class VehicleDataCalculator {
     'third',
     'fourth',
     'fifth',
-    'sixth'
   ];
 
   int _gearNumber(String gearPosition) {
@@ -74,12 +73,25 @@ class VehicleDataCalculator {
       acceleration = -state.vehicleSpeed;
     }
 
-    // Cap speed at 200kph
-    if (state.vehicleSpeed + acceleration > 200) {
+    var speed = state.vehicleSpeed + acceleration;
+
+    // Cap speed per gear for manual transmission type
+    if (gear == 1 && speed > 20) {
+      return 20;
+    } else if (gear == 2 && speed > 40) {
+      return 40;
+    } else if (gear == 3 && speed > 55) {
+      return 55;
+    } else if (gear == 4 && speed > 70) {
+      return 70;
+    }
+
+    // Cap overall speed at 200kph
+    if (speed > 200) {
       return 200;
     }
 
-    return state.vehicleSpeed + acceleration;
+    return speed;
   }
 
   double odometer(knowgo.Event state) {
