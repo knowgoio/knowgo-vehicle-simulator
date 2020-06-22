@@ -64,7 +64,7 @@ void updateVehicleState(knowgo.Event state, knowgo.Event update) {
     state.gearLeverPosition = update.gearLeverPosition;
   }
   if (update.odometer != null) {
-    state.odometer =  update.odometer;
+    state.odometer = update.odometer;
   }
   if (update.ignitionStatus != null) {
     state.ignitionStatus = update.ignitionStatus;

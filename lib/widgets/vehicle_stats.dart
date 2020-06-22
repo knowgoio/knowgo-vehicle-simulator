@@ -12,8 +12,10 @@ class VehicleStats extends StatefulWidget {
 
 class _VehicleStatsState extends State<VehicleStats> {
   Widget fuelLevelIndicator(VehicleSimulator vehicleSimulator) {
-    if (vehicleSimulator.state != null && vehicleSimulator.state.fuelLevel != null) {
-      return LinearProgressIndicator(value: vehicleSimulator.state.fuelLevel / 100.0);
+    if (vehicleSimulator.state != null &&
+        vehicleSimulator.state.fuelLevel != null) {
+      return LinearProgressIndicator(
+          value: vehicleSimulator.state.fuelLevel / 100.0);
     } else {
       return LinearProgressIndicator();
     }
@@ -23,7 +25,8 @@ class _VehicleStatsState extends State<VehicleStats> {
     if (vehicleSimulator.state != null &&
         vehicleSimulator.state.fuelConsumedSinceRestart != null &&
         vehicleSimulator.state.fuelLevel != null) {
-      var fuelConsumed = vehicleSimulator.state.fuelConsumedSinceRestart / vehicleSimulator.state.fuelLevel;
+      var fuelConsumed = vehicleSimulator.state.fuelConsumedSinceRestart /
+          vehicleSimulator.state.fuelLevel;
       return LinearProgressIndicator(value: fuelConsumed);
     } else {
       return LinearProgressIndicator();
@@ -44,12 +47,14 @@ class _VehicleStatsState extends State<VehicleStats> {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Center(child: Text(
-              'Vehicle Stats', style: TextStyle(fontWeight: FontWeight.bold))),
+          Center(
+              child: Text('Vehicle Stats',
+                  style: TextStyle(fontWeight: FontWeight.bold))),
           SizedBox(height: 10),
           Text('Generated VIN: ${vehicleSimulator.info?.VIN}'),
           Text('Odometer: ${vehicleSimulator.state.odometer.toString()}'),
-          Text('Vehicle Speed: ${vehicleSimulator.state.vehicleSpeed.toString()}'),
+          Text(
+              'Vehicle Speed: ${vehicleSimulator.state.vehicleSpeed.toString()}'),
           Text('Fuel Consumed:'),
           fuelConsumptionIndicator(vehicleSimulator),
           Text('Fuel Level:'),

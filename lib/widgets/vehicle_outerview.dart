@@ -11,17 +11,17 @@ class _VehicleOuterViewState extends State<VehicleOuterView> {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        Card(child:
-        Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(4.0)),
-            image: DecorationImage(
-              image: AssetImage('assets/car_driving.jpg'),
-              fit: BoxFit.cover,
-              alignment: Alignment(1.0, 1.0),
+        Card(
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(4.0)),
+              image: DecorationImage(
+                image: AssetImage('assets/car_driving.jpg'),
+                fit: BoxFit.cover,
+                alignment: Alignment(1.0, 1.0),
+              ),
             ),
           ),
-        ),
         ),
       ],
     );

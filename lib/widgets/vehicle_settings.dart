@@ -15,38 +15,40 @@ class _VehicleSettingsState extends State<VehicleSettings> {
   Widget simulatorButton(VehicleSimulator vehicleSimulator) {
     if (simulatorRunning == false) {
       return RaisedButton.icon(
-        onPressed: () async {
-          await vehicleSimulator.start();
-          setState(() {
-            simulatorRunning = true;
-          });
-        },
-        icon: Icon(Icons.play_arrow),
-        label: Text('Start Vehicle'));
+          onPressed: () async {
+            await vehicleSimulator.start();
+            setState(() {
+              simulatorRunning = true;
+            });
+          },
+          icon: Icon(Icons.play_arrow),
+          label: Text('Start Vehicle'));
     } else {
       return RaisedButton.icon(
-        onPressed: () {
-          vehicleSimulator.stop();
-          setState(() {
-            simulatorRunning = false;
-          });
-        },
-        icon: Icon(Icons.stop),
-        label: Text('Stop Vehicle'));
+          onPressed: () {
+            vehicleSimulator.stop();
+            setState(() {
+              simulatorRunning = false;
+            });
+          },
+          icon: Icon(Icons.stop),
+          label: Text('Stop Vehicle'));
     }
   }
 
   @override
   Widget build(BuildContext context) {
     var vehicleSimulator = context.watch<VehicleSimulator>();
-    var acceleratorPosition = vehicleSimulator.state.acceleratorPedalPosition ?? 0.0;
+    var acceleratorPosition =
+        vehicleSimulator.state.acceleratorPedalPosition ?? 0.0;
 
     return Card(
       child: Container(
         padding: EdgeInsets.all(10.0),
         child: Column(
           children: [
-            Text('Vehicle Controls', style: TextStyle(fontWeight: FontWeight.bold)),
+            Text('Vehicle Controls',
+                style: TextStyle(fontWeight: FontWeight.bold)),
             SizedBox(height: 10),
             Text('Accelerator Pedal'),
             Slider(

@@ -42,7 +42,8 @@ class VehicleDataCalculator {
     var gear = _gearNumber(state.transmissionGearPosition);
 
     if (state.ignitionStatus == 'run') {
-      engineForce = (engineV0Force * state.acceleratorPedalPosition / (50 * gear));
+      engineForce =
+          (engineV0Force * state.acceleratorPedalPosition / (50 * gear));
     }
 
     var acceleration = engineForce - airDrag - engineDrag - .1;
@@ -72,13 +73,15 @@ class VehicleDataCalculator {
       return 0.0;
     }
 
-    return state.fuelConsumedSinceRestart + idleFuelConsumption +
+    return state.fuelConsumedSinceRestart +
+        idleFuelConsumption +
         (maxFuelConsumption * (state.acceleratorPedalPosition / 100));
   }
 
   double fuelLevel(knowgo.Auto auto, knowgo.Event state) {
     final capacity = _tankCapacity(auto);
-    return state.fuelLevel * ((capacity - state.fuelConsumedSinceRestart) / capacity);
+    return state.fuelLevel *
+        ((capacity - state.fuelConsumedSinceRestart) / capacity);
   }
 
   double torque(knowgo.Event state) {
