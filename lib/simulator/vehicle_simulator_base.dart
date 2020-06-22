@@ -46,10 +46,14 @@ class VehicleSimulator extends ChangeNotifier {
 
       _receivePort.listen((data) {
         // Wait for the event isolate to open up a ReceivePort and then send
-        // through reference to the current vehicle info and state.
+        // through reference to the current vehicle info, last eventID and state.
         if (data is SendPort) {
+          int nextEventId = 0;
+          if (events.length > 0) {
+            nextEventId = events.last.eventID + 1;
+          }
           _sendPort = data;
-          _sendPort.send([info, state]);
+          _sendPort.send([info, nextEventId, state]);
         } else {
           // Receive event updates from the event isolate
           var update = data;

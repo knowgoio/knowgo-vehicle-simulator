@@ -6,7 +6,6 @@ import 'dart:async';
 void vehicleEventLoop(SendPort sendPort) {
   var generator = VehicleDataGenerator();
   var calculator = VehicleDataCalculator();
-  var eventId = 0;
   var journeyId = generator.journeyId();
 
   // Open up a ReceivePort and send a reference to its sendPort back to the
@@ -17,11 +16,12 @@ void vehicleEventLoop(SendPort sendPort) {
 
   // Wait for the current vehicle state to be passed in by the main isolate
   commPort.listen((data) {
-    var state = data[1];
+    var state = data[2];
+    var eventId = data[1];
 
     Timer.periodic(Duration(seconds: 1), (timer) {
       var info = data[0];
-      var event = data[1];
+      var event = data[2];
 
       event.engineSpeed = calculator.engineSpeed(state);
       event.vehicleSpeed = calculator.vehicleSpeed(state);
