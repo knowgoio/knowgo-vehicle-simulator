@@ -1,16 +1,43 @@
-# simulatordesktop
+# knowgo-vehicle-simulator
 
-A new Flutter application.
+A vehicle simulator for generating [KnowGo] events in Dart.
 
-## Getting Started
+[KnowGo]: https://knowgo.io
 
-This project is a starting point for a Flutter application.
+## Overview
 
-A few resources to get you started if this is your first Flutter project:
+The vehicle simulator will generate a single unique vehicle, which can
+be controlled either directly through the UI or through a REST API.
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+The Simulator itself consists of several different components:
+- The Vehicle Simulation model
+- An `Event isolate` for generating vehicle events
+- An `HTTP Server isolate` for exposing a REST API
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+The `HTTP Server isolate` exposes a REST API for starting/stopping the
+vehicle, updating the vehicle state, and for querying vehicle events.
+
+As the simulation state can not be shared directly across the isolates,
+the simulation model in the main isolate acts as the source of truth
+across the system:
+- Updates from the `Event isolate` are applied to the simulation model
+  periodically, in line with the event generation frequency: once per
+  second by default.
+- The `HTTP Server isolate` maintains its own cached copy of the
+  simulation state, which is updated with changes from the Event
+  isolate, UI interaction, and the REST API. Changes received through
+  the REST API are cached in the `HTTP Server isolate` and proxied back
+  to the simulation model directly.
+- The UI in the `main isolate` is redrawn based on changes to the
+  simulation model, triggered by UI interaction and updates from the
+  `Event isolate` or `HTTP Server isolate`.
+
+An overview of the overall interactivity patterns is provided below:
+
+![KnowGo Vehicle Simulator Interactions](overview.png)
+
+## Features and bugs
+
+Please file feature requests and bugs at the [issue tracker][tracker].
+
+[tracker]: https://github.com/knowgoio/knowgo-vehicle-simulator/issues
