@@ -1,5 +1,5 @@
 name: knowgo_simulator_desktop
-description: A new Flutter application.
+description: KnowGo Vehicle Simulator
 publish_to: 'none'
 
 version: 1.0.0
@@ -15,9 +15,9 @@ dependencies:
   random_string:
   vector_math: ^2.0.8
   uuid: ^2.1.0
+  args: ^1.6.0
   knowgo:
-    git:
-      url: git@bitbucket.org:adaptant/knowgo-client-dart.git
+   path: /home/pmundt/devel/git/knowgo/knowgo-client-dart
 
 dev_dependencies:
   flutter_test:

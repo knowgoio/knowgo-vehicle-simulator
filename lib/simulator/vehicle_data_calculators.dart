@@ -55,7 +55,7 @@ class VehicleDataCalculator {
     const engineDragCoeff = 0.0004;
     //const brakeConstant = 0.1;
     const engineV0Force = 20;
-    const carMass = 1;
+    //const carMass = 1;
 
     var airDrag = (state.vehicleSpeed * 3) * airDragCoeff;
     var engineDrag = state.engineSpeed * engineDragCoeff;

@@ -5,12 +5,30 @@ import 'package:knowgo/api.dart' as knowgo;
 import 'vehicle_state.dart';
 import 'vehicle_event_loop.dart';
 
+enum VehicleSimulatorCommands {
+  Start,
+  Stop,
+  Update,
+}
+
 /// Vehicle Simulator base class.
 class VehicleSimulator extends ChangeNotifier {
+  // Vehicle Events Isolate
   Isolate _eventIsolate;
 
+  // HTTP Server ReceivePort
+  final ReceivePort serverReceivePort;
+  SendPort _serverSendPort;
+
+  final simulatorReceivePort = ReceivePort();
+
+  VehicleSimulator([this.serverReceivePort]) {
+    initVehicleInfo(info);
+    initVehicleState(state);
+  }
+
   // Information about the generated Vehicle
-  final info = knowgo.Auto();
+  knowgo.Auto info = knowgo.Auto();
 
   // The current state of the Vehicle
   knowgo.Event state = knowgo.Event();
@@ -20,6 +38,29 @@ class VehicleSimulator extends ChangeNotifier {
 
   // Simulator state
   bool running = false;
+
+  Future<void> initHttpSync() async {
+    simulatorReceivePort.listen((data) {
+      if (data is SendPort) {
+        _serverSendPort = data;
+        _serverSendPort.send([info, state, null]);
+      } else {
+        // Handle updates to the simulator from the HTTP Server
+        var command = data[0];
+        switch (command) {
+          case VehicleSimulatorCommands.Start:
+            start();
+            break;
+          case VehicleSimulatorCommands.Stop:
+            stop();
+            break;
+          case VehicleSimulatorCommands.Update:
+            update(data[1]);
+            break;
+        }
+      }
+    });
+  }
 
   // The Vehicle Simulator uses a pair of Send/ReceivePorts in order to
   // enable bi-directional communication with the event isolate. As we can not
@@ -31,11 +72,6 @@ class VehicleSimulator extends ChangeNotifier {
   Future<void> start() async {
     var _receivePort = ReceivePort();
     SendPort _sendPort;
-
-    if (info.VIN == null) {
-      initVehicleInfo(info);
-      initVehicleState(state);
-    }
 
     if (running == false) {
       running = true;
@@ -59,7 +95,7 @@ class VehicleSimulator extends ChangeNotifier {
           var update = data;
 
           // Synchronize vehicle state
-          info.odometer = update.odometer.toInt();
+          info.odometer = num.parse((update.odometer).toStringAsFixed(2));
           updateVehicleState(state, update);
 
           // Add to event list
@@ -70,6 +106,7 @@ class VehicleSimulator extends ChangeNotifier {
             stop();
           }
 
+          _serverSendPort.send([info, state, events]);
           notifyListeners();
         }
       });
