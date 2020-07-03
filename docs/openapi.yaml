@@ -1,0 +1,313 @@
+openapi: 3.0.0
+info:
+  title: KnowGo Vehicle Simulator API
+  description: |
+    This is a simple API for interacting with the KnowGo Vehicle Simulator. It
+    provides mechanisms for starting/stopping the simulated vehicle, and for
+    obtaining detailed information and generated events from the vehicle.
+  contact:
+    email: labs@adaptant.io
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+servers:
+- url: https://virtserver.swaggerhub.com/Adaptant/knowgo-vehicle-simulator-api/1.0.0
+  description: SwaggerHub API Auto Mocking
+tags:
+- name: vehicles
+  description: Vehicle APIs
+paths:
+  /start:
+    post:
+      tags:
+      - vehicles
+      summary: start the simulated vehicle
+      description: Starts the running of the vehicle within the simulator
+      operationId: vehicleStart
+      responses:
+        "200":
+          description: OK
+  /stop:
+    post:
+      tags:
+      - vehicles
+      summary: stop the simulated vehicle
+      description: Stops the running of the vehicle within the simulator
+      operationId: vehicleStop
+      responses:
+        "200":
+          description: OK
+  /info:
+    get:
+      tags:
+      - vehicles
+      summary: information about the simulated vehicle
+      description: |
+        Obtain detailed information about the simulated vehicle and its
+        current state.
+      operationId: vehicleInfo
+      responses:
+        "200":
+          description: vehicle details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VehicleDetail'
+  /events:
+    get:
+      tags:
+      - vehicles
+      summary: simulated vehicle events
+      description: |
+        Obtain detailed events from the simulated vehicle in its running state.
+      operationId: vehicleEvents
+      responses:
+        "200":
+          description: vehicle events
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/VehicleEvent'
+components:
+  schemas:
+    VehicleDetail:
+      required:
+      - AutoID
+      type: object
+      properties:
+        AutoID:
+          type: integer
+          format: int64
+        DriverID:
+          type: integer
+          format: int64
+        OwnerID:
+          type: integer
+          format: int64
+        Name:
+          type: string
+          example: My Car
+        Make:
+          type: string
+          example: Opel
+        Model:
+          type: string
+          example: Astra
+        Year:
+          type: integer
+        VIN:
+          maxLength: 17
+          minLength: 0
+          type: string
+          description: Vehicle identification number in accordance with ISO 3779:2009
+          example: WP0ZZZ99ZTS392124
+        LicensePlate:
+          type: string
+        RegistrationExpiry:
+          type: string
+          format: date
+        FuelCapacity:
+          type: string
+        Odometer:
+          maximum: 16777214
+          minimum: 0
+          type: number
+          format: double
+        PolicyID:
+          type: string
+        Notes:
+          type: string
+          description: Optional field to enter owner notes about the vehicle
+          example: My work car
+        PhotoUrls:
+          type: array
+          items:
+            type: string
+            example: http://www.example.com/images/mycar.png
+        DriveTrain:
+          maxLength: 10
+          minLength: 3
+          type: string
+        EngineType:
+          maxLength: 30
+          minLength: 3
+          type: string
+        ExteriorColor:
+          maxLength: 30
+          minLength: 3
+          type: string
+        InteriorColor:
+          maxLength: 30
+          minLength: 3
+          type: string
+        Transmission:
+          maxLength: 30
+          minLength: 3
+          type: string
+    VehicleEvent:
+      required:
+      - EventID
+      type: object
+      properties:
+        EventID:
+          type: integer
+          format: int64
+        JourneyID:
+          type: string
+        AutoID:
+          type: integer
+          format: int64
+        EventCategoryID:
+          type: integer
+          format: int32
+        steering_wheel_angle:
+          maximum: 600
+          minimum: -600
+          type: number
+          format: float
+        torque_at_transmission:
+          maximum: 1500
+          minimum: -500
+          type: number
+          format: float
+        engine_speed:
+          maximum: 16382
+          minimum: 0
+          type: number
+          format: float
+        vehicle_speed:
+          maximum: 655
+          minimum: 0
+          type: number
+          format: float
+        accelerator_pedal_position:
+          maximum: 100
+          minimum: 0
+          type: number
+          format: float
+        parking_brake_status:
+          type: string
+          enum:
+          - "true"
+          - "false"
+        brake_pedal_status:
+          type: string
+          enum:
+          - "true"
+          - "false"
+        transmission_gear_position:
+          type: string
+          enum:
+          - first
+          - second
+          - third
+          - fourth
+          - fifth
+          - sixth
+          - seventh
+          - eighth
+          - ninth
+          - tenth
+          - reverse
+          - neutral
+        gear_lever_position:
+          type: string
+          enum:
+          - drive
+          - sport
+          - low
+          - first
+          - second
+          - third
+          - fourth
+          - fifth
+          - sixth
+          - seventh
+          - eighth
+          - ninth
+          - tenth
+          - reverse
+          - neutral
+        odometer:
+          maximum: 16777214
+          minimum: 0
+          type: number
+          format: double
+        ignition_status:
+          type: string
+          enum:
+          - "off"
+          - accessory
+          - run
+          - start
+        fuel_level:
+          maximum: 150
+          minimum: 0
+          type: number
+          description: percentage fuel remaining level
+          format: float
+        fuel_consumed_since_restart:
+          maximum: 4294967295
+          minimum: 0
+          type: number
+          description: fuel consumed in litres (this goes to 0 every time the vehicle
+            restarts, like a trip meter)
+          format: double
+        door_status:
+          type: string
+          enum:
+          - driver
+          - passenger
+          - rear_left
+          - rear_right
+        headlamp_status:
+          type: string
+          enum:
+          - "true"
+          - "false"
+        high_beam_status:
+          type: string
+          enum:
+          - "true"
+          - "false"
+        windshield_wiper_status:
+          type: string
+          enum:
+          - "true"
+          - "false"
+        latitude:
+          type: number
+          format: float
+        longitude:
+          type: number
+          format: float
+        bearing:
+          type: number
+          format: float
+        accuracy:
+          type: number
+          format: float
+        timestamp:
+          type: string
+          format: date-time
+        accel_x:
+          type: number
+          format: float
+        accel_y:
+          type: number
+          format: float
+        accel_z:
+          type: number
+          format: float
+        gyro_x:
+          type: number
+          format: float
+        gyro_y:
+          type: number
+          format: float
+        gyro_z:
+          type: number
+          format: float
