@@ -126,9 +126,11 @@ packages:
   knowgo:
     dependency: "direct main"
     description:
-      path: "/home/pmundt/devel/git/knowgo/knowgo-client-dart"
-      relative: false
-    source: path
+      path: "."
+      ref: HEAD
+      resolved-ref: ef8d475cba9abee5bf048dab7d7e00d990cfca4d
+      url: "git@bitbucket.org:adaptant/knowgo-client-dart"
+    source: git
     version: "1.0.0"
   logging:
     dependency: transitive
