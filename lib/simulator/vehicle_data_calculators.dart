@@ -1,6 +1,7 @@
 import 'dart:math';
-import 'package:vector_math/vector_math.dart';
+
 import 'package:knowgo/api.dart' as knowgo;
+import 'package:vector_math/vector_math.dart';
 
 class VehicleDataCalculator {
   final _gears = [
@@ -20,7 +21,7 @@ class VehicleDataCalculator {
     var gear = _gearNumber(state.transmissionGearPosition);
 
     // If we're already in the highest gear, go no further
-    if (gear == _gears.length) {
+    if (gear == _gears.length - 1) {
       return _gears[gear];
     }
 
