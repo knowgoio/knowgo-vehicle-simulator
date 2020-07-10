@@ -22,7 +22,6 @@ class VehicleDataCard extends StatelessWidget {
                   height: 30,
                   width: double.infinity,
                   decoration: BoxDecoration(
-                    //color: Colors.,
                     borderRadius: BorderRadius.vertical(
                       top: Radius.circular(4.0),
                     ),
@@ -39,14 +38,14 @@ class VehicleDataCard extends StatelessWidget {
                       top: Radius.circular(4.0),
                     ),
                   ),
-                  child: Text(title,
+                  child: Text(
+                    title,
                     style: TextStyle(color: Colors.white),
                   ),
                 ),
               ],
             ),
             Expanded(
-              flex: 5,
               child: Container(
                 width: double.infinity,
                 padding: EdgeInsets.all(10),
