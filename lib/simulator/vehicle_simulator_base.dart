@@ -123,8 +123,11 @@ class VehicleSimulator extends ChangeNotifier {
   }
 
   Future<void> update(knowgo.Event update) async {
+    var needsRestart = running;
     stop();
     updateVehicleState(state, update);
-    await start();
+    if (needsRestart) {
+      await start();
+    }
   }
 }
