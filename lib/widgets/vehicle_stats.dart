@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:knowgo_simulator_desktop/simulator.dart';
+import 'package:knowgo_simulator_desktop/widgets/vehicle_data_card.dart';
 import 'package:provider/provider.dart';
 
 class VehicleStats extends StatefulWidget {
@@ -35,23 +36,12 @@ class _VehicleStatsState extends State<VehicleStats> {
 
   Widget generateStatWidgets(VehicleSimulator vehicleSimulator) {
     if (vehicleSimulator.running == false) {
-      return Column(
-        children: <Widget>[
-          Text('Vehicle Stats', style: TextStyle(fontWeight: FontWeight.bold)),
-          Spacer(flex: 1),
-          Text('Waiting for simulator to start..'),
-          Spacer(flex: 1),
-        ],
-      );
+      return Text('Waiting for simulator to start..');
     } else {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Center(
-              child: Text('Vehicle Stats',
-                  style: TextStyle(fontWeight: FontWeight.bold))),
-          SizedBox(height: 10),
-          Text('Generated VIN: ${vehicleSimulator.info?.VIN}'),
+          Text('VIN: ${vehicleSimulator.info?.VIN}'),
           Text(
               'Odometer: ${vehicleSimulator.state.odometer.toStringAsFixed(2)} km'),
           Text(
@@ -69,11 +59,9 @@ class _VehicleStatsState extends State<VehicleStats> {
   @override
   Widget build(BuildContext context) {
     var vehicleSimulator = context.watch<VehicleSimulator>();
-    return Card(
-      child: Container(
-        padding: EdgeInsets.all(10.0),
-        child: generateStatWidgets(vehicleSimulator),
-      ),
+    return VehicleDataCard(
+      title: 'Vehicle Stats',
+      child: generateStatWidgets(vehicleSimulator),
     );
   }
 }

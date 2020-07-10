@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:knowgo_simulator_desktop/simulator.dart';
+import 'package:knowgo_simulator_desktop/widgets/vehicle_data_card.dart';
 import 'package:provider/provider.dart';
 
 class VehicleSettings extends StatefulWidget {
@@ -64,43 +65,43 @@ class _VehicleSettingsState extends State<VehicleSettings> {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    var vehicleSimulator = context.watch<VehicleSimulator>();
+  Widget generateVehicleControls(VehicleSimulator vehicleSimulator) {
     var acceleratorPosition =
         vehicleSimulator.state.acceleratorPedalPosition ?? 0.0;
 
-    return Card(
-      child: Container(
-        padding: EdgeInsets.all(10.0),
-        child: Column(
-          children: [
-            Text('Vehicle Controls',
-                style: TextStyle(fontWeight: FontWeight.bold)),
-            SizedBox(height: 10),
-            Text('Accelerator Pedal'),
-            Slider(
-              value: acceleratorPosition,
-              min: 0,
-              max: 100,
-              divisions: 10,
-              label: '${acceleratorPosition.toString()}',
-              onChanged: (value) {
-                setState(() {
-                  vehicleSimulator.state.acceleratorPedalPosition = value;
-                });
-              },
-              onChangeEnd: (value) async {
-                var update = vehicleSimulator.state;
-                update.acceleratorPedalPosition = value;
-                await vehicleSimulator.update(update);
-              },
-            ),
-            gearShiftButtons(vehicleSimulator),
-            simulatorButton(vehicleSimulator),
-          ],
+    return Column(
+      children: [
+        Text('Accelerator Pedal'),
+        Slider(
+          value: acceleratorPosition,
+          min: 0,
+          max: 100,
+          divisions: 10,
+          label: '${acceleratorPosition.toString()}',
+          onChanged: (value) {
+            setState(() {
+              vehicleSimulator.state.acceleratorPedalPosition = value;
+            });
+          },
+          onChangeEnd: (value) async {
+            var update = vehicleSimulator.state;
+            update.acceleratorPedalPosition = value;
+            await vehicleSimulator.update(update);
+          },
         ),
-      ),
+        gearShiftButtons(vehicleSimulator),
+        simulatorButton(vehicleSimulator),
+      ],
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    var vehicleSimulator = context.watch<VehicleSimulator>();
+
+    return VehicleDataCard(
+        title: 'Vehicle Controls',
+        child: generateVehicleControls(vehicleSimulator),
     );
   }
 }
