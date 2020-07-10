@@ -100,8 +100,8 @@ class _VehicleSettingsState extends State<VehicleSettings> {
     var vehicleSimulator = context.watch<VehicleSimulator>();
 
     return VehicleDataCard(
-        title: 'Vehicle Controls',
-        child: generateVehicleControls(vehicleSimulator),
+      title: 'Vehicle Controls',
+      child: generateVehicleControls(vehicleSimulator),
     );
   }
 }

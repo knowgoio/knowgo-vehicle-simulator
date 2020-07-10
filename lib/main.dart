@@ -56,8 +56,8 @@ class VehicleSimulatorApp extends StatelessWidget {
         brightness: Brightness.light,
         indicatorColor: Colors.white,
         textTheme: TextTheme(
-          headline6: TextStyle(
-            color: Colors.white, fontWeight: FontWeight.bold),
+          headline6:
+              TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),

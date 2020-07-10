@@ -32,8 +32,8 @@ class _EventLogState extends State<EventLog> {
   Widget build(BuildContext context) {
     var vehicleSimulator = context.watch<VehicleSimulator>();
     return VehicleDataCard(
-        title: 'Vehicle Event Log',
-        child: generateVehicleEventList(vehicleSimulator),
+      title: 'Vehicle Event Log',
+      child: generateVehicleEventList(vehicleSimulator),
     );
   }
 }

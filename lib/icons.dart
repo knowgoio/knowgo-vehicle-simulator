@@ -20,10 +20,13 @@ class KnowGoIcons {
   static const IconData person = IconData(0xe90c, fontFamily: 'Icomoon');
   static const IconData place = IconData(0xe90d, fontFamily: 'Icomoon');
   static const IconData place_edit = IconData(0xe90e, fontFamily: 'Icomoon');
-  static const IconData privacy_policy = IconData(0xe90f, fontFamily: 'Icomoon');
+  static const IconData privacy_policy =
+      IconData(0xe90f, fontFamily: 'Icomoon');
   static const IconData question = IconData(0xe910, fontFamily: 'Icomoon');
   static const IconData score = IconData(0xe911, fontFamily: 'Icomoon');
   static const IconData stop = IconData(0xe912, fontFamily: 'Icomoon');
-  static const IconData terms_and_conditions = IconData(0xe913, fontFamily: 'Icomoon');
-  static const IconData total_distance = IconData(0xe914, fontFamily: 'Icomoon');
+  static const IconData terms_and_conditions =
+      IconData(0xe913, fontFamily: 'Icomoon');
+  static const IconData total_distance =
+      IconData(0xe914, fontFamily: 'Icomoon');
 }
