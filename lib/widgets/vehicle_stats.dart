@@ -38,12 +38,19 @@ class _VehicleStatsState extends State<VehicleStats> {
     if (vehicleSimulator.running == false) {
       return Text('Waiting for simulator to start..');
     } else {
+      var distanceTraveled = vehicleSimulator.state.odometer -
+          vehicleSimulator.journey.odometerBegin;
+      if (distanceTraveled < 0.0) {
+        distanceTraveled = 0.0;
+      }
+
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Text('VIN: ${vehicleSimulator.info?.VIN}'),
           Text(
               'Odometer: ${vehicleSimulator.state.odometer.toStringAsFixed(2)} km'),
+          Text('Distance Traveled: ${distanceTraveled.toStringAsFixed(2)} km'),
           Text(
               'Vehicle Speed: ${vehicleSimulator.state.vehicleSpeed.toStringAsFixed(2)} km/h'),
           Text('Gear: ${vehicleSimulator.state.transmissionGearPosition}'),

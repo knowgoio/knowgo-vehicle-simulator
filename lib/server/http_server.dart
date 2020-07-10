@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'dart:isolate';
+
 import 'package:knowgo_simulator_desktop/simulator.dart';
+
 import 'http_handlers.dart';
 
 Future<void> runHttpServer(SendPort sendPort) async {
@@ -33,7 +35,7 @@ Future<void> runHttpServer(SendPort sendPort) async {
       vehicleSimulator.info = data[0];
       vehicleSimulator.state = data[1];
       if (data[2] != null) {
-        vehicleSimulator.events = data[2];
+        vehicleSimulator.journey.events = data[2];
       }
     });
 

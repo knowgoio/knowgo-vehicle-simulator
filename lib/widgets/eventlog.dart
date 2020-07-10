@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:knowgo_simulator_desktop/simulator.dart';
 import 'package:knowgo_simulator_desktop/widgets/vehicle_data_card.dart';
@@ -11,7 +12,7 @@ class EventLog extends StatefulWidget {
 
 class _EventLogState extends State<EventLog> {
   Widget generateVehicleEventList(VehicleSimulator vehicleSimulator) {
-    var events = vehicleSimulator.events;
+    var events = vehicleSimulator.journey.events;
 
     if (vehicleSimulator.running == false) {
       return Text('Waiting for simulator to start..');

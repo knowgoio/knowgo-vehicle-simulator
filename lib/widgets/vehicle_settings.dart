@@ -56,6 +56,8 @@ class _VehicleSettingsState extends State<VehicleSettings> {
       return RaisedButton.icon(
           onPressed: () {
             vehicleSimulator.stop();
+            // Ensure the Journey is restarted
+            vehicleSimulator.journey.journeyID = null;
             setState(() {
               simulatorRunning = false;
             });

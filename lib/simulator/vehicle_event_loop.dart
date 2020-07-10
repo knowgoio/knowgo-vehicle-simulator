@@ -1,12 +1,10 @@
-import 'dart:isolate';
-import 'vehicle_data_generator.dart';
-import 'vehicle_data_calculators.dart';
 import 'dart:async';
+import 'dart:isolate';
+
+import 'vehicle_data_calculators.dart';
 
 void vehicleEventLoop(SendPort sendPort) {
-  var generator = VehicleDataGenerator();
   var calculator = VehicleDataCalculator();
-  var journeyId = generator.journeyId();
 
   // Open up a ReceivePort and send a reference to its sendPort back to the
   // main isolate. This is used as a basis for establishing bi-directional
@@ -30,7 +28,6 @@ void vehicleEventLoop(SendPort sendPort) {
       event.torqueAtTransmission = calculator.torque(state);
       event.fuelConsumedSinceRestart = calculator.fuelConsumed(state);
       event.fuelLevel = calculator.fuelLevel(info, state);
-      event.journeyID = journeyId;
       event.autoID = info.autoID;
       event.eventID = eventId++;
       event.odometer = calculator.odometer(state);

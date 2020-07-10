@@ -1,9 +1,12 @@
 import 'dart:async';
 import 'dart:isolate';
+
 import 'package:flutter/foundation.dart';
 import 'package:knowgo/api.dart' as knowgo;
-import 'vehicle_state.dart';
+
+import 'vehicle_data_generator.dart';
 import 'vehicle_event_loop.dart';
+import 'vehicle_state.dart';
 
 enum VehicleSimulatorCommands {
   Start,
@@ -25,16 +28,21 @@ class VehicleSimulator extends ChangeNotifier {
   VehicleSimulator([this.serverReceivePort]) {
     initVehicleInfo(info);
     initVehicleState(state);
+    journey.autoID = info.autoID;
+    journey.driverID = info.driverID;
   }
 
   // Information about the generated Vehicle
   knowgo.Auto info = knowgo.Auto();
 
+  // The current Journey the Vehicle is on
+  knowgo.Journey journey = knowgo.Journey();
+
   // The current state of the Vehicle
   knowgo.Event state = knowgo.Event();
 
-  // List of Vehicle events generated
-  var events = [];
+  // Free-running event counter for generating event IDs
+  static int _eventCounter = 0;
 
   // Simulator state
   bool running = false;
@@ -84,12 +92,8 @@ class VehicleSimulator extends ChangeNotifier {
         // Wait for the event isolate to open up a ReceivePort and then send
         // through reference to the current vehicle info, last eventID and state.
         if (data is SendPort) {
-          int nextEventId = 0;
-          if (events.length > 0) {
-            nextEventId = events.last.eventID + 1;
-          }
           _sendPort = data;
-          _sendPort.send([info, nextEventId, state]);
+          _sendPort.send([info, _eventCounter++, state]);
         } else {
           // Receive event updates from the event isolate
           var update = data;
@@ -98,15 +102,25 @@ class VehicleSimulator extends ChangeNotifier {
           info.odometer = num.parse((update.odometer).toStringAsFixed(2));
           updateVehicleState(state, update);
 
+          // Check if we need to reset the journey
+          if (journey.journeyID == null) {
+            var generator = VehicleDataGenerator();
+
+            journey.journeyID = generator.journeyId();
+            journey.journeyBegin = DateTime.now();
+            journey.odometerBegin = info.odometer;
+            journey.events = [];
+          }
+
           // Add to event list
-          events.add(update);
+          journey.events.add(update);
 
           if (state.fuelLevel <= 0) {
             print('Vehicle is out of fuel, stopping..');
             stop();
           }
 
-          _serverSendPort.send([info, state, events]);
+          _serverSendPort.send([info, state, journey.events]);
           notifyListeners();
         }
       });

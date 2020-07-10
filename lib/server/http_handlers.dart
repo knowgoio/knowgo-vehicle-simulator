@@ -1,8 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:isolate';
-import 'package:knowgo_simulator_desktop/simulator.dart';
+
 import 'package:knowgo/api.dart' as knowgo;
+import 'package:knowgo_simulator_desktop/simulator.dart';
 
 Future<void> _handleVehicleInfoRequest(
     VehicleSimulator vehicleSimulator, HttpRequest req) async {
@@ -25,7 +26,7 @@ Future<void> _handleVehicleEventRequest(
 
   resp
     ..statusCode = HttpStatus.ok
-    ..write(jsonEncode(vehicleSimulator.events));
+    ..write(jsonEncode(vehicleSimulator.journey.events));
   await resp.close();
 }
 
