@@ -36,6 +36,10 @@ An overview of the overall interactivity patterns is provided below:
 
 ![KnowGo Vehicle Simulator Interactions](overview.png)
 
+## Simulator UI
+
+![KnowGo Vehicle Simulator Screenshot](simulator.png)
+
 ## Features and bugs
 
 Please file feature requests and bugs at the [issue tracker][tracker].
