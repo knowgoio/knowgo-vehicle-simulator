@@ -1,7 +1,9 @@
 import 'dart:io';
+
 import 'package:args/args.dart';
 import 'package:flutter/material.dart';
 import 'package:knowgo_simulator_desktop/server.dart';
+import 'package:knowgo_simulator_desktop/services.dart';
 import 'package:knowgo_simulator_desktop/simulator.dart';
 import 'package:knowgo_simulator_desktop/utils.dart';
 import 'package:knowgo_simulator_desktop/widgets.dart';
@@ -23,6 +25,9 @@ Future<void> main(List<String> args) async {
     exit(1);
   }
 
+  // Kick off any supporting services
+  setupServices();
+
   // Kick off the HTTP Server Isolate
   final simulatorHttpServer = SimulatorHttpServer(port);
 
@@ -39,9 +44,13 @@ Future<void> main(List<String> args) async {
   await vehicleSimulator.initHttpSync();
 
   runApp(
+    // Propagate ConsoleService change notifications across the UI
     ChangeNotifierProvider(
-      child: VehicleSimulatorApp(),
-      create: (_) => vehicleSimulator,
+      create: (_) => serviceLocator.get<ConsoleService>(),
+      child: ChangeNotifierProvider(
+        child: VehicleSimulatorApp(),
+        create: (_) => vehicleSimulator,
+      ),
     ),
   );
 }
@@ -111,7 +120,7 @@ class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
                 children: [
                   Expanded(
                     flex: 3,
-                    child: EventLog(),
+                    child: ConsoleLog(),
                   ),
                   Expanded(
                     flex: 1,

@@ -16,6 +16,7 @@ dependencies:
   vector_math: ^2.0.8
   uuid: ^2.1.0
   args: ^1.6.0
+  get_it: ^4.0.2
   knowgo:
     git:
       url: git@bitbucket.org:adaptant/knowgo-client-dart

@@ -3,6 +3,7 @@ import 'dart:isolate';
 
 import 'package:flutter/foundation.dart';
 import 'package:knowgo/api.dart' as knowgo;
+import 'package:knowgo_simulator_desktop/services.dart';
 
 import 'vehicle_data_generator.dart';
 import 'vehicle_event_loop.dart';
@@ -30,6 +31,7 @@ class VehicleSimulator extends ChangeNotifier {
     initVehicleState(state);
     journey.autoID = info.autoID;
     journey.driverID = info.driverID;
+    _writeConsoleMessage('Waiting for simulator to start..');
   }
 
   // Information about the generated Vehicle
@@ -46,6 +48,16 @@ class VehicleSimulator extends ChangeNotifier {
 
   // Simulator state
   bool running = false;
+
+  void _writeConsoleMessage(String msg) {
+    // As VehicleSimulator may be instantiated in separate isolates,
+    // make sure that the service in the main isolate is reachable.
+    if (serviceLocator.isRegistered<ConsoleService>() == false) {
+      return;
+    }
+    var _consoleService = serviceLocator.get<ConsoleService>();
+    _consoleService.write(msg);
+  }
 
   Future<void> initHttpSync() async {
     simulatorReceivePort.listen((data) {
@@ -78,6 +90,7 @@ class VehicleSimulator extends ChangeNotifier {
   // derived from this state. Vehicle events in the main isolate are then
   // updated on receipt of periodic messages from the event isolate.
   Future<void> start() async {
+    var _consoleService = serviceLocator.get<ConsoleService>();
     var _receivePort = ReceivePort();
     SendPort _sendPort;
 
@@ -98,6 +111,9 @@ class VehicleSimulator extends ChangeNotifier {
           // Receive event updates from the event isolate
           var update = data;
 
+          // Sync the event counter
+          _eventCounter++;
+
           // Synchronize vehicle state
           info.odometer = num.parse((update.odometer).toStringAsFixed(2));
           updateVehicleState(state, update);
@@ -115,8 +131,11 @@ class VehicleSimulator extends ChangeNotifier {
           // Add to event list
           journey.events.add(update);
 
+          // Log event to console
+          _consoleService.write(update.toString());
+
           if (state.fuelLevel <= 0) {
-            print('Vehicle is out of fuel, stopping..');
+            _writeConsoleMessage('Vehicle is out of fuel, stopping..');
             stop();
           }
 
