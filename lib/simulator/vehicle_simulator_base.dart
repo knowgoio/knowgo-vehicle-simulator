@@ -161,6 +161,8 @@ class VehicleSimulator extends ChangeNotifier {
     updateVehicleState(state, update);
     if (needsRestart) {
       await start();
+    } else {
+      notifyListeners();
     }
   }
 }
