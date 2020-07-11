@@ -18,7 +18,22 @@ class _ConsoleLogState extends State<ConsoleLog> {
           var last = consoleService.messages.length - index - 1;
           var msg = consoleService.messages[last];
           var timeStr = DateFormat('yyyy-MM-dd hh:mm:ss').format(msg.timestamp);
-          return Text('[$timeStr] ${msg.message}');
+
+          return RichText(
+            text: TextSpan(
+              style: TextStyle(color: Colors.blueGrey),
+              children: [
+                TextSpan(
+                  text: '[$timeStr] ',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                TextSpan(
+                  text: msg.message,
+                  style: TextStyle(color: Colors.black),
+                ),
+              ],
+            ),
+          );
         });
   }
 
