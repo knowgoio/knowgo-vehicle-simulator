@@ -50,9 +50,13 @@ class _VehicleStatsState extends State<VehicleStats> {
           Text('VIN: ${vehicleSimulator.info?.VIN}'),
           Text(
               'Odometer: ${vehicleSimulator.state.odometer.toStringAsFixed(2)} km'),
+          Text(
+              'Lat: ${vehicleSimulator.state.latitude.toStringAsPrecision(6)}, Lng: ${vehicleSimulator.state.longitude.toStringAsPrecision(6)}'),
           Text('Distance Traveled: ${distanceTraveled.toStringAsFixed(2)} km'),
           Text(
               'Vehicle Speed: ${vehicleSimulator.state.vehicleSpeed.toStringAsFixed(2)} km/h'),
+          Text(
+              'Engine Speed: ${vehicleSimulator.state.engineSpeed.toInt()} RPMs'),
           Text('Gear: ${vehicleSimulator.state.transmissionGearPosition}'),
           Text('Fuel Consumed:'),
           fuelConsumptionIndicator(vehicleSimulator),
