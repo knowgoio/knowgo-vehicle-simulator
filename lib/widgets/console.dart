@@ -4,14 +4,14 @@ import 'package:knowgo_simulator_desktop/services.dart';
 import 'package:knowgo_simulator_desktop/widgets/vehicle_data_card.dart';
 import 'package:provider/provider.dart';
 
-class ConsoleLog extends StatefulWidget {
+class ConsoleLog extends StatelessWidget {
   @override
-  _ConsoleLogState createState() => _ConsoleLogState();
-}
+  Widget build(BuildContext context) {
+    var consoleService = context.watch<ConsoleService>();
 
-class _ConsoleLogState extends State<ConsoleLog> {
-  Widget generateConsoleMessages(ConsoleService consoleService) {
-    return ListView.builder(
+    return VehicleDataCard(
+      title: 'Console',
+      child: ListView.builder(
         shrinkWrap: true,
         itemCount: consoleService.messages.length,
         itemBuilder: (BuildContext context, int index) {
@@ -34,16 +34,8 @@ class _ConsoleLogState extends State<ConsoleLog> {
               ],
             ),
           );
-        });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    var consoleService = context.watch<ConsoleService>();
-
-    return VehicleDataCard(
-      title: 'Console',
-      child: generateConsoleMessages(consoleService),
+        },
+      ),
     );
   }
 }
