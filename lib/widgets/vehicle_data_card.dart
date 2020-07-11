@@ -28,10 +28,7 @@ class VehicleDataCard extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  padding: EdgeInsets.only(left: 10),
-                  alignment: Alignment.centerLeft,
-                  height: 30,
-                  width: title.length * 8.0,
+                  padding: EdgeInsets.all(10),
                   decoration: BoxDecoration(
                     color: Theme.of(context).primaryColor,
                     borderRadius: BorderRadius.vertical(
@@ -41,6 +38,8 @@ class VehicleDataCard extends StatelessWidget {
                   child: Text(
                     title,
                     style: TextStyle(color: Colors.white),
+                    softWrap: false,
+                    maxLines: 1,
                   ),
                 ),
               ],
