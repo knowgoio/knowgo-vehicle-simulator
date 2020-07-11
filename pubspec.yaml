@@ -17,6 +17,7 @@ dependencies:
   uuid: ^2.1.0
   args: ^1.6.0
   get_it: ^4.0.2
+  font_awesome_flutter: ^8.8.1
   knowgo:
     git:
       url: git@bitbucket.org:adaptant/knowgo-client-dart

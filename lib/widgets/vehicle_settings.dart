@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:knowgo_simulator_desktop/services.dart';
 import 'package:knowgo_simulator_desktop/simulator.dart';
 import 'package:knowgo_simulator_desktop/widgets/vehicle_data_card.dart';
 import 'package:provider/provider.dart';
@@ -13,6 +15,8 @@ class VehicleSettings extends StatefulWidget {
 class _VehicleSettingsState extends State<VehicleSettings> {
   final calculator = VehicleDataCalculator();
   var simulatorRunning = false;
+  List<bool> _selections = List.generate(3, (_) => false);
+  final _consoleService = serviceLocator<ConsoleService>();
 
   Widget gearShiftButtons(VehicleSimulator vehicleSimulator) {
     return Row(
@@ -92,6 +96,47 @@ class _VehicleSettingsState extends State<VehicleSettings> {
           },
         ),
         gearShiftButtons(vehicleSimulator),
+        ToggleButtons(
+          children: [
+            _selections[0] == false
+                ? Icon(Icons.lock_open)
+                : Icon(Icons.lock_outline),
+            FaIcon(FontAwesomeIcons.umbrella),
+            _selections[2] == false
+                ? Icon(Icons.brightness_low)
+                : Icon(Icons.brightness_high),
+          ],
+          isSelected: _selections,
+          borderRadius: BorderRadius.circular(30),
+          disabledColor: Colors.grey,
+          disabledBorderColor: Colors.blueGrey,
+          onPressed: (int index) async {
+            final setting = !_selections[index];
+            var update = vehicleSimulator.state;
+
+            switch (index) {
+              case 0:
+                _consoleService
+                    .write((setting ? 'Locking' : 'Unlocking') + ' doors');
+                update.doorStatus = setting ? 'driver' : null;
+                break;
+              case 1:
+                _consoleService.write(
+                    'Turning windshield wipers ' + (setting ? 'on' : 'off'));
+                update.windshieldWiperStatus = setting.toString();
+                break;
+              case 2:
+                _consoleService
+                    .write('Turning headlamp ' + (setting ? 'on' : 'off'));
+                update.headlampStatus = setting.toString();
+                break;
+            }
+            await vehicleSimulator.update(update);
+            setState(() {
+              _selections[index] = setting;
+            });
+          },
+        ),
         simulatorButton(vehicleSimulator),
       ],
     );
