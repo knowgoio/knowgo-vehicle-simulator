@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:args/args.dart';
 import 'package:flutter/material.dart';
+import 'package:knowgo_simulator_desktop/icons.dart';
 import 'package:knowgo_simulator_desktop/server.dart';
 import 'package:knowgo_simulator_desktop/services.dart';
 import 'package:knowgo_simulator_desktop/simulator.dart';
@@ -62,11 +63,12 @@ class VehicleSimulatorApp extends StatelessWidget {
       title: 'KnowGo Vehicle Simulator',
       theme: ThemeData(
         primarySwatch: createMaterialColor(Color(0xff7ace56)),
+        primaryColor: const Color(0xff7ace56),
+        accentColor: const Color(0xff599942),
         brightness: Brightness.light,
         indicatorColor: Colors.white,
         textTheme: TextTheme(
-          headline6:
-              TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          headline6: TextStyle(color: Colors.white),
         ),
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
@@ -88,6 +90,7 @@ class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: Icon(KnowGoIcons.knowgo, color: Colors.white),
         title: Center(
           child: Text(
             'KnowGo Vehicle Simulator',

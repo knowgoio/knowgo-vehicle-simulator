@@ -35,7 +35,7 @@ class _VehicleStatsState extends State<VehicleStats> {
   }
 
   Widget generateStatWidgets(VehicleSimulator vehicleSimulator) {
-    if (vehicleSimulator.running == false) {
+    if (vehicleSimulator.journey.odometerBegin == null) {
       return Text('Waiting for simulator to start..');
     } else {
       var distanceTraveled = vehicleSimulator.state.odometer -
@@ -57,7 +57,7 @@ class _VehicleStatsState extends State<VehicleStats> {
               'Vehicle Speed: ${vehicleSimulator.state.vehicleSpeed.toStringAsFixed(2)} km/h'),
           Text(
               'Engine Speed: ${vehicleSimulator.state.engineSpeed.toInt()} RPMs'),
-          Text('Gear: ${vehicleSimulator.state.transmissionGearPosition}'),
+          Spacer(),
           Text('Fuel Consumed:'),
           fuelConsumptionIndicator(vehicleSimulator),
           Text('Fuel Level:'),

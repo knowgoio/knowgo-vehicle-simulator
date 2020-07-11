@@ -51,9 +51,16 @@ class VehicleDataCard extends StatelessWidget {
                 child: Scrollbar(
                   isAlwaysShown: true,
                   controller: _scrollController,
-                  child: SingleChildScrollView(
-                    controller: _scrollController,
-                    child: child,
+                  child: LayoutBuilder(
+                    builder: (context, constraint) {
+                      return SingleChildScrollView(
+                        controller: _scrollController,
+                        child: ConstrainedBox(
+                          constraints: constraint,
+                          child: child,
+                        ),
+                      );
+                    },
                   ),
                 ),
               ),

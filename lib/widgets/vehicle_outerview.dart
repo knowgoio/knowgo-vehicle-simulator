@@ -53,6 +53,14 @@ class _VehicleOuterViewState extends State<VehicleOuterView> {
             value: (state.headlampStatus == 'true') ? 'on' : 'off',
           ),
         ),
+        Positioned(
+          bottom: 175,
+          left: 300,
+          child: VehicleInfoChip(
+            label: 'gear',
+            value: state.transmissionGearPosition,
+          ),
+        ),
       ],
     );
   }

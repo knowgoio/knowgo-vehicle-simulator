@@ -24,18 +24,29 @@ class _VehicleSettingsState extends State<VehicleSettings> {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         RaisedButton.icon(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(30),
+          ),
           onPressed: () async {
             var update = vehicleSimulator.state;
             update.transmissionGearPosition = calculator.nextGear(update);
+            _consoleService
+                .write('Shifting up to ${update.transmissionGearPosition}');
             await vehicleSimulator.update(update);
           },
-          icon: Icon(Icons.arrow_upward),
-          label: Text('Shift up'),
+          color: Theme.of(context).accentColor,
+          icon: Icon(Icons.arrow_upward, color: Colors.white),
+          label: Text('Shift up', style: TextStyle(color: Colors.white)),
         ),
         RaisedButton.icon(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(30),
+          ),
           onPressed: () async {
             var update = vehicleSimulator.state;
             update.transmissionGearPosition = calculator.prevGear(update);
+            _consoleService
+                .write('Shifting down to ${update.transmissionGearPosition}');
             await vehicleSimulator.update(update);
           },
           icon: Icon(Icons.arrow_downward),
@@ -48,17 +59,27 @@ class _VehicleSettingsState extends State<VehicleSettings> {
   Widget simulatorButton(VehicleSimulator vehicleSimulator) {
     if (simulatorRunning == false) {
       return RaisedButton.icon(
-          onPressed: () async {
-            await vehicleSimulator.start();
-            setState(() {
-              simulatorRunning = true;
-            });
-          },
-          icon: Icon(Icons.play_arrow),
-          label: Text('Start Vehicle'));
+        color: Theme.of(context).accentColor,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(30),
+        ),
+        onPressed: () async {
+          _consoleService.write('Starting vehicle');
+          await vehicleSimulator.start();
+          setState(() {
+            simulatorRunning = true;
+          });
+        },
+        icon: Icon(Icons.play_arrow, color: Colors.white),
+        label: Text('Start Vehicle', style: TextStyle(color: Colors.white)),
+      );
     } else {
       return RaisedButton.icon(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(30),
+          ),
           onPressed: () {
+            _consoleService.write('Stopping vehicle');
             vehicleSimulator.stop();
             // Ensure the Journey is restarted
             vehicleSimulator.journey.journeyID = null;
@@ -76,68 +97,102 @@ class _VehicleSettingsState extends State<VehicleSettings> {
         vehicleSimulator.state.acceleratorPedalPosition ?? 0.0;
 
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      mainAxisSize: MainAxisSize.max,
       children: [
-        Text('Accelerator Pedal'),
-        Slider(
-          value: acceleratorPosition,
-          min: 0,
-          max: 100,
-          divisions: 10,
-          label: '${acceleratorPosition.toString()}',
-          onChanged: (value) {
-            setState(() {
-              vehicleSimulator.state.acceleratorPedalPosition = value;
-            });
-          },
-          onChangeEnd: (value) async {
-            var update = vehicleSimulator.state;
-            update.acceleratorPedalPosition = value;
-            await vehicleSimulator.update(update);
-          },
-        ),
-        gearShiftButtons(vehicleSimulator),
-        ToggleButtons(
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            _selections[0] == false
-                ? Icon(Icons.lock_open)
-                : Icon(Icons.lock_outline),
-            FaIcon(FontAwesomeIcons.umbrella),
-            _selections[2] == false
-                ? Icon(Icons.brightness_low)
-                : Icon(Icons.brightness_high),
-          ],
-          isSelected: _selections,
-          borderRadius: BorderRadius.circular(30),
-          disabledColor: Colors.grey,
-          disabledBorderColor: Colors.blueGrey,
-          onPressed: (int index) async {
-            final setting = !_selections[index];
-            var update = vehicleSimulator.state;
-
-            switch (index) {
-              case 0:
-                _consoleService
-                    .write((setting ? 'Locking' : 'Unlocking') + ' doors');
-                update.doorStatus = setting ? 'driver' : null;
-                break;
-              case 1:
+            Text('Accelerator'),
+            Slider.adaptive(
+              value: acceleratorPosition,
+              min: 0,
+              max: 100,
+              divisions: 10,
+              label: '${acceleratorPosition.toString()}',
+              onChanged: (value) {
+                setState(() {
+                  vehicleSimulator.state.acceleratorPedalPosition = value;
+                });
+              },
+              onChangeEnd: (value) async {
+                var update = vehicleSimulator.state;
+                update.acceleratorPedalPosition = value;
+                await vehicleSimulator.update(update);
                 _consoleService.write(
-                    'Turning windshield wipers ' + (setting ? 'on' : 'off'));
-                update.windshieldWiperStatus = setting.toString();
-                break;
-              case 2:
-                _consoleService
-                    .write('Turning headlamp ' + (setting ? 'on' : 'off'));
-                update.headlampStatus = setting.toString();
-                break;
-            }
-            await vehicleSimulator.update(update);
-            setState(() {
-              _selections[index] = setting;
-            });
-          },
+                    'Setting Accelerator Pedal to ${value.toInt().toString()}%');
+              },
+            ),
+          ],
         ),
-        simulatorButton(vehicleSimulator),
+        Container(
+          padding: EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(30),
+            border: Border.all(color: Theme.of(context).primaryColor),
+          ),
+          child: Column(
+            children: [
+              Text('Gear Shift'),
+              gearShiftButtons(vehicleSimulator),
+            ],
+          ),
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text('Switches'),
+            ToggleButtons(
+              children: [
+                _selections[0] == false
+                    ? Icon(Icons.lock_open)
+                    : Icon(Icons.lock_outline),
+                FaIcon(FontAwesomeIcons.umbrella),
+                _selections[2] == false
+                    ? Icon(Icons.brightness_low)
+                    : Icon(Icons.brightness_high),
+              ],
+              isSelected: _selections,
+              borderRadius: BorderRadius.circular(30),
+              color: Colors.black45,
+              borderColor: Theme.of(context).primaryColor,
+              disabledBorderColor: Theme.of(context).primaryColor,
+              onPressed: (int index) async {
+                final setting = !_selections[index];
+                var update = vehicleSimulator.state;
+
+                switch (index) {
+                  case 0:
+                    _consoleService
+                        .write((setting ? 'Locking' : 'Unlocking') + ' doors');
+                    update.doorStatus = setting ? 'driver' : null;
+                    break;
+                  case 1:
+                    _consoleService.write('Turning windshield wipers ' +
+                        (setting ? 'on' : 'off'));
+                    update.windshieldWiperStatus = setting.toString();
+                    break;
+                  case 2:
+                    _consoleService
+                        .write('Turning headlamp ' + (setting ? 'on' : 'off'));
+                    update.headlampStatus = setting.toString();
+                    break;
+                }
+                await vehicleSimulator.update(update);
+                setState(() {
+                  _selections[index] = setting;
+                });
+              },
+            ),
+          ],
+        ),
+        SizedBox(
+          width: double.infinity,
+          child: simulatorButton(vehicleSimulator),
+        ),
       ],
     );
   }
