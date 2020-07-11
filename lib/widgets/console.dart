@@ -17,7 +17,7 @@ class ConsoleLog extends StatelessWidget {
         itemBuilder: (BuildContext context, int index) {
           var last = consoleService.messages.length - index - 1;
           var msg = consoleService.messages[last];
-          var timeStr = DateFormat('yyyy-MM-dd hh:mm:ss').format(msg.timestamp);
+          var timeStr = DateFormat('yyyy-MM-dd HH:mm:ss').format(msg.timestamp);
 
           return RichText(
             text: TextSpan(
