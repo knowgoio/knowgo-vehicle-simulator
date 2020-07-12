@@ -142,8 +142,8 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: e2953062ca290ac904c5cbea6860604f78a7fa1e
-      url: "git@bitbucket.org:adaptant/knowgo-client-dart"
+      resolved-ref: "8d8a869cd5576a60033e2be34f9adabe27abc4ed"
+      url: "https://github.com/knowgoio/knowgo-client-dart"
     source: git
     version: "1.0.0"
   logging:

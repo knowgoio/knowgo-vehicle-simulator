@@ -1,5 +1,7 @@
 # knowgo-vehicle-simulator
 
+[![Build Status](https://travis-ci.com/knowgoio/knowgo-vehicle-simulator.svg?branch=master)](https://travis-ci.com/knowgoio/knowgo-vehicle-simulator)
+
 A vehicle simulator for generating [KnowGo] events in Dart.
 
 [KnowGo]: https://knowgo.io
