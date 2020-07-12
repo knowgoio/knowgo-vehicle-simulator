@@ -45,3 +45,10 @@ An overview of the overall interactivity patterns is provided below:
 Please file feature requests and bugs at the [issue tracker][tracker].
 
 [tracker]: https://github.com/knowgoio/knowgo-vehicle-simulator/issues
+
+## License
+
+Licensed under the terms of the MIT license, the full version of which
+can be found in the [LICENSE][license] file included in the distribution.
+
+[license]: https://raw.githubusercontent.com/knowgoio/knowgo-vehicle-simulator/master/LICENSE
