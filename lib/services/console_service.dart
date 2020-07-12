@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:knowgo_simulator_desktop/services.dart';
 import 'package:meta/meta.dart';
 
 class ConsoleMessage {
@@ -6,6 +8,12 @@ class ConsoleMessage {
   String message;
 
   ConsoleMessage({@required this.timestamp, @required this.message});
+
+  @override
+  String toString() {
+    var timeStr = DateFormat('yyyy-MM-dd HH:mm:ss').format(timestamp);
+    return '[$timeStr] $message';
+  }
 }
 
 abstract class ConsoleService extends ChangeNotifier {
@@ -16,6 +24,7 @@ abstract class ConsoleService extends ChangeNotifier {
 
 class ConsoleServiceImplementation extends ConsoleService {
   List<ConsoleMessage> _messages = [];
+  final _logger = serviceLocator.get<LoggingService>();
 
   ConsoleServiceImplementation();
 
@@ -28,6 +37,8 @@ class ConsoleServiceImplementation extends ConsoleService {
         ConsoleMessage(timestamp: DateTime.now(), message: msg);
 
     _messages.add(consoleMessage);
+    _logger.write(consoleMessage.toString());
+
     notifyListeners();
   }
 
