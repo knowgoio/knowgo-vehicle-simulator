@@ -90,7 +90,21 @@ class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: Icon(KnowGoIcons.knowgo, color: Colors.white),
+        leading: IconButton(
+          icon: Icon(KnowGoIcons.knowgo, color: Colors.white),
+          onPressed: () {
+            return showAboutDialog(
+              context: context,
+              applicationIcon: Icon(
+                KnowGoIcons.knowgo,
+                color: Theme.of(context).primaryColor,
+              ),
+              applicationName: 'KnowGo Vehicle Simulator',
+              applicationVersion: '1.0.0',
+              applicationLegalese: '© 2020 Adaptant Solutions AG',
+            );
+          },
+        ),
         title: Center(
           child: Text(
             'KnowGo Vehicle Simulator',
