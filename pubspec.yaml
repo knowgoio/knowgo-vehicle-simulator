@@ -20,7 +20,7 @@ dependencies:
   font_awesome_flutter: ^8.8.1
   knowgo:
     git:
-      url: git@bitbucket.org:adaptant/knowgo-client-dart
+      url: https://github.com/knowgoio/knowgo-client-dart
 
 dev_dependencies:
   flutter_test:
