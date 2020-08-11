@@ -19,9 +19,9 @@ class _VehicleSettingsState extends State<VehicleSettings> {
   final _consoleService = serviceLocator<ConsoleService>();
 
   Widget gearShiftButtons(VehicleSimulator vehicleSimulator) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    return Wrap(
+      crossAxisAlignment: WrapCrossAlignment.center,
+      alignment: WrapAlignment.spaceEvenly,
       children: [
         RaisedButton.icon(
           shape: RoundedRectangleBorder(
@@ -101,9 +101,10 @@ class _VehicleSettingsState extends State<VehicleSettings> {
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       mainAxisSize: MainAxisSize.max,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
+        Wrap(
+          alignment: WrapAlignment.center,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          direction: Axis.horizontal,
           children: [
             Text('Accelerator'),
             Slider.adaptive(
@@ -140,9 +141,11 @@ class _VehicleSettingsState extends State<VehicleSettings> {
             ],
           ),
         ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          crossAxisAlignment: CrossAxisAlignment.center,
+        Wrap(
+          alignment: WrapAlignment.spaceEvenly,
+          spacing: 16.0,
+          runSpacing: 4.0,
+          crossAxisAlignment: WrapCrossAlignment.center,
           children: [
             Text('Switches'),
             ToggleButtons(
