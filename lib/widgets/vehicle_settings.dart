@@ -95,6 +95,7 @@ class _VehicleSettingsState extends State<VehicleSettings> {
   Widget generateVehicleControls(VehicleSimulator vehicleSimulator) {
     var acceleratorPosition =
         vehicleSimulator.state.acceleratorPedalPosition ?? 0.0;
+    var steeringWheelAngle = vehicleSimulator.state.steeringWheelAngle ?? 0.0;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -124,6 +125,34 @@ class _VehicleSettingsState extends State<VehicleSettings> {
                 await vehicleSimulator.update(update);
                 _consoleService.write(
                     'Setting Accelerator Pedal to ${value.toInt().toString()}%');
+              },
+            ),
+          ],
+        ),
+        Wrap(
+          alignment: WrapAlignment.center,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          direction: Axis.horizontal,
+          children: [
+            Text('Steering Wheel Angle'),
+            Slider.adaptive(
+              value: steeringWheelAngle,
+              min: -180,
+              max: 180,
+              divisions: 10,
+              label: '${steeringWheelAngle.toStringAsFixed(1)}',
+              onChanged: (value) {
+                setState(() {
+                  vehicleSimulator.state.steeringWheelAngle =
+                      value.roundToDouble();
+                });
+              },
+              onChangeEnd: (value) async {
+                var update = vehicleSimulator.state;
+                update.steeringWheelAngle = value;
+                await vehicleSimulator.update(update);
+                _consoleService.write(
+                    'Setting Steering Wheel to ${value.round().toString()}°');
               },
             ),
           ],
