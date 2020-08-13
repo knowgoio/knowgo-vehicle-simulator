@@ -11,6 +11,7 @@ class ConsoleLog extends StatelessWidget {
 
     return VehicleDataCard(
       title: 'Console',
+      onReset: () => consoleService.clear(),
       child: ListView.builder(
         shrinkWrap: true,
         itemCount: consoleService.messages.length,

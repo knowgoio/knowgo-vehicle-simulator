@@ -4,8 +4,27 @@ class VehicleDataCard extends StatelessWidget {
   final _scrollController = ScrollController();
   final String title;
   final Widget child;
+  final VoidCallback onReset;
 
-  VehicleDataCard({@required this.title, @required this.child});
+  VehicleDataCard({@required this.title, @required this.child, this.onReset});
+
+  Widget generateActionButtons(BuildContext context) {
+    if (onReset != null) {
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          Container(
+            child: IconButton(
+              icon: Icon(Icons.refresh, color: Theme.of(context).primaryColor),
+              onPressed: () => onReset(),
+            ),
+          ),
+        ],
+      );
+    } else {
+      return Container();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,6 +61,7 @@ class VehicleDataCard extends StatelessWidget {
                     maxLines: 1,
                   ),
                 ),
+                generateActionButtons(context),
               ],
             ),
             Expanded(
