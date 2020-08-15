@@ -28,6 +28,7 @@ Future<void> main(List<String> args) async {
 
   // Kick off any supporting services
   setupServices();
+  await serviceLocator.allReady();
 
   // Kick off the HTTP Server Isolate
   final simulatorHttpServer = SimulatorHttpServer(port);
@@ -73,7 +74,16 @@ class VehicleSimulatorApp extends StatelessWidget {
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       debugShowCheckedModeBanner: false,
-      home: VehicleSimulatorHome(),
+      home: FutureBuilder(
+        future: serviceLocator.allReady(),
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (snapshot.hasData) {
+            return VehicleSimulatorHome();
+          } else {
+            return Center(child: CircularProgressIndicator());
+          }
+        },
+      ),
     );
   }
 }
@@ -86,25 +96,108 @@ class VehicleSimulatorHome extends StatefulWidget {
 }
 
 class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
+  var settingsService = serviceLocator.get<SettingsService>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(KnowGoIcons.knowgo, color: Colors.white),
-          onPressed: () {
-            return showAboutDialog(
-              context: context,
-              applicationIcon: Icon(
-                KnowGoIcons.knowgo,
-                color: Theme.of(context).primaryColor,
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            AppBar(
+              leading: IconButton(
+                icon: Icon(Icons.arrow_back, color: Colors.white),
+                onPressed: () => Navigator.pop(context),
               ),
-              applicationName: 'KnowGo Vehicle Simulator',
-              applicationVersion: '1.0.0',
-              applicationLegalese: '© 2020 Adaptant Solutions AG',
-            );
-          },
+              title:
+                  Text('Configuration', style: TextStyle(color: Colors.white)),
+              actions: [
+                Padding(
+                  padding: EdgeInsets.only(right: 20),
+                  child: Icon(Icons.settings, color: Colors.white),
+                ),
+              ],
+            ),
+            CheckboxListTile(
+              title: const Text('Session Logging'),
+              value: settingsService.loggingEnabled,
+              onChanged: (bool value) {
+                setState(() {
+                  settingsService.loggingEnabled = value;
+                });
+              },
+            ),
+            ListTile(
+              title: const Text('KnowGo Server'),
+              subtitle: Text(settingsService.server),
+              trailing: IconButton(
+                icon: Icon(Icons.edit),
+                onPressed: () async {
+                  await showDialog(
+                    context: context,
+                    barrierDismissible: false,
+                    builder: (BuildContext buildContext) {
+                      return TextFieldAlertDialog(
+                        title: 'KnowGo Server',
+                        initialValue: settingsService.server,
+                        onSubmitted: (value) {
+                          setState(() {
+                            settingsService.server = value;
+                          });
+                        },
+                      );
+                    },
+                  );
+                },
+              ),
+            ),
+            ListTile(
+              title: const Text('KnowGo API Key'),
+              subtitle: Text(settingsService.apiKey),
+              trailing: IconButton(
+                icon: Icon(Icons.edit),
+                onPressed: () async {
+                  await showDialog(
+                    context: context,
+                    barrierDismissible: false,
+                    builder: (BuildContext buildContext) {
+                      return TextFieldAlertDialog(
+                        title: 'KnowGo API Key',
+                        initialValue: settingsService.apiKey,
+                        onSubmitted: (value) {
+                          setState(() {
+                            settingsService.apiKey = value;
+                          });
+                        },
+                      );
+                    },
+                  );
+                },
+              ),
+            ),
+          ],
         ),
+      ),
+      appBar: AppBar(
+        iconTheme: IconThemeData(color: Colors.white),
+        actions: [
+          IconButton(
+            icon: Icon(KnowGoIcons.knowgo, color: Colors.white),
+            onPressed: () {
+              return showAboutDialog(
+                context: context,
+                applicationIcon: Icon(
+                  KnowGoIcons.knowgo,
+                  color: Theme.of(context).primaryColor,
+                ),
+                applicationName: 'KnowGo Vehicle Simulator',
+                applicationVersion: '1.0.0',
+                applicationLegalese: '© 2020 Adaptant Solutions AG',
+              );
+            },
+          ),
+        ],
         title: Center(
           child: Text(
             'KnowGo Vehicle Simulator',
