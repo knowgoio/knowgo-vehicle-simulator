@@ -97,14 +97,14 @@ class _VehicleSettingsState extends State<VehicleSettings> {
     var vehicleSimulator = context.watch<VehicleSimulator>();
     var acceleratorPosition =
         vehicleSimulator.state.acceleratorPedalPosition ?? 0.0;
+    var brakePosition = vehicleSimulator.state.brakePedalPosition ?? 0.0;
     var steeringWheelAngle = vehicleSimulator.state.steeringWheelAngle ?? 0.0;
 
     return VehicleDataCard(
       title: 'Vehicle Controls',
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        mainAxisSize: MainAxisSize.max,
+      child: ListView(
+        shrinkWrap: true,
+        padding: EdgeInsets.symmetric(horizontal: 10),
         children: [
           VehicleDataSlider(
             title: 'Accelerator',
@@ -124,6 +124,26 @@ class _VehicleSettingsState extends State<VehicleSettings> {
               await vehicleSimulator.update(update);
               _consoleService.write(
                   'Setting Accelerator Pedal to ${value.toInt().toString()}%');
+            },
+          ),
+          VehicleDataSlider(
+            title: 'Brake',
+            value: brakePosition,
+            label: brakePosition.toString(),
+            min: 0,
+            max: 100,
+            divisions: 10,
+            onChanged: (value) {
+              setState(() {
+                vehicleSimulator.state.brakePedalPosition = value;
+              });
+            },
+            onChangeEnd: (value) async {
+              var update = vehicleSimulator.state;
+              update.brakePedalPosition = value;
+              await vehicleSimulator.update(update);
+              _consoleService
+                  .write('Setting Brake Pedal to ${value.toInt().toString()}%');
             },
           ),
           VehicleDataSlider(
@@ -160,6 +180,7 @@ class _VehicleSettingsState extends State<VehicleSettings> {
               ],
             ),
           ),
+          SizedBox(height: 10),
           Wrap(
             alignment: WrapAlignment.spaceEvenly,
             spacing: 16.0,
@@ -211,6 +232,7 @@ class _VehicleSettingsState extends State<VehicleSettings> {
               ),
             ],
           ),
+          SizedBox(height: 4),
           SizedBox(
             width: double.infinity,
             child: simulatorButton(vehicleSimulator),

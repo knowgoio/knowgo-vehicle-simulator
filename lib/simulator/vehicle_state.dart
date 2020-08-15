@@ -1,6 +1,7 @@
-import 'package:vin_decoder/vin_decoder.dart';
-import 'vehicle_data_generator.dart';
 import 'package:knowgo/api.dart' as knowgo;
+import 'package:vin_decoder/vin_decoder.dart';
+
+import 'vehicle_data_generator.dart';
 
 void initVehicleInfo(knowgo.Auto auto) {
   var generator = VehicleDataGenerator();
@@ -23,6 +24,7 @@ void initVehicleState(knowgo.Event state) {
   state.latitude = 48.020250;
   state.longitude = 11.584850;
   state.acceleratorPedalPosition = 10.0;
+  state.brakePedalPosition = 0.0;
   state.bearing = 0;
   state.odometer = generator.odometer();
   state.vehicleSpeed ??= 0;
@@ -54,8 +56,8 @@ void updateVehicleState(knowgo.Event state, knowgo.Event update) {
   if (update.parkingBrakeStatus != null) {
     state.parkingBrakeStatus = update.parkingBrakeStatus;
   }
-  if (update.brakePedalStatus != null) {
-    state.brakePedalStatus = update.brakePedalStatus;
+  if (update.brakePedalPosition != null) {
+    state.brakePedalPosition = update.brakePedalPosition;
   }
   if (update.transmissionGearPosition != null) {
     state.transmissionGearPosition = update.transmissionGearPosition;

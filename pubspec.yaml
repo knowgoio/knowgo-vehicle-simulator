@@ -10,6 +10,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  intl: ^0.16.1
   provider: ^4.1.3
   vin_decoder: ^0.1.2
   random_string:
