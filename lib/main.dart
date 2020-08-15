@@ -14,20 +14,23 @@ Future<void> main(List<String> args) async {
   exitCode = 0;
 
   final parser = ArgParser()
+    ..addOption('config',
+        abbr: 'c', defaultsTo: 'config.yaml', help: 'Config file to use')
     ..addOption('port', abbr: 'p', defaultsTo: '8086', help: 'Port to bind to')
     ..addFlag('help', abbr: 'h', negatable: false, help: 'Show usage info');
   final results = parser.parse(args);
+  final config = results['config'];
   final showHelp = results['help'];
   final port = int.parse(results['port'].toString());
 
   if (showHelp) {
-    print('usage: knowgo-vehicle-simulator [-ph]');
+    print('usage: knowgo-vehicle-simulator [-cph]');
     print(parser.usage);
     exit(1);
   }
 
   // Kick off any supporting services
-  setupServices();
+  setupServices(config);
   await serviceLocator.allReady();
 
   // Kick off the HTTP Server Isolate
@@ -97,6 +100,14 @@ class VehicleSimulatorHome extends StatefulWidget {
 
 class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
   var settingsService = serviceLocator.get<SettingsService>();
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Write out the initial configuration
+    settingsService.saveConfig();
+  }
 
   @override
   Widget build(BuildContext context) {

@@ -43,6 +43,21 @@ An overview of the overall interactivity patterns is provided below:
 
 ![KnowGo Vehicle Simulator Screenshot](simulator.png)
 
+## Configuration
+
+Configuration of the simulator can be tuned through a `config.yaml` file,
+which will be parsed and updated by configuration changes within the UI.
+The format of the file is:
+
+```yaml
+sessionLogging: true
+
+# Optional KnowGo Backend Configuration
+knowgo:
+  server: https://api.adaptant.io
+  apiKey: <knowgo-API-Key>
+```
+
 ## Features and bugs
 
 Please file feature requests and bugs at the [issue tracker][tracker].
