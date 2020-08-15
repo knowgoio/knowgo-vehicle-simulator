@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 
 class VehicleDataSlider extends StatelessWidget {
@@ -27,19 +28,22 @@ class VehicleDataSlider extends StatelessWidget {
       alignment: WrapAlignment.spaceAround,
       crossAxisAlignment: WrapCrossAlignment.center,
       children: [
-        SizedBox(
-          width: 75,
-          child: Text(title, textAlign: TextAlign.center),
+        FractionallySizedBox(
+          widthFactor: 0.25,
+          child: AutoSizeText(title, textAlign: TextAlign.center, maxLines: 1),
         ),
-        Slider.adaptive(
-          value: value,
-          min: min,
-          max: max,
-          divisions: divisions,
-          label: label,
-          onChanged: (value) => (onChanged != null) ? onChanged(value) : null,
-          onChangeEnd: (value) =>
-              (onChangeEnd != null) ? onChangeEnd(value) : null,
+        FractionallySizedBox(
+          widthFactor: 0.75,
+          child: Slider.adaptive(
+            value: value,
+            min: min,
+            max: max,
+            divisions: divisions,
+            label: label,
+            onChanged: (value) => (onChanged != null) ? onChanged(value) : null,
+            onChangeEnd: (value) =>
+                (onChangeEnd != null) ? onChangeEnd(value) : null,
+          ),
         ),
       ],
     );

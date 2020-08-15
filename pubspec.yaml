@@ -19,6 +19,7 @@ dependencies:
   get_it: ^4.0.2
   font_awesome_flutter: ^8.8.1
   yaml: ^2.2.1
+  auto_size_text: ^2.1.0
   knowgo:
     git:
       url: https://github.com/knowgoio/knowgo-client-dart
