@@ -54,7 +54,7 @@ class VehicleDataCalculator {
   double vehicleSpeed(knowgo.Event state) {
     const airDragCoeff = 0.000008;
     const engineDragCoeff = 0.0004;
-    //const brakeConstant = 0.1;
+    const brakeConstant = 0.1;
     const engineV0Force = 20;
     //const carMass = 1;
 
@@ -68,7 +68,10 @@ class VehicleDataCalculator {
           (engineV0Force * state.acceleratorPedalPosition / (50 * gear));
     }
 
-    var acceleration = engineForce - airDrag - engineDrag - .1;
+    var acceleration = engineForce -
+        airDrag -
+        engineDrag -
+        (state.brakePedalPosition * brakeConstant);
 
     if ((acceleration + state.vehicleSpeed) < 0.0) {
       acceleration = -state.vehicleSpeed;
