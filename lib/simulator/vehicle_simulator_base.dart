@@ -34,6 +34,9 @@ class VehicleSimulator extends ChangeNotifier {
     _writeConsoleMessage('Waiting for simulator to start..');
   }
 
+  // API Client for optional backend connectivity
+  knowgo.ApiClient apiClient;
+
   // Information about the generated Vehicle
   knowgo.Auto info = knowgo.Auto();
 
@@ -91,6 +94,7 @@ class VehicleSimulator extends ChangeNotifier {
   // updated on receipt of periodic messages from the event isolate.
   Future<void> start() async {
     var _consoleService = serviceLocator.get<ConsoleService>();
+    var _settingsService = serviceLocator.get<SettingsService>();
     var _receivePort = ReceivePort();
     SendPort _sendPort;
 
@@ -100,6 +104,14 @@ class VehicleSimulator extends ChangeNotifier {
       // Spawn the event isolate
       _eventIsolate =
           await Isolate.spawn(vehicleEventLoop, _receivePort.sendPort);
+
+      // Init API client connection
+      if (_settingsService.server != null) {
+        apiClient = knowgo.ApiClient(basePath: _settingsService.server);
+        if (_settingsService.apiKey != null) {
+          apiClient.addDefaultHeader('X-API-Key', _settingsService.apiKey);
+        }
+      }
 
       _receivePort.listen((data) {
         // Wait for the event isolate to open up a ReceivePort and then send
@@ -133,6 +145,11 @@ class VehicleSimulator extends ChangeNotifier {
 
           // Log event to console
           _consoleService.write(update.toString());
+
+          // Dispatch event to backend asynchronously
+          if (apiClient != null) {
+            knowgo.EventsApi(apiClient).addEvent(update).catchError((e) {});
+          }
 
           if (state.fuelLevel <= 0) {
             _writeConsoleMessage('Vehicle is out of fuel, stopping..');
