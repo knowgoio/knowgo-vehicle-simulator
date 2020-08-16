@@ -56,7 +56,6 @@ class VehicleDataCalculator {
     const engineDragCoeff = 0.0004;
     const brakeConstant = 0.1;
     const engineV0Force = 20;
-    //const carMass = 1;
 
     var airDrag = (state.vehicleSpeed * 3) * airDragCoeff;
     var engineDrag = state.engineSpeed * engineDragCoeff;
@@ -138,6 +137,40 @@ class VehicleDataCalculator {
     }
 
     return -drag;
+  }
+
+  double heading(knowgo.Event state) {
+    // Stay on the present heading if the wheel angle is 0
+    if (state.steeringWheelAngle == 0) {
+      return state.bearing;
+    }
+
+    // The ratio of steering wheel degrees to wheel degrees, typically in the
+    // range of 12-20 for passenger vehicles.
+    const steeringRatio = 12;
+    var wheelAngle = state.steeringWheelAngle / steeringRatio;
+    var wheelAngleRadians = radians(wheelAngle);
+    var calcAngle = -wheelAngleRadians;
+
+    if (wheelAngle < 0) {
+      calcAngle -= pi / 2;
+    } else if (wheelAngle > 0) {
+      calcAngle += pi / 2;
+    }
+
+    var turningCircumference = 0.028 * tan(calcAngle);
+    var distance = state.vehicleSpeed / 3600;
+    var delta = (distance / turningCircumference) * 2 * pi;
+    var heading = radians(state.bearing) + delta;
+
+    while (heading >= (2 * pi)) {
+      heading -= (2 * pi);
+    }
+    while (heading < 0) {
+      heading += (2 * pi);
+    }
+
+    return heading * (180 / pi);
   }
 
   double latitude(knowgo.Event state) {

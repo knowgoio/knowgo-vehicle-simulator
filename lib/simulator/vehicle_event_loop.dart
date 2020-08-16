@@ -25,6 +25,7 @@ void vehicleEventLoop(SendPort sendPort) {
       event.vehicleSpeed = calculator.vehicleSpeed(state);
       event.latitude = calculator.latitude(state);
       event.longitude = calculator.longitude(state);
+      event.bearing = calculator.heading(state);
       event.torqueAtTransmission = calculator.torque(state);
       event.fuelConsumedSinceRestart = calculator.fuelConsumed(state);
       event.fuelLevel = calculator.fuelLevel(info, state);

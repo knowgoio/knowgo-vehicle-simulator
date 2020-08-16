@@ -51,7 +51,7 @@ class _VehicleStatsState extends State<VehicleStats> {
           Text(
               'Odometer: ${vehicleSimulator.state.odometer.toStringAsFixed(2)} km'),
           Text(
-              'Lat: ${vehicleSimulator.state.latitude.toStringAsPrecision(6)}, Lng: ${vehicleSimulator.state.longitude.toStringAsPrecision(6)}'),
+              'Lat: ${vehicleSimulator.state.latitude.toStringAsPrecision(6)}, Lng: ${vehicleSimulator.state.longitude.toStringAsPrecision(6)}, Heading: ${vehicleSimulator.state.bearing.toInt()}°'),
           Text('Distance Traveled: ${distanceTraveled.toStringAsFixed(2)} km'),
           Text(
               'Vehicle Speed: ${vehicleSimulator.state.vehicleSpeed.toStringAsFixed(2)} km/h'),
