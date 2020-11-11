@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:knowgo/api.dart' as knowgo;
 import 'package:knowgo_simulator_desktop/services.dart';
 import 'package:knowgo_simulator_desktop/simulator.dart';
 import 'package:knowgo_simulator_desktop/widgets.dart';
@@ -29,7 +30,8 @@ class _VehicleSettingsState extends State<VehicleSettings> {
           ),
           onPressed: () async {
             var update = vehicleSimulator.state;
-            update.transmissionGearPosition = calculator.nextGear(update);
+            update.transmissionGearPosition =
+                vehicleSimulator.state.transmissionGearPosition.nextGear;
             _consoleService
                 .write('Shifting up to ${update.transmissionGearPosition}');
             await vehicleSimulator.update(update);
@@ -44,7 +46,8 @@ class _VehicleSettingsState extends State<VehicleSettings> {
           ),
           onPressed: () async {
             var update = vehicleSimulator.state;
-            update.transmissionGearPosition = calculator.prevGear(update);
+            update.transmissionGearPosition =
+                vehicleSimulator.state.transmissionGearPosition.prevGear;
             _consoleService
                 .write('Shifting down to ${update.transmissionGearPosition}');
             await vehicleSimulator.update(update);
@@ -211,17 +214,19 @@ class _VehicleSettingsState extends State<VehicleSettings> {
                     case 0:
                       _consoleService.write(
                           (setting ? 'Locking' : 'Unlocking') + ' doors');
-                      update.doorStatus = setting ? 'driver' : null;
+                      update.doorStatus = setting
+                          ? knowgo.DoorStatus.all_locked
+                          : knowgo.DoorStatus.all_unlocked;
                       break;
                     case 1:
                       _consoleService.write('Turning windshield wipers ' +
                           (setting ? 'on' : 'off'));
-                      update.windshieldWiperStatus = setting.toString();
+                      update.windshieldWiperStatus = setting;
                       break;
                     case 2:
                       _consoleService.write(
                           'Turning headlamp ' + (setting ? 'on' : 'off'));
-                      update.headlampStatus = setting.toString();
+                      update.headlampStatus = setting;
                       break;
                   }
                   await vehicleSimulator.update(update);

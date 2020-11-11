@@ -19,8 +19,11 @@ void initVehicleInfo(knowgo.Auto auto) {
 void initVehicleState(knowgo.Event state) {
   var generator = VehicleDataGenerator();
 
-  state.transmissionGearPosition = 'first';
-  state.ignitionStatus = 'run';
+  state.transmissionGearPosition = knowgo.TransmissionGearPosition.first;
+  state.ignitionStatus = knowgo.IgnitionStatus.run;
+  state.windshieldWiperStatus = false;
+  state.headlampStatus = false;
+  state.doorStatus = knowgo.DoorStatus.all_unlocked;
   state.latitude = 48.020250;
   state.longitude = 11.584850;
   state.acceleratorPedalPosition = 10.0;

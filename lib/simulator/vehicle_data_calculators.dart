@@ -4,41 +4,6 @@ import 'package:knowgo/api.dart' as knowgo;
 import 'package:vector_math/vector_math.dart';
 
 class VehicleDataCalculator {
-  final _gears = [
-    'neutral',
-    'first',
-    'second',
-    'third',
-    'fourth',
-    'fifth',
-  ];
-
-  int _gearNumber(String gearPosition) {
-    return _gears.indexOf(gearPosition);
-  }
-
-  String nextGear(knowgo.Event state) {
-    var gear = _gearNumber(state.transmissionGearPosition);
-
-    // If we're already in the highest gear, go no further
-    if (gear == _gears.length - 1) {
-      return _gears[gear];
-    }
-
-    return _gears[gear + 1];
-  }
-
-  String prevGear(knowgo.Event state) {
-    var gear = _gearNumber(state.transmissionGearPosition);
-
-    // Go no lower than first
-    if (gear <= 1) {
-      return _gears[1];
-    }
-
-    return _gears[gear - 1];
-  }
-
   int _tankCapacity(knowgo.Auto auto) {
     final numRegex = RegExp(r'[0-9]');
     final capacity = numRegex.matchAsPrefix(auto.fuelCapacity).group(0);
@@ -48,7 +13,7 @@ class VehicleDataCalculator {
   double engineSpeed(knowgo.Event state) {
     return 16382 *
         state.vehicleSpeed /
-        (100.0 * _gearNumber(state.transmissionGearPosition));
+        (100.0 * state.transmissionGearPosition.gearNumber);
   }
 
   double vehicleSpeed(knowgo.Event state) {
@@ -60,9 +25,9 @@ class VehicleDataCalculator {
     var airDrag = (state.vehicleSpeed * 3) * airDragCoeff;
     var engineDrag = state.engineSpeed * engineDragCoeff;
     var engineForce = 0.0;
-    var gear = _gearNumber(state.transmissionGearPosition);
+    var gear = state.transmissionGearPosition.gearNumber;
 
-    if (state.ignitionStatus == 'run') {
+    if (state.ignitionStatus == knowgo.IgnitionStatus.run) {
       engineForce =
           (engineV0Force * state.acceleratorPedalPosition / (50 * gear));
     }
@@ -106,7 +71,7 @@ class VehicleDataCalculator {
     var maxFuelConsumption = 0.0015; // Max consumption in Litres per second
     var idleFuelConsumption = 0.000015; // Idle fuel consumption rate
 
-    if (state.ignitionStatus != 'run') {
+    if (state.ignitionStatus != knowgo.IgnitionStatus.run) {
       return 0.0;
     }
 
@@ -123,16 +88,16 @@ class VehicleDataCalculator {
 
   double torque(knowgo.Event state) {
     const engineToTorque = 500.0 / 16382.0;
-    var gear = _gearNumber(state.transmissionGearPosition) - 1;
-    if (gear < 1) {
-      gear = 1;
+    var gear = state.transmissionGearPosition.prevGear;
+    if (gear == knowgo.TransmissionGearPosition.neutral) {
+      gear = knowgo.TransmissionGearPosition.first;
     }
 
-    var ratio = 1 - (gear * .1);
+    var ratio = 1 - (gear.gearNumber * .1);
     var drag = state.engineSpeed * engineToTorque;
     var power = state.acceleratorPedalPosition * 15 * ratio;
 
-    if (state.ignitionStatus == 'run') {
+    if (state.ignitionStatus == knowgo.IgnitionStatus.run) {
       return power - drag;
     }
 
