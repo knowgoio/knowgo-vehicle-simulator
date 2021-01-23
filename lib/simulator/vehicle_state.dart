@@ -1,23 +1,74 @@
 import 'package:knowgo/api.dart' as knowgo;
+import 'package:knowgo_simulator_desktop/services.dart';
 import 'package:vin_decoder/vin_decoder.dart';
 
 import 'vehicle_data_generator.dart';
 
 void initVehicleInfo(knowgo.Auto auto) {
   var generator = VehicleDataGenerator();
+  var autoConfig = knowgo.Auto();
 
-  auto.name = 'KnowGo Vehicle Simulator';
-  auto.VIN = generator.vin();
-  auto.licensePlate = generator.licensePlate();
+  // As VehicleSimulator may be instantiated in separate isolates,
+  // make sure that the service in the main isolate is reachable.
+  if (serviceLocator.isRegistered<SettingsService>() == true) {
+    var settingsService = serviceLocator.get<SettingsService>();
+    autoConfig = settingsService.autoConfig;
+  }
+
+  if (autoConfig.name != null) {
+    auto.name = autoConfig.name;
+  } else {
+    auto.name = 'KnowGo Vehicle Simulator';
+  }
+
+  if (autoConfig.VIN != null) {
+    auto.VIN = autoConfig.VIN;
+  } else {
+    auto.VIN = generator.vin();
+  }
+
+  if (autoConfig.licensePlate != null) {
+    auto.licensePlate = autoConfig.licensePlate;
+  } else {
+    auto.licensePlate = generator.licensePlate();
+  }
+
   auto.year = VIN(number: auto.VIN).getYear();
-  auto.odometer = 0; // This will be updated by the event loop
-  auto.driverID = generator.id();
-  auto.autoID = generator.id();
+
+  if (autoConfig.odometer != null) {
+    auto.odometer = autoConfig.odometer;
+  } else {
+    auto.odometer = 0; // This will be updated by the event loop
+  }
+
+  if (autoConfig.driverID != null) {
+    auto.driverID = autoConfig.driverID;
+  } else {
+    auto.driverID = generator.id();
+  }
+
+  if (autoConfig.autoID != null) {
+    auto.autoID = autoConfig.autoID;
+  } else {
+    auto.autoID = generator.id();
+  }
+
   auto.fuelCapacity = "40L";
 }
 
 void initVehicleState(knowgo.Event state) {
   var generator = VehicleDataGenerator();
+  var initEvent = knowgo.Event();
+
+  // As VehicleSimulator may be instantiated in separate isolates,
+  // make sure that the service in the main isolate is reachable.
+  if (serviceLocator.isRegistered<SettingsService>() == true) {
+    var settingsService = serviceLocator.get<SettingsService>();
+    initEvent = settingsService.initEvent;
+    if (initEvent.odometer == null) {
+      initEvent.odometer = settingsService.autoConfig.odometer;
+    }
+  }
 
   state.transmissionGearPosition = knowgo.TransmissionGearPosition.first;
   state.ignitionStatus = knowgo.IgnitionStatus.run;
@@ -29,7 +80,13 @@ void initVehicleState(knowgo.Event state) {
   state.acceleratorPedalPosition = 10.0;
   state.brakePedalPosition = 0.0;
   state.bearing = 0;
-  state.odometer = generator.odometer();
+
+  if (initEvent.odometer != null) {
+    state.odometer = initEvent.odometer;
+  } else {
+    state.odometer = generator.odometer();
+  }
+
   state.vehicleSpeed ??= 0;
   state.steeringWheelAngle = 0;
   state.engineSpeed = 0;
