@@ -20,8 +20,33 @@ class SettingsService {
     saveConfig();
   }
 
+  // Optional MQTT Configuration
+  bool _mqttEnabled = false;
+  bool get mqttEnabled => _mqttEnabled;
+
+  set mqttEnabled(bool value) {
+    _mqttEnabled = value;
+    saveConfig();
+  }
+
+  String _mqttBroker;
+  String get mqttBroker => _mqttBroker;
+
+  set mqttBroker(String brokerAddress) {
+    _mqttBroker = brokerAddress;
+    saveConfig();
+  }
+
+  String _mqttTopic;
+  String get mqttTopic => _mqttTopic;
+
+  set mqttTopic(String topic) {
+    _mqttTopic = topic;
+    saveConfig();
+  }
+
   // Optional Kafka configuration
-  bool _kafkaEnabled;
+  bool _kafkaEnabled = false;
   bool get kafkaEnabled => _kafkaEnabled;
 
   set kafkaEnabled(bool value) {
@@ -78,6 +103,12 @@ class SettingsService {
 
     _configFile = yamlConfig;
 
+    if (doc['mqtt'] != null) {
+      _mqttBroker = doc['mqtt']['broker'];
+      _mqttTopic = doc['mqtt']['topic'];
+      _mqttEnabled = true;
+    }
+
     if (doc['kafka'] != null) {
       _kafkaBroker = doc['kafka']['broker'];
       _kafkaTopic = doc['kafka']['topic'];
@@ -96,6 +127,12 @@ class SettingsService {
   Map<String, dynamic> configToJson() {
     final data = Map<String, dynamic>();
     data['sessionLogging'] = _loggingEnabled;
+
+    if (_mqttEnabled == true) {
+      data['mqtt'] = Map<String, dynamic>();
+      data['mqtt']['broker'] = _mqttBroker;
+      data['mqtt']['topic'] = _mqttTopic;
+    }
 
     if (_kafkaEnabled == true) {
       data['kafka'] = Map<String, dynamic>();

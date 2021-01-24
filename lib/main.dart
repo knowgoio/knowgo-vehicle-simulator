@@ -188,6 +188,69 @@ class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
               ),
             ),
             CheckboxListTile(
+              title: const Text('MQTT Support'),
+              value: settingsService.mqttEnabled,
+              onChanged: (bool value) {
+                setState(() {
+                  settingsService.mqttEnabled = value;
+                });
+              },
+            ),
+            Visibility(
+              visible: settingsService.mqttEnabled,
+              child: ListTile(
+                title: const Text('MQTT Broker'),
+                subtitle: Text(settingsService.mqttBroker ?? ''),
+                trailing: IconButton(
+                  icon: Icon(Icons.edit),
+                  onPressed: () async {
+                    await showDialog(
+                      context: context,
+                      barrierDismissible: false,
+                      builder: (BuildContext buildContext) {
+                        return TextFieldAlertDialog(
+                          title: 'MQTT Broker',
+                          initialValue: settingsService.mqttBroker,
+                          onSubmitted: (value) {
+                            setState(() {
+                              settingsService.mqttBroker = value;
+                            });
+                          },
+                        );
+                      },
+                    );
+                  },
+                ),
+              ),
+            ),
+            Visibility(
+              visible: settingsService.mqttEnabled,
+              child: ListTile(
+                title: const Text('MQTT Topic'),
+                subtitle: Text(settingsService.mqttTopic ?? ''),
+                trailing: IconButton(
+                  icon: Icon(Icons.edit),
+                  onPressed: () async {
+                    await showDialog(
+                      context: context,
+                      barrierDismissible: false,
+                      builder: (BuildContext buildContext) {
+                        return TextFieldAlertDialog(
+                          title: 'MQTT Topic',
+                          initialValue: settingsService.mqttTopic,
+                          onSubmitted: (value) {
+                            setState(() {
+                              settingsService.mqttTopic = value;
+                            });
+                          },
+                        );
+                      },
+                    );
+                  },
+                ),
+              ),
+            ),
+            CheckboxListTile(
               title: const Text('Kafka Support'),
               value: settingsService.kafkaEnabled,
               onChanged: (bool value) {
@@ -200,7 +263,7 @@ class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
               visible: settingsService.kafkaEnabled,
               child: ListTile(
                 title: const Text('Kafka Broker'),
-                subtitle: Text(settingsService.kafkaBroker),
+                subtitle: Text(settingsService.kafkaBroker ?? ''),
                 trailing: IconButton(
                   icon: Icon(Icons.edit),
                   onPressed: () async {
@@ -227,7 +290,7 @@ class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
               visible: settingsService.kafkaEnabled,
               child: ListTile(
                 title: const Text('Kafka Topic'),
-                subtitle: Text(settingsService.kafkaTopic),
+                subtitle: Text(settingsService.kafkaTopic ?? ''),
                 trailing: IconButton(
                   icon: Icon(Icons.edit),
                   onPressed: () async {

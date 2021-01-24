@@ -5,6 +5,8 @@ import 'package:flutter/foundation.dart';
 import 'package:kafka/kafka.dart';
 import 'package:knowgo/api.dart' as knowgo;
 import 'package:knowgo_simulator_desktop/services.dart';
+import 'package:mqtt_client/mqtt_client.dart';
+import 'package:mqtt_client/mqtt_server_client.dart';
 
 import 'vehicle_data_generator.dart';
 import 'vehicle_event_loop.dart';
@@ -37,6 +39,9 @@ class VehicleSimulator extends ChangeNotifier {
 
   // API Client for optional backend connectivity
   knowgo.ApiClient apiClient;
+
+  // MQTT client for optional MQTT broker connectivity
+  MqttServerClient mqttClient;
 
   // Kafka client for optional Kafka broker connectivity
   Producer kafkaProducer;
@@ -89,6 +94,30 @@ class VehicleSimulator extends ChangeNotifier {
     });
   }
 
+  void initMqttConnection() async {
+    var _settingsService = serviceLocator.get<SettingsService>();
+
+    if (_settingsService.mqttEnabled == false) {
+      return;
+    }
+
+    var hostPortPair = _settingsService.mqttBroker.split(':');
+
+    mqttClient = MqttServerClient.withPort(hostPortPair[0],
+        'knowgo-simulator-desktop', int.parse(hostPortPair[1]));
+
+    try {
+      var _status = await mqttClient.connect();
+      if (_status.state == MqttConnectionState.connected) {
+        _writeConsoleMessage(
+            'MQTT client connected to broker @ ' + _settingsService.mqttBroker);
+      }
+    } catch (e) {
+      _writeConsoleMessage('Unable to connect to MQTT broker: ${e}');
+      mqttClient = null;
+    }
+  }
+
   // The Vehicle Simulator uses a pair of Send/ReceivePorts in order to
   // enable bi-directional communication with the event isolate. As we can not
   // share memory directly between the main and event isolates, we instead have
@@ -115,6 +144,11 @@ class VehicleSimulator extends ChangeNotifier {
         if (_settingsService.apiKey != null) {
           apiClient.addDefaultHeader('X-API-Key', _settingsService.apiKey);
         }
+      }
+
+      // Init MQTT client
+      if (_settingsService.mqttEnabled) {
+        initMqttConnection();
       }
 
       // Init Kafka producer
@@ -161,6 +195,15 @@ class VehicleSimulator extends ChangeNotifier {
           // Dispatch event to backend asynchronously
           if (apiClient != null) {
             knowgo.EventsApi(apiClient).addEvent(update).catchError((e) {});
+          }
+
+          // Dispatch event to MQTT broker asynchronously
+          if (mqttClient != null) {
+            final builder = MqttClientPayloadBuilder();
+            builder.addString(update.toJson().toString());
+            mqttClient.publishMessage(_settingsService.mqttTopic,
+                MqttQos.exactlyOnce, builder.payload,
+                retain: false);
           }
 
           // Dispatch event to Kafka topic asynchronously

@@ -43,6 +43,12 @@ An overview of the overall interactivity patterns is provided below:
 
 ![KnowGo Vehicle Simulator Screenshot](simulator.png)
 
+## Event Publication
+
+By default, generated events are only logged in the console. Events can
+be published to a KnowGo API backend, as well as MQTT and Kafka brokers.
+The specific configuration for each is outlined below.
+
 ## Configuration
 
 Configuration of the simulator can be tuned through a `config.yaml` file,
@@ -54,8 +60,16 @@ sessionLogging: true
 
 # Optional KnowGo Backend Configuration
 knowgo:
-  server: https://api.adaptant.io
+  server: <knowgo-API-server>
   apiKey: <knowgo-API-Key>
+
+kafka:
+  broker: <kafka-broker-address>
+  topic: <kafka-topic>
+
+mqtt:
+  broker: <MQTT-broker-address>
+  
 ```
 
 ## Features and bugs
