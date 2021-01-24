@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:isolate';
 
 import 'package:flutter/foundation.dart';
+import 'package:kafka/kafka.dart';
 import 'package:knowgo/api.dart' as knowgo;
 import 'package:knowgo_simulator_desktop/services.dart';
 
@@ -36,6 +37,9 @@ class VehicleSimulator extends ChangeNotifier {
 
   // API Client for optional backend connectivity
   knowgo.ApiClient apiClient;
+
+  // Kafka client for optional Kafka broker connectivity
+  Producer kafkaProducer;
 
   // Information about the generated Vehicle
   knowgo.Auto info = knowgo.Auto();
@@ -113,6 +117,14 @@ class VehicleSimulator extends ChangeNotifier {
         }
       }
 
+      // Init Kafka producer
+      if (_settingsService.kafkaEnabled) {
+        var kafkaConfig =
+            ProducerConfig(bootstrapServers: [_settingsService.kafkaBroker]);
+        kafkaProducer = Producer<String, String>(
+            StringSerializer(), StringSerializer(), kafkaConfig);
+      }
+
       _receivePort.listen((data) {
         // Wait for the event isolate to open up a ReceivePort and then send
         // through reference to the current vehicle info, last eventID and state.
@@ -149,6 +161,14 @@ class VehicleSimulator extends ChangeNotifier {
           // Dispatch event to backend asynchronously
           if (apiClient != null) {
             knowgo.EventsApi(apiClient).addEvent(update).catchError((e) {});
+          }
+
+          // Dispatch event to Kafka topic asynchronously
+          if (kafkaProducer != null) {
+            // Use the vehicle ID as the key
+            var record = ProducerRecord(_settingsService.kafkaTopic, 0,
+                info.autoID.toString(), update.toJson().toString());
+            kafkaProducer.add(record);
           }
 
           if (state.fuelLevel <= 0) {

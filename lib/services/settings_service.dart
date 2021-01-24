@@ -20,6 +20,31 @@ class SettingsService {
     saveConfig();
   }
 
+  // Optional Kafka configuration
+  bool _kafkaEnabled;
+  bool get kafkaEnabled => _kafkaEnabled;
+
+  set kafkaEnabled(bool value) {
+    _kafkaEnabled = value;
+    saveConfig();
+  }
+
+  String _kafkaBroker;
+  String get kafkaBroker => _kafkaBroker;
+
+  set kafkaBroker(String brokerAddress) {
+    _kafkaBroker = brokerAddress;
+    saveConfig();
+  }
+
+  String _kafkaTopic;
+  String get kafkaTopic => _kafkaTopic;
+
+  set kafkaTopic(String topic) {
+    _kafkaTopic = topic;
+    saveConfig();
+  }
+
   String _apiKey;
   String get apiKey => _apiKey;
 
@@ -53,6 +78,12 @@ class SettingsService {
 
     _configFile = yamlConfig;
 
+    if (doc['kafka'] != null) {
+      _kafkaBroker = doc['kafka']['broker'];
+      _kafkaTopic = doc['kafka']['topic'];
+      _kafkaEnabled = true;
+    }
+
     if (doc['vehicle'] != null) {
       autoConfig.autoID = doc['vehicle']['autoId'];
       autoConfig.driverID = doc['vehicle']['driverId'];
@@ -65,6 +96,12 @@ class SettingsService {
   Map<String, dynamic> configToJson() {
     final data = Map<String, dynamic>();
     data['sessionLogging'] = _loggingEnabled;
+
+    if (_kafkaEnabled == true) {
+      data['kafka'] = Map<String, dynamic>();
+      data['kafka']['broker'] = _kafkaBroker;
+      data['kafka']['topic'] = _kafkaTopic;
+    }
 
     data['knowgo'] = Map<String, dynamic>();
     data['knowgo']['server'] = _server;

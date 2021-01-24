@@ -12,7 +12,7 @@ dependencies:
     sdk: flutter
   intl: ^0.16.1
   provider: ^4.1.3
-  vin_decoder: ^0.1.2
+  vin_decoder: ^0.1.3
   random_string:
   vector_math: ^2.0.8
   uuid: ^2.1.0
@@ -21,6 +21,10 @@ dependencies:
   font_awesome_flutter: ^8.8.1
   yaml: ^2.2.1
   auto_size_text: ^2.1.0
+  kafka:
+    git:
+      url: https://github.com/dart-kafka/kafka
+      ref: kafka-0.10
   knowgo:
     git:
       url: https://github.com/knowgoio/knowgo-client-dart

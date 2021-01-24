@@ -187,6 +187,69 @@ class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
                 },
               ),
             ),
+            CheckboxListTile(
+              title: const Text('Kafka Support'),
+              value: settingsService.kafkaEnabled,
+              onChanged: (bool value) {
+                setState(() {
+                  settingsService.kafkaEnabled = value;
+                });
+              },
+            ),
+            Visibility(
+              visible: settingsService.kafkaEnabled,
+              child: ListTile(
+                title: const Text('Kafka Broker'),
+                subtitle: Text(settingsService.kafkaBroker),
+                trailing: IconButton(
+                  icon: Icon(Icons.edit),
+                  onPressed: () async {
+                    await showDialog(
+                      context: context,
+                      barrierDismissible: false,
+                      builder: (BuildContext buildContext) {
+                        return TextFieldAlertDialog(
+                          title: 'Kafka Broker',
+                          initialValue: settingsService.kafkaBroker,
+                          onSubmitted: (value) {
+                            setState(() {
+                              settingsService.kafkaBroker = value;
+                            });
+                          },
+                        );
+                      },
+                    );
+                  },
+                ),
+              ),
+            ),
+            Visibility(
+              visible: settingsService.kafkaEnabled,
+              child: ListTile(
+                title: const Text('Kafka Topic'),
+                subtitle: Text(settingsService.kafkaTopic),
+                trailing: IconButton(
+                  icon: Icon(Icons.edit),
+                  onPressed: () async {
+                    await showDialog(
+                      context: context,
+                      barrierDismissible: false,
+                      builder: (BuildContext buildContext) {
+                        return TextFieldAlertDialog(
+                          title: 'Kafka Topic',
+                          initialValue: settingsService.kafkaTopic,
+                          onSubmitted: (value) {
+                            setState(() {
+                              settingsService.kafkaTopic = value;
+                            });
+                          },
+                        );
+                      },
+                    );
+                  },
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -204,7 +267,7 @@ class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
                 ),
                 applicationName: 'KnowGo Vehicle Simulator',
                 applicationVersion: '1.0.0',
-                applicationLegalese: '© 2020 Adaptant Solutions AG',
+                applicationLegalese: '© 2020-2021 Adaptant Solutions AG',
               );
             },
           ),
