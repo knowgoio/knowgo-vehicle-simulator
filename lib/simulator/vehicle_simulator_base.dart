@@ -109,8 +109,10 @@ class VehicleSimulator extends ChangeNotifier {
     try {
       var _status = await mqttClient.connect();
       if (_status.state == MqttConnectionState.connected) {
-        _writeConsoleMessage(
-            'MQTT client connected to broker @ ' + _settingsService.mqttBroker);
+        _writeConsoleMessage('MQTT client connected to broker @ ' +
+            _settingsService.mqttBroker +
+            '/' +
+            _settingsService.mqttTopic);
       }
     } catch (e) {
       _writeConsoleMessage('Unable to connect to MQTT broker: ${e}');
