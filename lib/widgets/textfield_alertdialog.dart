@@ -39,7 +39,7 @@ class _TextFieldAlertDialogState extends State<TextFieldAlertDialog> {
         },
       ),
       actions: [
-        FlatButton(
+        TextButton(
           onPressed: () {
             Navigator.pop(context, false);
           },
@@ -48,7 +48,7 @@ class _TextFieldAlertDialogState extends State<TextFieldAlertDialog> {
             style: TextStyle(color: Theme.of(context).accentColor),
           ),
         ),
-        FlatButton(
+        TextButton(
           onPressed: () {
             widget.onSubmitted(controller.text);
             Navigator.pop(context, true);

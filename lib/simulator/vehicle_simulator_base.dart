@@ -115,7 +115,7 @@ class VehicleSimulator extends ChangeNotifier {
             _settingsService.mqttTopic);
       }
     } catch (e) {
-      _writeConsoleMessage('Unable to connect to MQTT broker: ${e}');
+      _writeConsoleMessage('Unable to connect to MQTT broker: $e');
       mqttClient = null;
     }
   }

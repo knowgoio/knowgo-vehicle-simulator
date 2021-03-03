@@ -24,10 +24,7 @@ class _VehicleSettingsState extends State<VehicleSettings> {
       crossAxisAlignment: WrapCrossAlignment.center,
       alignment: WrapAlignment.spaceEvenly,
       children: [
-        RaisedButton.icon(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(30),
-          ),
+        ElevatedButton.icon(
           onPressed: () async {
             var update = vehicleSimulator.state;
             update.transmissionGearPosition =
@@ -36,13 +33,21 @@ class _VehicleSettingsState extends State<VehicleSettings> {
                 .write('Shifting up to ${update.transmissionGearPosition}');
             await vehicleSimulator.update(update);
           },
-          color: Theme.of(context).accentColor,
+          style: ElevatedButton.styleFrom(
+            primary: Theme.of(context).accentColor,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(30),
+            ),
+          ),
           icon: Icon(Icons.arrow_upward, color: Colors.white),
           label: Text('Shift up', style: TextStyle(color: Colors.white)),
         ),
-        RaisedButton.icon(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(30),
+        ElevatedButton.icon(
+          style: ElevatedButton.styleFrom(
+            primary: Colors.grey[300],
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(30),
+            ),
           ),
           onPressed: () async {
             var update = vehicleSimulator.state;
@@ -61,10 +66,12 @@ class _VehicleSettingsState extends State<VehicleSettings> {
 
   Widget simulatorButton(VehicleSimulator vehicleSimulator) {
     if (simulatorRunning == false) {
-      return RaisedButton.icon(
-        color: Theme.of(context).accentColor,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(30),
+      return ElevatedButton.icon(
+        style: ElevatedButton.styleFrom(
+          primary: Theme.of(context).accentColor,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(30),
+          ),
         ),
         onPressed: () async {
           _consoleService.write('Starting vehicle');
@@ -77,9 +84,11 @@ class _VehicleSettingsState extends State<VehicleSettings> {
         label: Text('Start Vehicle', style: TextStyle(color: Colors.white)),
       );
     } else {
-      return RaisedButton.icon(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(30),
+      return ElevatedButton.icon(
+          style: ElevatedButton.styleFrom(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(30),
+            ),
           ),
           onPressed: () {
             _consoleService.write('Stopping vehicle');
