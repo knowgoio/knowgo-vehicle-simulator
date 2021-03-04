@@ -3,14 +3,17 @@
 [![Build Status](https://travis-ci.com/knowgoio/knowgo-vehicle-simulator.svg?branch=master)](https://travis-ci.com/knowgoio/knowgo-vehicle-simulator)
 [![Coverage Status](https://coveralls.io/repos/github/knowgoio/knowgo-vehicle-simulator/badge.svg?branch=master)](https://coveralls.io/github/knowgoio/knowgo-vehicle-simulator?branch=master)
 
-A vehicle simulator for generating [KnowGo] events in Dart.
+A multi-platform vehicle simulator for generating [KnowGo Car] events in Dart.
 
-[KnowGo]: https://knowgo.io
+[KnowGo Car]: https://knowgo.io
 
 ## Overview
 
 The vehicle simulator will generate a single unique vehicle, which can
-be controlled either directly through the UI or through a REST API.
+be controlled either directly through the UI or through a REST API. For
+fleet simulation workloads, multiple instances of the simulator may be
+run in parallel, with each generated vehicle being manually joined to
+a specified fleet.
 
 The Simulator itself consists of several different components:
 - The Vehicle Simulation model
@@ -43,6 +46,24 @@ An overview of the overall interactivity patterns is provided below:
 
 ![KnowGo Vehicle Simulator Screenshot](simulator.png)
 
+## Implementation Status
+
+The simulator was originally written for the desktop, and so should
+work fine there and on any reasonably-sized tablet.
+
+- [x] Linux desktop
+- [x] Windows desktop
+- [x] MacOS desktop
+- [ ] Web (in progress)
+- [x] Android (only tested on a tablet)
+- [ ] iOS (untested)
+
+The UI will need to be reworked to run on smaller displays, this is not
+a high priority at the moment, but will eventually be implemented. Web
+support is contingent upon encapsulation of the simulation event loop
+within a web worker, owing to a lack of support for isolates on web,
+and is currently under investigation.
+
 ## Event Publication
 
 By default, generated events are only logged in the console. Events can
@@ -63,13 +84,15 @@ knowgo:
   server: <knowgo-API-server>
   apiKey: <knowgo-API-Key>
 
+# Optional Kafka Broker Configuration
 kafka:
   broker: <kafka-broker-address>
   topic: <kafka-topic>
 
+# Optional MQTT Broker Configuration
 mqtt:
   broker: <MQTT-broker-address>
-  
+  topic: <MQTT-topic>
 ```
 
 ## Features and bugs
