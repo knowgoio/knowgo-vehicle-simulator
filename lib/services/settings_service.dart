@@ -86,11 +86,14 @@ class SettingsService {
     saveConfig();
   }
 
-  SettingsService(File yamlConfig) {
+  SettingsService([File yamlConfig]) {
     _loggingEnabled = true;
     _server = "https://api.adaptant.io";
     _apiKey = "ra-adaptation-demo";
-    _configFile = yamlConfig;
+
+    if (yamlConfig != null) {
+      _configFile = yamlConfig;
+    }
   }
 
   SettingsService.fromYaml(File yamlConfig) {
@@ -189,6 +192,11 @@ class SettingsService {
 
   // Save the updated configuration settings to the config file
   void saveConfig() {
+    // Handle cases where the config file is not persisted, as in Flutter web.
+    if (_configFile == null) {
+      return;
+    }
+
     // truncate existing configuration
     _configFile.writeAsStringSync('');
 

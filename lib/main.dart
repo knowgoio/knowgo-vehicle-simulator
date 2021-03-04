@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:args/args.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:knowgo_simulator_desktop/icons.dart';
 import 'package:knowgo_simulator_desktop/server.dart';
@@ -11,8 +12,6 @@ import 'package:knowgo_simulator_desktop/widgets.dart';
 import 'package:provider/provider.dart';
 
 Future<void> main(List<String> args) async {
-  exitCode = 0;
-
   final parser = ArgParser()
     ..addOption('config',
         abbr: 'c', defaultsTo: 'config.yaml', help: 'Config file to use')
@@ -22,6 +21,7 @@ Future<void> main(List<String> args) async {
   final config = results['config'];
   final showHelp = results['help'];
   final port = int.parse(results['port'].toString());
+  VehicleSimulator vehicleSimulator;
 
   if (showHelp) {
     print('usage: knowgo-vehicle-simulator [-cph]');
@@ -33,20 +33,25 @@ Future<void> main(List<String> args) async {
   setupServices(config);
   await serviceLocator.allReady();
 
-  // Kick off the HTTP Server Isolate
-  final simulatorHttpServer = SimulatorHttpServer(port);
+  // In Flutter web instances, we do not expose the REST server
+  if (kIsWeb) {
+    vehicleSimulator = VehicleSimulator();
+  } else {
+    // Kick off the HTTP Server Isolate
+    final simulatorHttpServer = SimulatorHttpServer(port);
 
-  // Instantiate the Vehicle Simulator, and hand it a ReceivePort to communicate
-  // with the HTTP Server.
-  final vehicleSimulator = VehicleSimulator(simulatorHttpServer.receivePort);
+    // Instantiate the Vehicle Simulator, and hand it a ReceivePort to communicate
+    // with the HTTP Server.
+    vehicleSimulator = VehicleSimulator(simulatorHttpServer.receivePort);
 
-  // Start up the HTTP server, and hand it a ReceivePort to communicate with
-  // the Vehicle Simulator.
-  await simulatorHttpServer.start(vehicleSimulator.simulatorReceivePort);
+    // Start up the HTTP server, and hand it a ReceivePort to communicate with
+    // the Vehicle Simulator.
+    await simulatorHttpServer.start(vehicleSimulator.simulatorReceivePort);
 
-  // Establish bi-directional communication and state synchronization between
-  // the Vehicle Simulator and the HTTP Server.
-  await vehicleSimulator.initHttpSync();
+    // Establish bi-directional communication and state synchronization between
+    // the Vehicle Simulator and the HTTP Server.
+    await vehicleSimulator.initHttpSync();
+  }
 
   runApp(
     // Propagate ConsoleService change notifications across the UI
