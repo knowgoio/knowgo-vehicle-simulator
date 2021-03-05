@@ -9,7 +9,10 @@ import 'settings_service.dart';
 
 final serviceLocator = GetIt.instance;
 
-void setupServices(String configFile) {
+const String configFile = String.fromEnvironment('KNOWGO_SIMULATOR_CONFIG',
+    defaultValue: 'config.yaml');
+
+void setupServices() {
   serviceLocator.registerSingletonAsync<SettingsService>(() async {
     if (kIsWeb) {
       return SettingsService();

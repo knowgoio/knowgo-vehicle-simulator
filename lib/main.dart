@@ -1,6 +1,3 @@
-import 'dart:io';
-
-import 'package:args/args.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:knowgo_simulator_desktop/icons.dart';
@@ -11,32 +8,21 @@ import 'package:knowgo_simulator_desktop/utils.dart';
 import 'package:knowgo_simulator_desktop/widgets.dart';
 import 'package:provider/provider.dart';
 
-Future<void> main(List<String> args) async {
-  final parser = ArgParser()
-    ..addOption('config',
-        abbr: 'c', defaultsTo: 'config.yaml', help: 'Config file to use')
-    ..addOption('port', abbr: 'p', defaultsTo: '8086', help: 'Port to bind to')
-    ..addFlag('help', abbr: 'h', negatable: false, help: 'Show usage info');
-  final results = parser.parse(args);
-  final config = results['config'];
-  final showHelp = results['help'];
-  final port = int.parse(results['port'].toString());
+Future<void> main() async {
   VehicleSimulator vehicleSimulator;
 
-  if (showHelp) {
-    print('usage: knowgo-vehicle-simulator [-cph]');
-    print(parser.usage);
-    exit(1);
-  }
-
   // Kick off any supporting services
-  setupServices(config);
+  setupServices();
   await serviceLocator.allReady();
 
   // In Flutter web instances, we do not expose the REST server
   if (kIsWeb) {
     vehicleSimulator = VehicleSimulator();
   } else {
+    const String portString =
+        String.fromEnvironment('KNOWGO_SIMULATOR_PORT', defaultValue: '8086');
+    final port = int.parse(portString);
+
     // Kick off the HTTP Server Isolate
     final simulatorHttpServer = SimulatorHttpServer(port);
 

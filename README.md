@@ -95,6 +95,13 @@ mqtt:
   topic: <MQTT-topic>
 ```
 
+A number of environment variables can also be set:
+
+Environment Variable | Description | Default value
+:-------------------|:-----------|:-------------
+*KNOWGO_SIMULATOR_CONFIG* | Location of `config.yaml` file | `config.yaml`
+*KNOWGO_SIMULATOR_PORT* | HTTP port to bind for REST API | 8086
+
 ## Features and bugs
 
 Please file feature requests and bugs at the [issue tracker][tracker].
