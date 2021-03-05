@@ -10,25 +10,25 @@ A multi-platform vehicle simulator for generating [KnowGo Car] events in Dart.
 ## Overview
 
 The vehicle simulator will generate a single unique vehicle, which can
-be controlled either directly through the UI or through a REST API. For
-fleet simulation workloads, multiple instances of the simulator may be
-run in parallel, with each generated vehicle being manually joined to
-a specified fleet.
+be controlled either directly through the UI or through an optional REST
+API. For fleet simulation workloads, multiple instances of the simulator
+may be run in parallel, with each generated vehicle being manually
+joined to a specified fleet.
 
 The Simulator itself consists of several different components:
 - The Vehicle Simulation model
-- An `Event isolate` for generating vehicle events
-- An `HTTP Server isolate` for exposing a REST API
-
-The `HTTP Server isolate` exposes a REST API for starting/stopping the
-vehicle, updating the vehicle state, and for querying vehicle events.
+- An `Event loop` for generating vehicle events, run as either
+  an Isolate or Web Worker depending upon the target platform.
+- An optional `HTTP Server isolate` for exposing a REST API with basic
+  vehicle controls - starting/stopping the vehicle, updating the
+  vehicle state, and querying vehicle events.
 
 As the simulation state can not be shared directly across the isolates,
 the simulation model in the main isolate acts as the source of truth
 across the system:
-- Updates from the `Event isolate` are applied to the simulation model
-  periodically, in line with the event generation frequency: once per
-  second by default.
+- Updates from the `Event loop` are applied to the simulation model
+  periodically, in line with the event generation frequency: once
+  per second by default.
 - The `HTTP Server isolate` maintains its own cached copy of the
   simulation state, which is updated with changes from the Event
   isolate, UI interaction, and the REST API. Changes received through
@@ -36,11 +36,14 @@ across the system:
   to the simulation model directly.
 - The UI in the `main isolate` is redrawn based on changes to the
   simulation model, triggered by UI interaction and updates from the
-  `Event isolate` or `HTTP Server isolate`.
+  `Event loop` or `HTTP Server isolate`.
 
-An overview of the overall interactivity patterns is provided below:
+An overview of the overall interactivity patterns for the different
+target platforms is provided in the table below:
 
-![KnowGo Vehicle Simulator Interactions](overview.png)
+Flutter Web                       | Other Target Platforms
+:--------------------------------:|:----------------------------------:
+![Web Worker-driven Simulation Flow](overview-web.png) | ![Isolate-driven Simulation Flow](overview.png)
 
 ## Simulator UI
 
@@ -54,15 +57,12 @@ work fine there and on any reasonably-sized tablet.
 - [x] Linux desktop
 - [x] Windows desktop
 - [x] MacOS desktop
-- [ ] Web (in progress)
+- [x] Web
 - [x] Android (only tested on a tablet)
 - [ ] iOS (untested)
 
 The UI will need to be reworked to run on smaller displays, this is not
-a high priority at the moment, but will eventually be implemented. Web
-support is contingent upon encapsulation of the simulation event loop
-within a web worker, owing to a lack of support for isolates on web,
-and is currently under investigation.
+a high priority at the moment, but will eventually be implemented.
 
 ## Event Publication
 

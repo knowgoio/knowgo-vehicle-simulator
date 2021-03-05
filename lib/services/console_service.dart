@@ -24,9 +24,13 @@ abstract class ConsoleService extends ChangeNotifier {
 
 class ConsoleServiceImplementation extends ConsoleService {
   List<ConsoleMessage> _messages = [];
-  final _logger = serviceLocator.get<LoggingService>();
+  var _logger;
 
-  ConsoleServiceImplementation();
+  ConsoleServiceImplementation() {
+    if (serviceLocator.isRegistered<LoggingService>()) {
+      _logger = serviceLocator.get<LoggingService>();
+    }
+  }
 
   @override
   List<ConsoleMessage> get messages => _messages;
@@ -37,7 +41,9 @@ class ConsoleServiceImplementation extends ConsoleService {
         ConsoleMessage(timestamp: DateTime.now(), message: msg);
 
     _messages.add(consoleMessage);
-    _logger.write(consoleMessage.toString());
+    if (_logger != null) {
+      _logger.write(consoleMessage.toString());
+    }
 
     notifyListeners();
   }
