@@ -1,11 +1,11 @@
 {
-    "name": "simulatordesktop",
-    "short_name": "simulatordesktop",
+    "name": "KnowGo Vehicle Simulator",
+    "short_name": "knowgo_vehicle_simulator",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter application.",
+    "description": "A multi-platform vehicle simulator for generating KnowGo Car events.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
