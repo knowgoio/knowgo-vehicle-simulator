@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:knowgo_simulator_desktop/services.dart';
-import 'package:knowgo_simulator_desktop/widgets/vehicle_data_card.dart';
+import 'package:knowgo_vehicle_simulator/services.dart';
+import 'package:knowgo_vehicle_simulator/widgets/vehicle_data_card.dart';
 import 'package:provider/provider.dart';
 
 class ConsoleLog extends StatelessWidget {

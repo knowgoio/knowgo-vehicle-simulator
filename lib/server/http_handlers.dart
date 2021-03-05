@@ -3,7 +3,7 @@ import 'dart:io';
 import 'dart:isolate';
 
 import 'package:knowgo/api.dart' as knowgo;
-import 'package:knowgo_simulator_desktop/simulator.dart';
+import 'package:knowgo_vehicle_simulator/simulator.dart';
 
 Future<void> _handleVehicleInfoRequest(
     VehicleSimulator vehicleSimulator, HttpRequest req) async {

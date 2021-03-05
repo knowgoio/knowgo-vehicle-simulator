@@ -7,7 +7,7 @@ import 'dart:isolate';
 import 'package:flutter/foundation.dart';
 import 'package:kafka/kafka.dart';
 import 'package:knowgo/api.dart' as knowgo;
-import 'package:knowgo_simulator_desktop/services.dart';
+import 'package:knowgo_vehicle_simulator/services.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
 

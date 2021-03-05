@@ -1,5 +1,5 @@
 import 'package:knowgo/api.dart' as knowgo;
-import 'package:knowgo_simulator_desktop/services.dart';
+import 'package:knowgo_vehicle_simulator/services.dart';
 import 'package:vin_decoder/vin_decoder.dart';
 
 import 'vehicle_data_generator.dart';

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:knowgo_simulator_desktop/widgets.dart';
+import 'package:knowgo_vehicle_simulator/widgets.dart';
 
 void main() {
   testWidgets('VehicleInfoChip contains label and value',

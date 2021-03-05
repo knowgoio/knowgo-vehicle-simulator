@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:knowgo_simulator_desktop/services.dart';
+import 'package:knowgo_vehicle_simulator/services.dart';
 import 'package:meta/meta.dart';
 
 class ConsoleMessage {

@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:intl/intl.dart';
-import 'package:knowgo_simulator_desktop/services.dart';
+import 'package:knowgo_vehicle_simulator/services.dart';
 
 abstract class LoggingService {
   void write(String msg);

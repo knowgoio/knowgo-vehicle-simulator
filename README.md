@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.com/knowgoio/knowgo-vehicle-simulator.svg?branch=master)](https://travis-ci.com/knowgoio/knowgo-vehicle-simulator)
 [![Coverage Status](https://coveralls.io/repos/github/knowgoio/knowgo-vehicle-simulator/badge.svg?branch=master)](https://coveralls.io/github/knowgoio/knowgo-vehicle-simulator?branch=master)
 
-A multi-platform vehicle simulator for generating [KnowGo Car] events in Dart.
+A multi-platform vehicle simulator for generating [KnowGo Car] events.
 
 [KnowGo Car]: https://knowgo.io
 

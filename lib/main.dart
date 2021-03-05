@@ -1,11 +1,11 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:knowgo_simulator_desktop/icons.dart';
-import 'package:knowgo_simulator_desktop/server.dart';
-import 'package:knowgo_simulator_desktop/services.dart';
-import 'package:knowgo_simulator_desktop/simulator.dart';
-import 'package:knowgo_simulator_desktop/utils.dart';
-import 'package:knowgo_simulator_desktop/widgets.dart';
+import 'package:knowgo_vehicle_simulator/icons.dart';
+import 'package:knowgo_vehicle_simulator/server.dart';
+import 'package:knowgo_vehicle_simulator/services.dart';
+import 'package:knowgo_vehicle_simulator/simulator.dart';
+import 'package:knowgo_vehicle_simulator/utils.dart';
+import 'package:knowgo_vehicle_simulator/widgets.dart';
 import 'package:provider/provider.dart';
 
 Future<void> main() async {

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:knowgo/api.dart' as knowgo;
-import 'package:knowgo_simulator_desktop/services.dart';
-import 'package:knowgo_simulator_desktop/simulator.dart';
-import 'package:knowgo_simulator_desktop/widgets.dart';
+import 'package:knowgo_vehicle_simulator/services.dart';
+import 'package:knowgo_vehicle_simulator/simulator.dart';
+import 'package:knowgo_vehicle_simulator/widgets.dart';
 import 'package:provider/provider.dart';
 
 class VehicleSettings extends StatefulWidget {

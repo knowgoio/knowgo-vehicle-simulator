@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'dart:isolate';
 
-import 'package:knowgo_simulator_desktop/simulator.dart';
+import 'package:knowgo_vehicle_simulator/simulator.dart';
 
 import 'http_handlers.dart';
 
