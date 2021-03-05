@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 // ignore: avoid_web_libraries_in_flutter
-import 'dart:html';
+import 'dart:html' if (dart.library.io) '../worker_stub.dart';
 import 'dart:isolate';
 
 import 'package:flutter/foundation.dart';
