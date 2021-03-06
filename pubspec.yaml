@@ -1,7 +1,8 @@
 name: knowgo_vehicle_simulator
 description: A multi-platform vehicle simulator for generating KnowGo Car events.
 publish_to: 'none'
-
+repository: https://github.com/knowgoio/knowgo-vehicle-simulator
+issue_tracker: https://github.com/knowgoio/knowgo-vehicle-simulator/issues
 version: 1.0.0
 
 environment:
@@ -16,11 +17,10 @@ dependencies:
   random_string:
   vector_math: ^2.0.8
   uuid: ^2.1.0
-  args: ^2.0.0
   get_it: ^6.0.0
   js: ^0.6.3
   font_awesome_flutter: ^8.8.1
-  yaml: ^3.1.0
+  yaml: ^2.2.1
   auto_size_text: ^2.1.0
   mqtt_client: ^8.1.0
   kafka:
@@ -34,6 +34,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  msix: ^0.1.15
 
 flutter:
   uses-material-design: true
@@ -51,3 +52,15 @@ flutter:
     - family: Icomoon
       fonts:
       - asset: fonts/icomoon.ttf
+
+msix_config:
+  display_name: KnowGo Vehicle Simulator
+  publisher_display_name: Adaptant Solutions AG
+  identity_name: io.knowgo.vehicle.simulator
+  msix_version: 1.0.0.0
+  logo_path: web/icons/icon-512.png
+  start_menu_icon_path: web/icons/icon-512.png
+  tile_icon_path: web/icons/icon-512.png
+  icons_background_color: transparent
+  architecture: x64
+  capabilities: 'internetClient,internetClientServer,privateNetworkClientServer'
