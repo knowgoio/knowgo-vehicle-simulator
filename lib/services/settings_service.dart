@@ -123,7 +123,9 @@ class SettingsService {
       autoConfig.driverID = doc['vehicle']['driverId'];
       autoConfig.name = doc['vehicle']['name'];
       autoConfig.licensePlate = doc['vehicle']['licensePlate'];
-      autoConfig.odometer = doc['vehicle']['odometer'].toDouble();
+      if (doc['vehicle']['odometer'] != null) {
+        autoConfig.odometer = doc['vehicle']['odometer'].toDouble();
+      }
     }
   }
 
