@@ -1,3 +1,5 @@
+![KnowGo Vehicle Simulator Logo](logo.png)
+
 # knowgo-vehicle-simulator
 
 [![Build Status](https://travis-ci.com/knowgoio/knowgo-vehicle-simulator.svg?branch=master)](https://travis-ci.com/knowgoio/knowgo-vehicle-simulator)
