@@ -154,7 +154,9 @@ class VehicleSimulator extends ChangeNotifier {
     journey.events.add(update);
 
     // Log event to console
-    _consoleService.write(update.toString());
+    if (_settingsService.eventLoggingEnabled) {
+      _consoleService.write(update.toString());
+    }
 
     // Dispatch event to backend asynchronously
     if (apiClient != null) {

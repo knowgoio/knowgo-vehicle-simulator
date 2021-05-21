@@ -86,10 +86,17 @@ class SettingsService {
     saveConfig();
   }
 
+  // Log event notifications to console
+  bool _eventLoggingEnabled = true;
+  bool get eventLoggingEnabled => _eventLoggingEnabled;
+
+  set eventLoggingEnabled(bool value) {
+    _eventLoggingEnabled = value;
+    saveConfig();
+  }
+
   SettingsService([File yamlConfig]) {
-    _loggingEnabled = true;
-    _server = "https://api.adaptant.io";
-    _apiKey = "ra-adaptation-demo";
+    _loggingEnabled = false;
 
     if (yamlConfig != null) {
       _configFile = yamlConfig;
@@ -101,6 +108,7 @@ class SettingsService {
     var doc = loadYaml(yamlString);
 
     _loggingEnabled = doc['sessionLogging'];
+    _eventLoggingEnabled = doc['eventLogging'];
     _server = doc['knowgo']['server'];
     _apiKey = doc['knowgo']['apiKey'];
 
@@ -132,6 +140,7 @@ class SettingsService {
   Map<String, dynamic> configToJson() {
     final data = Map<String, dynamic>();
     data['sessionLogging'] = _loggingEnabled;
+    data['eventLogging'] = _eventLoggingEnabled;
 
     if (_mqttEnabled == true) {
       data['mqtt'] = Map<String, dynamic>();

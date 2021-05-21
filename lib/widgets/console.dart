@@ -11,7 +11,14 @@ class ConsoleLog extends StatelessWidget {
 
     return VehicleDataCard(
       title: 'Console',
-      onReset: () => consoleService.clear(),
+      actions: [
+        Container(
+          child: IconButton(
+            icon: Icon(Icons.refresh, color: Theme.of(context).primaryColor),
+            onPressed: () => consoleService.clear(),
+          ),
+        ),
+      ],
       child: ListView.builder(
         shrinkWrap: true,
         itemCount: consoleService.messages.length,

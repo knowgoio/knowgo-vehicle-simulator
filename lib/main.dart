@@ -146,7 +146,18 @@ class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
               ],
             ),
             CheckboxListTile(
+              title: const Text('Event Logging'),
+              subtitle: const Text('Log generated events'),
+              value: settingsService.eventLoggingEnabled,
+              onChanged: (bool value) {
+                setState(() {
+                  settingsService.eventLoggingEnabled = value;
+                });
+              },
+            ),
+            CheckboxListTile(
               title: const Text('Session Logging'),
+              subtitle: const Text('Save session log'),
               value: settingsService.loggingEnabled,
               onChanged: (bool value) {
                 setState(() {

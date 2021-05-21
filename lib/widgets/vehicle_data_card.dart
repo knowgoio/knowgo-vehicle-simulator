@@ -3,23 +3,16 @@ import 'package:flutter/material.dart';
 class VehicleDataCard extends StatelessWidget {
   final _scrollController = ScrollController();
   final String title;
+  final List<Widget> actions;
   final Widget child;
-  final VoidCallback onReset;
 
-  VehicleDataCard({@required this.title, @required this.child, this.onReset});
+  VehicleDataCard({@required this.title, @required this.child, this.actions});
 
   Widget generateActionButtons(BuildContext context) {
-    if (onReset != null) {
+    if (actions != null) {
       return Row(
         mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          Container(
-            child: IconButton(
-              icon: Icon(Icons.refresh, color: Theme.of(context).primaryColor),
-              onPressed: () => onReset(),
-            ),
-          ),
-        ],
+        children: actions,
       );
     } else {
       return Container();

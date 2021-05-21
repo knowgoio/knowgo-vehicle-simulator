@@ -78,6 +78,7 @@ The format of the file is:
 
 ```yaml
 sessionLogging: true
+eventLogging: true
 
 # Optional KnowGo Backend Configuration
 knowgo:
