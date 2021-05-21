@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=KnowGo Vehicle Simulator
+GenericName=KnowGo Vehicle Simulator
+Exec=knowgo-vehicle-simulator
+Icon=${SNAP}/meta/gui/knowgo-vehicle-simulator.png
+Terminal=false
+Type=Application
+Categories=Development;Devices and IoT;Science;

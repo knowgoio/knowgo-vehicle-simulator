@@ -1,0 +1,47 @@
+name: knowgo-vehicle-simulator
+title: KnowGo Vehicle Simulator
+version: 1.0.0
+summary: Connected Car simulator for generating and streaming realistic telemetry
+description: |
+  KnowGo Vehicle Simulator is an interactive multi-platform Connected Car simulator capable of
+  generating and streaming realistic vehicle telemetry to REST API endpoints, KnowGo Car backends,
+  and various data brokers (MQTT, Kafka) to aid in the development of Connected Car services.
+
+  It exposes a simple REST API to further allow the vehicle state to be directly manipulated,
+  enabling connectivity with external vehicle data sources and further allowing the simulator to
+  act as a digital twin for connected vehicles.
+
+confinement: strict
+base: core18
+grade: devel
+
+icon: snap/gui/knowgo-vehicle-simulator.png
+license: MIT
+
+slots:
+  dbus-knowgo-vehicle-simulator:
+    interface: dbus
+    bus: session
+    name: io.knowgo.knowgo_vehicle_simulator
+
+apps:
+  knowgo-vehicle-simulator:
+    command: knowgo_vehicle_simulator
+    extensions: [flutter-master]
+    plugs:
+      - desktop
+      - desktop-legacy
+      - network
+      - network-bind
+      - opengl
+      - process-control
+      - wayland
+      - x11
+
+    slots:
+      - dbus-knowgo-vehicle-simulator
+parts:
+  knowgo-vehicle-simulator:
+    source: .
+    plugin: flutter
+    flutter-target: lib/main.dart

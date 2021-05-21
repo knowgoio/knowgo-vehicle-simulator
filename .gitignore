@@ -45,3 +45,6 @@ app.*.map.json
 
 # Simulator config
 config.yaml
+
+# Snapcraft
+*.snap
