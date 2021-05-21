@@ -4,6 +4,7 @@ import 'dart:isolate';
 
 import 'package:knowgo/api.dart' as knowgo;
 import 'package:knowgo_vehicle_simulator/simulator.dart';
+import 'package:knowgo_vehicle_simulator/simulator/vehicle_notifications.dart';
 
 Future<void> _handleVehicleInfoRequest(
     VehicleSimulator vehicleSimulator, HttpRequest req) async {
@@ -27,6 +28,19 @@ Future<void> _handleVehicleEventRequest(
   resp
     ..statusCode = HttpStatus.ok
     ..write(jsonEncode(vehicleSimulator.journey.events));
+  await resp.close();
+}
+
+Future<void> _handleVehicleNotification(
+    VehicleSimulator vehicleSimulator, HttpRequest req) async {
+  var resp = req.response;
+  var content = await utf8.decoder.bind(req).join();
+  var data = jsonDecode(content);
+  var model = vehicleSimulator.notificationModel;
+
+  model.push(VehicleNotification.fromJson(data));
+
+  resp.statusCode = HttpStatus.ok;
   await resp.close();
 }
 
@@ -55,6 +69,9 @@ void handleHttpRequest(
   switch (req.method) {
     case 'POST':
       switch (req.uri.path) {
+        case '/notify':
+          _handleVehicleNotification(vehicleSimulator, req);
+          return;
         case '/start':
           // Tell the simulator to start the vehicle
           sendPort.send([VehicleSimulatorCommands.Start]);

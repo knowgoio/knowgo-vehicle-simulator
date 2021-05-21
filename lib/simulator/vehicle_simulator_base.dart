@@ -8,6 +8,7 @@ import 'package:flutter/foundation.dart';
 import 'package:kafka/kafka.dart';
 import 'package:knowgo/api.dart' as knowgo;
 import 'package:knowgo_vehicle_simulator/services.dart';
+import 'package:knowgo_vehicle_simulator/simulator/vehicle_notifications.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
 
@@ -34,6 +35,8 @@ class VehicleSimulator extends ChangeNotifier {
   SendPort _serverSendPort;
 
   final simulatorReceivePort = ReceivePort();
+
+  final notificationModel = VehicleNotificationModel();
 
   VehicleSimulator([this.serverReceivePort]) {
     initVehicleInfo(info);

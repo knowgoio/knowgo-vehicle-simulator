@@ -4,6 +4,7 @@ import 'package:knowgo_vehicle_simulator/icons.dart';
 import 'package:knowgo_vehicle_simulator/server.dart';
 import 'package:knowgo_vehicle_simulator/services.dart';
 import 'package:knowgo_vehicle_simulator/simulator.dart';
+import 'package:knowgo_vehicle_simulator/simulator/vehicle_notifications.dart';
 import 'package:knowgo_vehicle_simulator/utils.dart';
 import 'package:knowgo_vehicle_simulator/widgets.dart';
 import 'package:provider/provider.dart';
@@ -39,14 +40,17 @@ Future<void> main() async {
     await vehicleSimulator.initHttpSync();
   }
 
+  Provider.debugCheckInvalidValueType = null;
+
   runApp(
-    // Propagate ConsoleService change notifications across the UI
-    ChangeNotifierProvider(
-      create: (_) => serviceLocator.get<ConsoleService>(),
-      child: ChangeNotifierProvider(
-        child: VehicleSimulatorApp(),
-        create: (_) => vehicleSimulator,
-      ),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+            create: (_) => serviceLocator.get<ConsoleService>()),
+        ChangeNotifierProvider.value(value: vehicleSimulator),
+        ChangeNotifierProvider.value(value: vehicleSimulator.notificationModel),
+      ],
+      child: VehicleSimulatorApp(),
     ),
   );
 }
@@ -94,10 +98,30 @@ class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
 
   @override
   void initState() {
+    var model = Provider.of<VehicleNotificationModel>(context, listen: false);
+
     super.initState();
 
     // Write out the initial configuration
     settingsService.saveConfig();
+
+    model.addListener(_vehicleNotificationListener);
+  }
+
+  void _vehicleNotificationListener() {
+    var model = Provider.of<VehicleNotificationModel>(context, listen: false);
+    var consoleService = serviceLocator.get<ConsoleService>();
+
+    model.notifications.forEach((notification) {
+      if (notification.text != null) {
+        consoleService
+            .write('Received vehicle notification: ${notification.text}');
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(notification.text)));
+      }
+    });
+
+    model.clear();
   }
 
   @override

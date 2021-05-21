@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:isolate';
 
 import 'package:knowgo_vehicle_simulator/simulator.dart';
+import 'package:knowgo_vehicle_simulator/simulator/vehicle_notifications.dart';
 
 import 'http_handlers.dart';
 
@@ -29,6 +30,14 @@ Future<void> runHttpServer(SendPort sendPort) async {
     simulatorSendPort.send(simulatorCommPort.sendPort);
 
     var vehicleSimulator = VehicleSimulator();
+    var notificationModel = vehicleSimulator.notificationModel;
+
+    // Proxy notifications back to the main isolate
+    void _notificationListener() {
+      sendPort.send(notificationModel.notifications);
+    }
+
+    notificationModel.addListener(_notificationListener);
 
     // Receive updated vehicle simulator state
     simulatorCommPort.listen((data) {
@@ -48,6 +57,7 @@ Future<void> runHttpServer(SendPort sendPort) async {
 class SimulatorHttpServer {
   Isolate _serverIsolate;
   final receivePort = ReceivePort();
+  final notificationModel = VehicleNotificationModel();
   SendPort simulatorSendPort;
   final int port;
 
@@ -60,8 +70,12 @@ class SimulatorHttpServer {
 
     // Wait for the simulator to open up its ReceivePort
     receivePort.listen((data) {
-      _sendPort = data;
-      _sendPort.send([port, _simulatorReceivePort.sendPort]);
+      if (data is SendPort) {
+        _sendPort = data;
+        _sendPort.send([port, _simulatorReceivePort.sendPort]);
+      } else {
+        notificationModel.pushAll(data);
+      }
     });
   }
 
