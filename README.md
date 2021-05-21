@@ -3,17 +3,26 @@
 [![Build Status](https://travis-ci.com/knowgoio/knowgo-vehicle-simulator.svg?branch=master)](https://travis-ci.com/knowgoio/knowgo-vehicle-simulator)
 [![Coverage Status](https://coveralls.io/repos/github/knowgoio/knowgo-vehicle-simulator/badge.svg?branch=master)](https://coveralls.io/github/knowgoio/knowgo-vehicle-simulator?branch=master)
 
-A multi-platform vehicle simulator for generating [KnowGo Car] events.
-
-[KnowGo Car]: https://knowgo.io
+An interactive multi-platform Connected Car simulator for generating
+and streaming realistic vehicle telemetry.
 
 ## Overview
 
-The vehicle simulator will generate a single unique vehicle, which can
+``knowgo-vehicle-simulator`` has been developed to aid in the
+development and validation of data-driven Connected Car services and
+models that require easy access to realistic synthetic driving data,
+both for static and streaming applications. It was originally designed
+for generating event records for the [KnowGo Car] platform, but has
+been generalized so that it may be useful both to Connected Car service
+developers and researchers.
+
+The vehicle simulator generates a single unique vehicle, which can
 be controlled either directly through the UI or through an optional REST
-API. For fleet simulation workloads, multiple instances of the simulator
-may be run in parallel, with each generated vehicle being manually
-joined to a specified fleet.
+API. This may be further interfaced with OEM-specific external data
+sources and models in order to permit the simulation state to act as an
+automotive digital twin. For fleet simulation workloads, multiple
+instances of the simulator may be run in parallel, with each generated
+vehicle being manually joined to a specified fleet.
 
 The Simulator itself consists of several different components:
 - The Vehicle Simulation model
@@ -21,7 +30,8 @@ The Simulator itself consists of several different components:
   an Isolate or Web Worker depending upon the target platform.
 - An optional `HTTP Server isolate` for exposing a REST API with basic
   vehicle controls - starting/stopping the vehicle, updating the
-  vehicle state, and querying vehicle events.
+  vehicle state, handling vehicle notifications, and querying vehicle
+  events.
 
 As the simulation state can not be shared directly across the isolates,
 the simulation model in the main isolate acts as the source of truth
@@ -114,4 +124,5 @@ Please file feature requests and bugs at the [issue tracker][tracker].
 Licensed under the terms of the MIT license, the full version of which
 can be found in the [LICENSE][license] file included in the distribution.
 
+[KnowGo Car]: https://knowgo.io
 [license]: https://raw.githubusercontent.com/knowgoio/knowgo-vehicle-simulator/master/LICENSE
