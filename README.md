@@ -1,4 +1,4 @@
-![KnowGo Vehicle Simulator Logo](logo.png)
+![KnowGo Vehicle Simulator Logo](docs/images/logo.png)
 
 # knowgo-vehicle-simulator
 
@@ -55,11 +55,11 @@ target platforms is provided in the table below:
 
 Flutter Web                       | Other Target Platforms
 :--------------------------------:|:----------------------------------:
-![Web Worker-driven Simulation Flow](overview-web.png) | ![Isolate-driven Simulation Flow](overview.png)
+![Web Worker-driven Simulation Flow](docs/images/overview-web.png) | ![Isolate-driven Simulation Flow](docs/images/overview.png)
 
 ## Simulator UI
 
-![KnowGo Vehicle Simulator Screenshot](simulator.png)
+![KnowGo Vehicle Simulator Screenshot](docs/images/simulator.png)
 
 ## Implementation Status
 

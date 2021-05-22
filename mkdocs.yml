@@ -1,0 +1,24 @@
+site_name: KnowGo Vehicle Simulator
+repo_url: https://github.com/knowgoio/knowgo-vehicle-simulator
+repo_name: knowgoio/knowgo-vehicle-simulator
+theme:
+  name: material
+  palette:
+    primary: light green
+    accent: light green
+  features:
+    - navigation.indexes
+    #- navigation.tabs
+    - navigation.sections
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/knowgoio
+    - icon: fontawesome/brands/twitter
+      link: https://twitter.com/knowgo_io
+markdown_extensions:
+  - admonition
+  - def_list
+  - pymdownx.highlight
+  - pymdownx.superfences
+copyright: Copyright &copy; 2021 <a href="https://adaptant.io/research">Adaptant Labs</a>
