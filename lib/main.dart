@@ -87,7 +87,7 @@ class VehicleSimulatorApp extends StatelessWidget {
 }
 
 class VehicleSimulatorHome extends StatefulWidget {
-  VehicleSimulatorHome({Key key}) : super(key: key);
+  VehicleSimulatorHome({Key? key}) : super(key: key);
 
   @override
   _VehicleSimulatorHomeState createState() => _VehicleSimulatorHomeState();
@@ -113,12 +113,10 @@ class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
     var consoleService = serviceLocator.get<ConsoleService>();
 
     model.notifications.forEach((notification) {
-      if (notification.text != null) {
-        consoleService
-            .write('Received vehicle notification: ${notification.text}');
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(notification.text)));
-      }
+      consoleService
+          .write('Received vehicle notification: ${notification.text}');
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(notification.text)));
     });
 
     model.clear();
@@ -149,25 +147,29 @@ class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
               title: const Text('Event Logging'),
               subtitle: const Text('Log generated events'),
               value: settingsService.eventLoggingEnabled,
-              onChanged: (bool value) {
-                setState(() {
-                  settingsService.eventLoggingEnabled = value;
-                });
+              onChanged: (bool? value) {
+                if (value != null) {
+                  setState(() {
+                    settingsService.eventLoggingEnabled = value;
+                  });
+                }
               },
             ),
             CheckboxListTile(
               title: const Text('Session Logging'),
               subtitle: const Text('Save session log'),
               value: settingsService.loggingEnabled,
-              onChanged: (bool value) {
-                setState(() {
-                  settingsService.loggingEnabled = value;
-                });
+              onChanged: (bool? value) {
+                if (value != null) {
+                  setState(() {
+                    settingsService.loggingEnabled = value;
+                  });
+                }
               },
             ),
             ListTile(
               title: const Text('KnowGo Server'),
-              subtitle: Text(settingsService.server),
+              subtitle: Text(settingsService.server!),
               trailing: IconButton(
                 icon: Icon(Icons.edit),
                 onPressed: () async {
@@ -177,7 +179,7 @@ class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
                     builder: (BuildContext buildContext) {
                       return TextFieldAlertDialog(
                         title: 'KnowGo Server',
-                        initialValue: settingsService.server,
+                        initialValue: settingsService.server!,
                         onSubmitted: (value) {
                           setState(() {
                             settingsService.server = value;
@@ -191,7 +193,7 @@ class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
             ),
             ListTile(
               title: const Text('KnowGo API Key'),
-              subtitle: Text(settingsService.apiKey),
+              subtitle: Text(settingsService.apiKey!),
               trailing: IconButton(
                 icon: Icon(Icons.edit),
                 onPressed: () async {
@@ -201,7 +203,7 @@ class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
                     builder: (BuildContext buildContext) {
                       return TextFieldAlertDialog(
                         title: 'KnowGo API Key',
-                        initialValue: settingsService.apiKey,
+                        initialValue: settingsService.apiKey!,
                         onSubmitted: (value) {
                           setState(() {
                             settingsService.apiKey = value;
@@ -216,10 +218,12 @@ class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
             CheckboxListTile(
               title: const Text('MQTT Support'),
               value: settingsService.mqttEnabled,
-              onChanged: (bool value) {
-                setState(() {
-                  settingsService.mqttEnabled = value;
-                });
+              onChanged: (bool? value) {
+                if (value != null) {
+                  setState(() {
+                    settingsService.mqttEnabled = value;
+                  });
+                }
               },
             ),
             Visibility(
@@ -236,7 +240,7 @@ class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
                       builder: (BuildContext buildContext) {
                         return TextFieldAlertDialog(
                           title: 'MQTT Broker',
-                          initialValue: settingsService.mqttBroker,
+                          initialValue: settingsService.mqttBroker!,
                           onSubmitted: (value) {
                             setState(() {
                               settingsService.mqttBroker = value;
@@ -263,7 +267,7 @@ class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
                       builder: (BuildContext buildContext) {
                         return TextFieldAlertDialog(
                           title: 'MQTT Topic',
-                          initialValue: settingsService.mqttTopic,
+                          initialValue: settingsService.mqttTopic!,
                           onSubmitted: (value) {
                             setState(() {
                               settingsService.mqttTopic = value;
@@ -279,10 +283,12 @@ class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
             CheckboxListTile(
               title: const Text('Kafka Support'),
               value: settingsService.kafkaEnabled,
-              onChanged: (bool value) {
-                setState(() {
-                  settingsService.kafkaEnabled = value;
-                });
+              onChanged: (bool? value) {
+                if (value != null) {
+                  setState(() {
+                    settingsService.kafkaEnabled = value;
+                  });
+                }
               },
             ),
             Visibility(
@@ -299,7 +305,7 @@ class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
                       builder: (BuildContext buildContext) {
                         return TextFieldAlertDialog(
                           title: 'Kafka Broker',
-                          initialValue: settingsService.kafkaBroker,
+                          initialValue: settingsService.kafkaBroker!,
                           onSubmitted: (value) {
                             setState(() {
                               settingsService.kafkaBroker = value;
@@ -326,7 +332,7 @@ class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
                       builder: (BuildContext buildContext) {
                         return TextFieldAlertDialog(
                           title: 'Kafka Topic',
-                          initialValue: settingsService.kafkaTopic,
+                          initialValue: settingsService.kafkaTopic!,
                           onSubmitted: (value) {
                             setState(() {
                               settingsService.kafkaTopic = value;

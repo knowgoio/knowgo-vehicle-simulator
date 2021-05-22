@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 // https://medium.com/@filipvk/creating-a-custom-color-swatch-in-flutter-554bcdcb27f3
 MaterialColor createMaterialColor(Color color) {
   List strengths = <double>[.05];
-  Map swatch = <int, Color>{};
+  var swatch = Map<int, Color>();
   final int r = color.red, g = color.green, b = color.blue;
 
   for (int i = 1; i < 10; i++) {

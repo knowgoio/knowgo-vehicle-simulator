@@ -5,9 +5,13 @@ import 'package:vector_math/vector_math.dart';
 
 class VehicleDataCalculator {
   int _tankCapacity(knowgo.Auto auto) {
+    if (auto.fuelCapacity == null) {
+      return 0;
+    }
+
     final numRegex = RegExp(r'[0-9]');
-    final capacity = numRegex.matchAsPrefix(auto.fuelCapacity).group(0);
-    return int.parse(capacity);
+    final capacity = numRegex.matchAsPrefix(auto.fuelCapacity)?.group(0);
+    return int.parse(capacity!);
   }
 
   double engineSpeed(knowgo.Event state) {

@@ -3,16 +3,16 @@ import 'package:flutter/material.dart';
 class VehicleDataCard extends StatelessWidget {
   final _scrollController = ScrollController();
   final String title;
-  final List<Widget> actions;
+  final List<Widget>? actions;
   final Widget child;
 
-  VehicleDataCard({@required this.title, @required this.child, this.actions});
+  VehicleDataCard({required this.title, required this.child, this.actions});
 
   Widget generateActionButtons(BuildContext context) {
     if (actions != null) {
       return Row(
         mainAxisAlignment: MainAxisAlignment.end,
-        children: actions,
+        children: actions!,
       );
     } else {
       return Container();

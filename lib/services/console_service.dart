@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:knowgo_vehicle_simulator/services.dart';
-import 'package:meta/meta.dart';
 
 class ConsoleMessage {
-  DateTime timestamp;
-  String message;
+  final DateTime timestamp;
+  final String message;
 
-  ConsoleMessage({@required this.timestamp, @required this.message});
+  ConsoleMessage({required this.timestamp, required this.message});
 
   @override
   String toString() {

@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 
 class TextFieldAlertDialog extends StatefulWidget {
   final String title;
-  final String initialValue;
+  final String? initialValue;
   final ValueChanged<String> onSubmitted;
 
   TextFieldAlertDialog({
-    @required this.title,
+    required this.title,
     this.initialValue,
-    @required this.onSubmitted,
+    required this.onSubmitted,
   });
 
   @override
@@ -21,7 +21,7 @@ class _TextFieldAlertDialogState extends State<TextFieldAlertDialog> {
   @override
   void initState() {
     super.initState();
-    controller.text = widget.initialValue;
+    controller.text = widget.initialValue!;
   }
 
   @override

@@ -31,9 +31,9 @@ class VehicleDataCardTest extends StatelessWidget {
   final Widget child;
 
   const VehicleDataCardTest({
-    Key key,
-    @required this.title,
-    @required this.child,
+    Key? key,
+    required this.title,
+    required this.child,
   }) : super(key: key);
 
   @override

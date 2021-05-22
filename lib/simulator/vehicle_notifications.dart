@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 class VehicleNotification {
   final String text;
 
-  VehicleNotification({@required this.text});
+  VehicleNotification({required this.text});
 
   VehicleNotification.fromJson(Map<String, dynamic> json) : text = json['text'];
 
@@ -37,7 +37,7 @@ class VehicleNotificationModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  VehicleNotification pop() {
+  VehicleNotification? pop() {
     if (_notifications.isNotEmpty) {
       var notification = _notifications.removeLast();
       notifyListeners();

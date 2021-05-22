@@ -14,10 +14,12 @@ void main() {
 
     // Text finders do not work on RichText widgets, so we must convert the
     // widget text to plaintext for matching.
-    final RichText richText = find.byType(RichText).evaluate().first.widget;
-    final richTextText = richText.text.toPlainText();
+    final richText = find.byType(RichText).evaluate().first.widget;
+    if (richText is RichText) {
+      final richTextText = richText.text.toPlainText();
 
-    expect(richTextText, 'label: value');
+      expect(richTextText, 'label: value');
+    }
   });
 }
 
@@ -26,9 +28,9 @@ class VehicleInfoChipTest extends StatelessWidget {
   final String value;
 
   const VehicleInfoChipTest({
-    Key key,
-    @required this.label,
-    @required this.value,
+    Key? key,
+    required this.label,
+    required this.value,
   }) : super(key: key);
 
   @override

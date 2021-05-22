@@ -25,14 +25,14 @@ enum VehicleSimulatorCommands {
 /// Vehicle Simulator base class.
 class VehicleSimulator extends ChangeNotifier {
   // Vehicle Events Web Worker
-  Worker _eventWorker;
+  Worker? _eventWorker;
 
   // Vehicle Events Isolate
-  Isolate _eventIsolate;
+  Isolate? _eventIsolate;
 
   // HTTP Server ReceivePort
-  final ReceivePort serverReceivePort;
-  SendPort _serverSendPort;
+  final ReceivePort? serverReceivePort;
+  SendPort? _serverSendPort;
 
   final simulatorReceivePort = ReceivePort();
 
@@ -47,13 +47,13 @@ class VehicleSimulator extends ChangeNotifier {
   }
 
   // API Client for optional backend connectivity
-  knowgo.ApiClient apiClient;
+  knowgo.ApiClient? apiClient;
 
   // MQTT client for optional MQTT broker connectivity
-  MqttServerClient mqttClient;
+  MqttServerClient? mqttClient;
 
   // Kafka client for optional Kafka broker connectivity
-  Producer kafkaProducer;
+  Producer? kafkaProducer;
 
   // Information about the generated Vehicle
   knowgo.Auto info = knowgo.Auto();
@@ -84,7 +84,7 @@ class VehicleSimulator extends ChangeNotifier {
     simulatorReceivePort.listen((data) {
       if (data is SendPort) {
         _serverSendPort = data;
-        _serverSendPort.send([info, state, null]);
+        _serverSendPort?.send([info, state, null]);
       } else {
         // Handle updates to the simulator from the HTTP Server
         var command = data[0];
@@ -110,18 +110,18 @@ class VehicleSimulator extends ChangeNotifier {
       return;
     }
 
-    var hostPortPair = _settingsService.mqttBroker.split(':');
+    var hostPortPair = _settingsService.mqttBroker?.split(':');
 
-    mqttClient = MqttServerClient.withPort(hostPortPair[0],
-        'knowgo-simulator-desktop', int.parse(hostPortPair[1]));
+    mqttClient = MqttServerClient.withPort(hostPortPair?[0],
+        'knowgo-simulator-desktop', int.parse(hostPortPair![1]));
 
     try {
-      var _status = await mqttClient.connect();
-      if (_status.state == MqttConnectionState.connected) {
+      var _status = await mqttClient?.connect();
+      if (_status?.state == MqttConnectionState.connected) {
         _writeConsoleMessage('MQTT client connected to broker @ ' +
-            _settingsService.mqttBroker +
+            _settingsService.mqttBroker! +
             '/' +
-            _settingsService.mqttTopic);
+            _settingsService.mqttTopic!);
       }
     } catch (e) {
       _writeConsoleMessage('Unable to connect to MQTT broker: $e');
@@ -137,7 +137,7 @@ class VehicleSimulator extends ChangeNotifier {
     _eventCounter++;
 
     // Synchronize vehicle state
-    info.odometer = num.parse((update.odometer).toStringAsFixed(2));
+    info.odometer = num.parse((update.odometer).toStringAsFixed(2)).toDouble();
     updateVehicleState(state, update);
 
     // Check if we need to reset the journey
@@ -167,7 +167,7 @@ class VehicleSimulator extends ChangeNotifier {
     if (mqttClient != null) {
       final builder = MqttClientPayloadBuilder();
       builder.addString(update.toJson().toString());
-      mqttClient.publishMessage(
+      mqttClient?.publishMessage(
           _settingsService.mqttTopic, MqttQos.exactlyOnce, builder.payload,
           retain: false);
     }
@@ -177,7 +177,7 @@ class VehicleSimulator extends ChangeNotifier {
       // Use the vehicle ID as the key
       var record = ProducerRecord(_settingsService.kafkaTopic, 0,
           info.autoID.toString(), update.toJson().toString());
-      kafkaProducer.add(record);
+      kafkaProducer?.add(record);
     }
 
     // Auto-stop the vehicle if the current event would render the vehicle
@@ -194,7 +194,7 @@ class VehicleSimulator extends ChangeNotifier {
     _eventWorker = Worker('lib/simulator/vehicle_event_worker.js');
 
     // Listen for event updates
-    _eventWorker.onMessage.listen((msg) {
+    _eventWorker?.onMessage.listen((msg) {
       var map = Map<String, dynamic>.from(msg.data);
       var update = knowgo.Event.fromJson(map);
       _dispatchEventUpdate(update);
@@ -203,7 +203,7 @@ class VehicleSimulator extends ChangeNotifier {
 
     // Kick-off the web worker
     _eventWorker
-        .postMessage([jsonEncode(info), _eventCounter, jsonEncode(state)]);
+        ?.postMessage([jsonEncode(info), _eventCounter, jsonEncode(state)]);
   }
 
   // The Vehicle Simulator uses a pair of Send/ReceivePorts in order to
@@ -232,7 +232,7 @@ class VehicleSimulator extends ChangeNotifier {
         _dispatchEventUpdate(data);
 
         // Synchronize the HTTP server state
-        _serverSendPort.send([info, state, journey.events]);
+        _serverSendPort?.send([info, state, journey.events]);
 
         // Trigger UI redraw
         notifyListeners();
@@ -255,7 +255,7 @@ class VehicleSimulator extends ChangeNotifier {
     if (_settingsService.server != null) {
       apiClient = knowgo.ApiClient(basePath: _settingsService.server);
       if (_settingsService.apiKey != null) {
-        apiClient.addDefaultHeader('X-API-Key', _settingsService.apiKey);
+        apiClient?.addDefaultHeader('X-API-Key', _settingsService.apiKey);
       }
     }
 
@@ -267,7 +267,7 @@ class VehicleSimulator extends ChangeNotifier {
     // Init Kafka producer
     if (_settingsService.kafkaEnabled) {
       var kafkaConfig =
-          ProducerConfig(bootstrapServers: [_settingsService.kafkaBroker]);
+          ProducerConfig(bootstrapServers: [_settingsService.kafkaBroker!]);
       kafkaProducer = Producer<String, String>(
           StringSerializer(), StringSerializer(), kafkaConfig);
     }
@@ -280,14 +280,14 @@ class VehicleSimulator extends ChangeNotifier {
   }
 
   void _stopWorkers() {
-    _eventWorker.terminate();
+    _eventWorker?.terminate();
     running = false;
     _eventWorker = null;
     notifyListeners();
   }
 
   void _stopIsolates() {
-    _eventIsolate.kill(priority: Isolate.immediate);
+    _eventIsolate?.kill(priority: Isolate.immediate);
     running = false;
     _eventIsolate = null;
     notifyListeners();

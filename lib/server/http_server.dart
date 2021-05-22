@@ -55,10 +55,9 @@ Future<void> runHttpServer(SendPort sendPort) async {
 }
 
 class SimulatorHttpServer {
-  Isolate _serverIsolate;
+  Isolate? _serverIsolate;
   final receivePort = ReceivePort();
   final notificationModel = VehicleNotificationModel();
-  SendPort simulatorSendPort;
   final int port;
 
   SimulatorHttpServer(this.port);
@@ -80,6 +79,6 @@ class SimulatorHttpServer {
   }
 
   void stop() {
-    _serverIsolate.kill(priority: Isolate.immediate);
+    _serverIsolate?.kill(priority: Isolate.immediate);
   }
 }

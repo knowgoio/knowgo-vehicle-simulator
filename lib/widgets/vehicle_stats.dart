@@ -13,8 +13,7 @@ class VehicleStats extends StatefulWidget {
 
 class _VehicleStatsState extends State<VehicleStats> {
   Widget fuelLevelIndicator(VehicleSimulator vehicleSimulator) {
-    if (vehicleSimulator.state != null &&
-        vehicleSimulator.state.fuelLevel != null) {
+    if (vehicleSimulator.state.fuelLevel != null) {
       return LinearProgressIndicator(
           value: vehicleSimulator.state.fuelLevel / 100.0);
     } else {
@@ -23,8 +22,7 @@ class _VehicleStatsState extends State<VehicleStats> {
   }
 
   Widget fuelConsumptionIndicator(VehicleSimulator vehicleSimulator) {
-    if (vehicleSimulator.state != null &&
-        vehicleSimulator.state.fuelConsumedSinceRestart != null &&
+    if (vehicleSimulator.state.fuelConsumedSinceRestart != null &&
         vehicleSimulator.state.fuelLevel != null) {
       var fuelConsumed = vehicleSimulator.state.fuelConsumedSinceRestart /
           vehicleSimulator.state.fuelLevel;
@@ -47,7 +45,7 @@ class _VehicleStatsState extends State<VehicleStats> {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Text('VIN: ${vehicleSimulator.info?.VIN}'),
+          Text('VIN: ${vehicleSimulator.info.VIN}'),
           Text(
               'Odometer: ${vehicleSimulator.state.odometer.toStringAsFixed(2)} km'),
           Text(

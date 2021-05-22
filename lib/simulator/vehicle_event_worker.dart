@@ -30,14 +30,14 @@ class JsMap<V> extends MapMixin<String, dynamic> {
   JsMap(this._jsObject);
 
   @override
-  V operator [](Object key) => getProperty(_jsObject, key.toString());
+  V operator [](Object? key) => getProperty(_jsObject, key.toString());
 
   @override
   operator []=(String key, dynamic value) =>
       setProperty(_jsObject, key.toString(), value);
 
   @override
-  remove(Object key) {
+  remove(Object? key) {
     throw "Not implemented yet";
   }
 
@@ -45,7 +45,7 @@ class JsMap<V> extends MapMixin<String, dynamic> {
   Iterable<String> get keys => _getKeysOfObject(_jsObject);
 
   @override
-  bool containsKey(Object key) => hasProperty(_jsObject, key);
+  bool containsKey(Object? key) => hasProperty(_jsObject, key!);
 
   @override
   void clear() {

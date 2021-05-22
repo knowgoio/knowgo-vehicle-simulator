@@ -5,18 +5,18 @@ class VehicleDataSlider extends StatelessWidget {
   final double value;
   final double min;
   final double max;
-  final int divisions;
+  final int? divisions;
   final String label;
   final String title;
-  final ValueChanged<double> onChanged;
-  final ValueChanged<double> onChangeEnd;
+  final ValueChanged<double>? onChanged;
+  final ValueChanged<double>? onChangeEnd;
 
   VehicleDataSlider({
-    @required this.value,
-    @required this.min,
-    @required this.max,
-    @required this.label,
-    @required this.title,
+    required this.value,
+    required this.min,
+    required this.max,
+    required this.label,
+    required this.title,
     this.onChanged,
     this.onChangeEnd,
     this.divisions,
@@ -40,9 +40,10 @@ class VehicleDataSlider extends StatelessWidget {
             max: max,
             divisions: divisions,
             label: label,
-            onChanged: (value) => (onChanged != null) ? onChanged(value) : null,
+            onChanged: (value) =>
+                (onChanged != null) ? onChanged!(value) : null,
             onChangeEnd: (value) =>
-                (onChangeEnd != null) ? onChangeEnd(value) : null,
+                (onChangeEnd != null) ? onChangeEnd!(value) : null,
           ),
         ),
       ],

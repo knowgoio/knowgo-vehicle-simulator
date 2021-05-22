@@ -6,7 +6,7 @@ class VehicleInfoChip extends StatelessWidget {
   final String label;
   final String value;
 
-  VehicleInfoChip({@required this.label, @required this.value});
+  VehicleInfoChip({required this.label, required this.value});
 
   @override
   Widget build(BuildContext context) {

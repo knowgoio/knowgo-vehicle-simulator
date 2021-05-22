@@ -4,7 +4,7 @@ import 'package:knowgo/api.dart' as knowgo;
 import 'package:yaml/yaml.dart';
 
 class SettingsService {
-  File _configFile;
+  File? _configFile;
 
   // User-defined auto configuration
   knowgo.Auto autoConfig = knowgo.Auto();
@@ -12,12 +12,14 @@ class SettingsService {
   // Initial vehicle event setting
   knowgo.Event initEvent = knowgo.Event();
 
-  String _server;
-  String get server => _server;
+  String? _server;
+  String? get server => _server;
 
-  set server(String serverAddress) {
-    _server = serverAddress;
-    saveConfig();
+  set server(String? serverAddress) {
+    if (serverAddress != null) {
+      _server = serverAddress;
+      saveConfig();
+    }
   }
 
   // Optional MQTT Configuration
@@ -29,18 +31,18 @@ class SettingsService {
     saveConfig();
   }
 
-  String _mqttBroker;
-  String get mqttBroker => _mqttBroker;
+  String? _mqttBroker;
+  String? get mqttBroker => _mqttBroker;
 
-  set mqttBroker(String brokerAddress) {
+  set mqttBroker(String? brokerAddress) {
     _mqttBroker = brokerAddress;
     saveConfig();
   }
 
-  String _mqttTopic;
-  String get mqttTopic => _mqttTopic;
+  String? _mqttTopic;
+  String? get mqttTopic => _mqttTopic;
 
-  set mqttTopic(String topic) {
+  set mqttTopic(String? topic) {
     _mqttTopic = topic;
     saveConfig();
   }
@@ -54,31 +56,31 @@ class SettingsService {
     saveConfig();
   }
 
-  String _kafkaBroker;
-  String get kafkaBroker => _kafkaBroker;
+  String? _kafkaBroker;
+  String? get kafkaBroker => _kafkaBroker;
 
-  set kafkaBroker(String brokerAddress) {
+  set kafkaBroker(String? brokerAddress) {
     _kafkaBroker = brokerAddress;
     saveConfig();
   }
 
-  String _kafkaTopic;
-  String get kafkaTopic => _kafkaTopic;
+  String? _kafkaTopic;
+  String? get kafkaTopic => _kafkaTopic;
 
-  set kafkaTopic(String topic) {
+  set kafkaTopic(String? topic) {
     _kafkaTopic = topic;
     saveConfig();
   }
 
-  String _apiKey;
-  String get apiKey => _apiKey;
+  String? _apiKey;
+  String? get apiKey => _apiKey;
 
-  set apiKey(String key) {
+  set apiKey(String? key) {
     _apiKey = key;
     saveConfig();
   }
 
-  bool _loggingEnabled;
+  bool _loggingEnabled = false;
   bool get loggingEnabled => _loggingEnabled;
 
   set loggingEnabled(bool value) {
@@ -95,9 +97,7 @@ class SettingsService {
     saveConfig();
   }
 
-  SettingsService([File yamlConfig]) {
-    _loggingEnabled = false;
-
+  SettingsService([File? yamlConfig]) {
     if (yamlConfig != null) {
       _configFile = yamlConfig;
     }
@@ -108,7 +108,11 @@ class SettingsService {
     var doc = loadYaml(yamlString);
 
     _loggingEnabled = doc['sessionLogging'];
-    _eventLoggingEnabled = doc['eventLogging'];
+
+    if (doc['eventLogging'] != null) {
+      _eventLoggingEnabled = doc['eventLogging'];
+    }
+
     _server = doc['knowgo']['server'];
     _apiKey = doc['knowgo']['apiKey'];
 
@@ -171,7 +175,7 @@ class SettingsService {
   String _generateEmptyString(int length) =>
       String.fromCharCodes(List.generate(length, (_) => 32));
 
-  void writeMapToYamlFile(File file, Map<String, dynamic> map,
+  void writeMapToYamlFile(File file, Map<dynamic, dynamic> map,
       {int depth = 0}) {
     var parentPadding = _generateEmptyString(depth * 2);
     var childPadding = _generateEmptyString((depth + 1) * 2);
@@ -209,9 +213,9 @@ class SettingsService {
     }
 
     // truncate existing configuration
-    _configFile.writeAsStringSync('');
+    _configFile!.writeAsStringSync('');
 
     // Write out new YAML document from JSON map
-    writeMapToYamlFile(_configFile, configToJson());
+    writeMapToYamlFile(_configFile!, configToJson());
   }
 }
