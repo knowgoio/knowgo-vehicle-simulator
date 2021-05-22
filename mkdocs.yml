@@ -3,6 +3,8 @@ repo_url: https://github.com/knowgoio/knowgo-vehicle-simulator
 repo_name: knowgoio/knowgo-vehicle-simulator
 theme:
   name: material
+  logo: images/icon.png
+  favicon: images/favicon.png
   palette:
     primary: light green
     accent: light green
