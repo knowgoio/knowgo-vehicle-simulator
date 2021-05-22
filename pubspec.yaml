@@ -1,8 +1,11 @@
 name: knowgo_vehicle_simulator
-description: A multi-platform vehicle simulator for generating KnowGo Car events.
+description: >-
+  An interactive multi-platform Connected Car simulator for generating and streaming realistic
+  vehicle telemetry.
 publish_to: 'none'
 repository: https://github.com/knowgoio/knowgo-vehicle-simulator
 issue_tracker: https://github.com/knowgoio/knowgo-vehicle-simulator/issues
+documentation: https://knowgoio.github.io/knowgo-vehicle-simulator/
 version: 1.0.0
 
 environment:
