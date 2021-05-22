@@ -2,7 +2,9 @@ import 'dart:convert';
 import 'dart:isolate';
 
 import 'package:knowgo/api.dart' as knowgo;
+import 'package:knowgo_vehicle_simulator/server/http_exve_api.dart';
 import 'package:knowgo_vehicle_simulator/simulator.dart';
+import 'package:knowgo_vehicle_simulator/simulator/vehicle_exve_model.dart';
 import 'package:knowgo_vehicle_simulator/simulator/vehicle_notifications.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf_router/shelf_router.dart';
@@ -10,9 +12,12 @@ import 'package:shelf_router/shelf_router.dart';
 class VehicleSimulatorApi {
   final VehicleSimulator vehicleSimulator;
   final SendPort simulatorSendPort;
+  final VehicleExVeModel? exveModel;
 
   VehicleSimulatorApi(
-      {required this.vehicleSimulator, required this.simulatorSendPort});
+      {required this.vehicleSimulator,
+      required this.simulatorSendPort,
+      this.exveModel = null});
 
   Router get router {
     final router = Router();
@@ -64,6 +69,13 @@ class VehicleSimulatorApi {
       model.push(VehicleNotification.fromJson(data));
       return Response.ok('Notification submitted');
     });
+
+    // Handle all /exve/ requests with the ExVe API sub-router
+    if (exveModel != null) {
+      final exveApi =
+          ExVeAPI(vehicleSimulator: vehicleSimulator, exveModel: exveModel!);
+      router.mount(('/exve/'), exveApi.router);
+    }
 
     return router;
   }

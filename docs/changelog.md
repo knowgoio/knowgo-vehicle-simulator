@@ -7,6 +7,7 @@
 - Make Event logging configurable.
 - Addition of `/notify` REST API endpoint for delivering notifications
   to the simulator.
+- Convert the HTTP server to use the new `shelf` framework.
 
 [dart-kafka]: https://github.com/dart-kafka/kafka
 

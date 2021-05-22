@@ -282,7 +282,7 @@ packages:
     source: hosted
     version: "2.1.0"
   shelf:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: shelf
       url: "https://pub.dartlang.org"

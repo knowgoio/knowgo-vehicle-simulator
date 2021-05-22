@@ -2,6 +2,7 @@ import 'dart:isolate';
 
 import 'package:knowgo_vehicle_simulator/server/http_simulator_api.dart';
 import 'package:knowgo_vehicle_simulator/simulator.dart';
+import 'package:knowgo_vehicle_simulator/simulator/vehicle_exve_model.dart';
 import 'package:knowgo_vehicle_simulator/simulator/vehicle_notifications.dart';
 import 'package:shelf/shelf_io.dart' as shelf_io;
 
@@ -14,6 +15,7 @@ Future<void> runHttpServer(SendPort sendPort) async {
 
   var simulatorCommPort = ReceivePort();
   var vehicleSimulator = VehicleSimulator();
+  var exveModel = VehicleExVeModel();
 
   commPort.listen((data) async {
     var port = data[0];
@@ -21,14 +23,10 @@ Future<void> runHttpServer(SendPort sendPort) async {
 
     simulatorSendPort.send(simulatorCommPort.sendPort);
 
-    var notificationModel = vehicleSimulator.notificationModel;
-
     // Proxy notifications back to the main isolate
-    void _notificationListener() {
-      sendPort.send(notificationModel.notifications);
-    }
-
-    notificationModel.addListener(_notificationListener);
+    var notificationModel = vehicleSimulator.notificationModel;
+    notificationModel
+        .addListener(() => sendPort.send(notificationModel.notifications));
 
     // Receive updated vehicle simulator state
     simulatorCommPort.listen((data) {
@@ -37,11 +35,16 @@ Future<void> runHttpServer(SendPort sendPort) async {
       if (data[2] != null) {
         vehicleSimulator.journey.events = data[2];
       }
+
+      // Add the vehicle to the ExVe model
+      exveModel.addVehicle(vehicleSimulator.info.autoID);
     });
 
     final vehicleSimulatorApi = VehicleSimulatorApi(
-        vehicleSimulator: vehicleSimulator,
-        simulatorSendPort: simulatorSendPort);
+      vehicleSimulator: vehicleSimulator,
+      simulatorSendPort: simulatorSendPort,
+      exveModel: exveModel,
+    );
 
     var server =
         await shelf_io.serve(vehicleSimulatorApi.router, 'localhost', port);
