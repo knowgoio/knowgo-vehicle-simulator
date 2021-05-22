@@ -21,4 +21,13 @@ markdown_extensions:
   - def_list
   - pymdownx.highlight
   - pymdownx.superfences
+nav:
+  - index.md
+  - architecture.md
+  - getting-started.md
+  - rest-api.md
+  - About:
+    - license.md
+plugins:
+  - render_swagger
 copyright: Copyright &copy; 2021 <a href="https://adaptant.io/research">Adaptant Labs</a>
