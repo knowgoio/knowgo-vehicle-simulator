@@ -27,7 +27,8 @@ nav:
   - getting-started.md
   - rest-api.md
   - About:
+    - changelog.md
     - license.md
 plugins:
   - render_swagger
-copyright: Copyright &copy; 2021 <a href="https://adaptant.io/research">Adaptant Labs</a>
+copyright: Copyright &copy; 2020 - 2021 <a href="https://adaptant.io/research">Adaptant Labs</a>
