@@ -26,6 +26,8 @@ dependencies:
   yaml: ^2.2.1
   auto_size_text: ^2.1.0
   mqtt_client: ^8.1.0
+  shelf: ^0.7.9
+  shelf_router: ^0.7.4
   # Kafka is presently holding back null safety
   kafka:
     git:

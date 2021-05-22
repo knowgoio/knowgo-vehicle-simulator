@@ -1,10 +1,9 @@
-import 'dart:io';
 import 'dart:isolate';
 
+import 'package:knowgo_vehicle_simulator/server/http_simulator_api.dart';
 import 'package:knowgo_vehicle_simulator/simulator.dart';
 import 'package:knowgo_vehicle_simulator/simulator/vehicle_notifications.dart';
-
-import 'http_handlers.dart';
+import 'package:shelf/shelf_io.dart' as shelf_io;
 
 Future<void> runHttpServer(SendPort sendPort) async {
   // Open up a ReceivePort and send a reference to its sendPort back to the
@@ -14,22 +13,14 @@ Future<void> runHttpServer(SendPort sendPort) async {
   sendPort.send(commPort.sendPort);
 
   var simulatorCommPort = ReceivePort();
+  var vehicleSimulator = VehicleSimulator();
 
   commPort.listen((data) async {
     var port = data[0];
     var simulatorSendPort = data[1];
 
-    final server = await HttpServer.bind(
-      InternetAddress.anyIPv4,
-      port,
-    );
-
-    print(
-        'Vehicle Simulator listening on ${server.address.address}:${server.port}...');
-
     simulatorSendPort.send(simulatorCommPort.sendPort);
 
-    var vehicleSimulator = VehicleSimulator();
     var notificationModel = vehicleSimulator.notificationModel;
 
     // Proxy notifications back to the main isolate
@@ -48,9 +39,15 @@ Future<void> runHttpServer(SendPort sendPort) async {
       }
     });
 
-    await for (HttpRequest req in server) {
-      handleHttpRequest(vehicleSimulator, simulatorSendPort, req);
-    }
+    final vehicleSimulatorApi = VehicleSimulatorApi(
+        vehicleSimulator: vehicleSimulator,
+        simulatorSendPort: simulatorSendPort);
+
+    var server =
+        await shelf_io.serve(vehicleSimulatorApi.router, 'localhost', port);
+
+    print(
+        'Vehicle Simulator listening on ${server.address.host}:${server.port}...');
   });
 }
 
