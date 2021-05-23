@@ -71,7 +71,7 @@ void initVehicleState(knowgo.Event state) {
   }
 
   state.transmissionGearPosition = knowgo.TransmissionGearPosition.first;
-  state.ignitionStatus = knowgo.IgnitionStatus.run;
+  state.ignitionStatus = knowgo.IgnitionStatus.off;
   state.windshieldWiperStatus = false;
   state.headlampStatus = false;
   state.doorStatus = knowgo.DoorStatus.all_unlocked;

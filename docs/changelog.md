@@ -5,10 +5,13 @@
 - Preparation for null safety (disabled by default, until all dependent
   packages have been migrated - currently blocked by [dart-kafka]).
 - Make Event logging configurable.
-- Addition of `/notify` REST API endpoint for delivering notifications
-  to the simulator.
+- Addition of `/simulator/notification` REST API endpoint for delivering
+  notifications to the simulator.
 - Convert the HTTP server to use the new `shelf` framework.
+- Additon of webhook manipulation and [ISO 20078-2:2019] Extended Vehicle
+  (ExVe) APIs, corresponding to `v1.1.0` of the [REST API](rest-api.md).
 
+[ISO 20078-2:2019]: https://www.iso.org/standard/67578.html
 [dart-kafka]: https://github.com/dart-kafka/kafka
 
 ## 1.0.0

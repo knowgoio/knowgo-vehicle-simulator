@@ -1,13 +1,32 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:knowgo_vehicle_simulator/simulator.dart';
-import 'package:knowgo_vehicle_simulator/simulator/vehicle_exve_model.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf_router/shelf_router.dart';
 
 extension NumberRounding on num {
   num toPrecision(int precision) {
     return num.parse(this.toStringAsFixed(precision));
+  }
+}
+
+class ExVeResource {
+  final String name;
+  final String version = '1.0';
+  final String href;
+
+  ExVeResource({required HttpServer server, required name, required vehicleId})
+      : name = name,
+        href =
+            'http://${server.address.host}:${server.port}/exve/vehicles/$vehicleId/$name';
+
+  Map<String, dynamic> toJson() {
+    Map<String, dynamic> json = {};
+    json['name'] = name;
+    json['version'] = version;
+    json['href'] = href;
+    return json;
   }
 }
 
@@ -36,6 +55,20 @@ class ExVeAPI {
       }
     });
 
+    router.post('/vehicles/<vehicleId>/notification', (Request request) async {
+      var vehicleId = int.parse(params(request, 'vehicleId'));
+      var content = await request.readAsString();
+      var data = jsonDecode(content);
+      var model = vehicleSimulator.notificationModel;
+
+      if (vehicleSimulator.info.autoID != vehicleId) {
+        return Response.notFound('Vehicle not found');
+      }
+
+      model.push(VehicleNotification.fromJson(data));
+      return Response.ok('Notification submitted');
+    });
+
     router.get('/vehicles/<vehicleId>/<resource>', (Request request) {
       var vehicleId = int.parse(params(request, 'vehicleId'));
       var resource = params(request, 'resource');
@@ -47,6 +80,23 @@ class ExVeAPI {
       }
 
       switch (resource) {
+        case 'capabilities':
+        case 'resources':
+          data = [
+            ExVeResource(
+                server: vehicleSimulator.httpServer!,
+                name: 'acceleratorPedalPositions',
+                vehicleId: vehicleId),
+            ExVeResource(
+                server: vehicleSimulator.httpServer!,
+                name: 'locations',
+                vehicleId: vehicleId),
+            ExVeResource(
+                server: vehicleSimulator.httpServer!,
+                name: 'odometers',
+                vehicleId: vehicleId),
+          ];
+          break;
         case 'acceleratorPedalPositions':
           if (vehicleSimulator.journey.events.isNotEmpty) {
             // Cache the previous reading to avoid issuing unchanged readings

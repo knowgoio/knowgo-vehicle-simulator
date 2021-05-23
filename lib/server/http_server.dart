@@ -16,6 +16,7 @@ Future<void> runHttpServer(SendPort sendPort) async {
   var simulatorCommPort = ReceivePort();
   var vehicleSimulator = VehicleSimulator();
   var exveModel = VehicleExVeModel();
+  var webhookModel = WebhookModel();
 
   commPort.listen((data) async {
     var port = data[0];
@@ -30,6 +31,10 @@ Future<void> runHttpServer(SendPort sendPort) async {
 
     // Receive updated vehicle simulator state
     simulatorCommPort.listen((data) {
+      // Pass in vehicle info, the previous state, and the updated state for
+      // processing webhooks.
+      webhookModel.processWebhooks(data[0], vehicleSimulator.state, data[1]);
+
       vehicleSimulator.info = data[0];
       vehicleSimulator.state = data[1];
       if (data[2] != null) {
@@ -44,13 +49,14 @@ Future<void> runHttpServer(SendPort sendPort) async {
       vehicleSimulator: vehicleSimulator,
       simulatorSendPort: simulatorSendPort,
       exveModel: exveModel,
+      webhookModel: webhookModel,
     );
 
-    var server =
+    vehicleSimulator.httpServer =
         await shelf_io.serve(vehicleSimulatorApi.router, 'localhost', port);
 
     print(
-        'Vehicle Simulator listening on ${server.address.host}:${server.port}...');
+        'Vehicle Simulator listening on ${vehicleSimulator.httpServer!.address.host}:${vehicleSimulator.httpServer!.port}...');
   });
 }
 

@@ -2,13 +2,14 @@ import 'dart:async';
 import 'dart:convert';
 // ignore: avoid_web_libraries_in_flutter
 import 'dart:html' if (dart.library.io) '../worker_stub.dart';
+import 'dart:io';
 import 'dart:isolate';
 
 import 'package:flutter/foundation.dart';
 import 'package:kafka/kafka.dart';
 import 'package:knowgo/api.dart' as knowgo;
 import 'package:knowgo_vehicle_simulator/services.dart';
-import 'package:knowgo_vehicle_simulator/simulator/vehicle_notifications.dart';
+import 'package:knowgo_vehicle_simulator/simulator.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
 
@@ -35,7 +36,6 @@ class VehicleSimulator extends ChangeNotifier {
   SendPort? _serverSendPort;
 
   final simulatorReceivePort = ReceivePort();
-
   final notificationModel = VehicleNotificationModel();
 
   VehicleSimulator([this.serverReceivePort]) {
@@ -45,6 +45,9 @@ class VehicleSimulator extends ChangeNotifier {
     journey.driverID = info.driverID;
     _writeConsoleMessage('Waiting for simulator to start..');
   }
+
+  // HTTP Server for optional REST API
+  HttpServer? httpServer;
 
   // API Client for optional backend connectivity
   knowgo.ApiClient? apiClient;
@@ -272,6 +275,8 @@ class VehicleSimulator extends ChangeNotifier {
           StringSerializer(), StringSerializer(), kafkaConfig);
     }
 
+    state.ignitionStatus = knowgo.IgnitionStatus.run;
+
     if (kIsWeb) {
       return _startWebWorkers();
     }
@@ -297,6 +302,8 @@ class VehicleSimulator extends ChangeNotifier {
     if (running == false) {
       return;
     }
+
+    state.ignitionStatus = knowgo.IgnitionStatus.off;
 
     if (kIsWeb) {
       _stopWorkers();
