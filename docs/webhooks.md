@@ -1,6 +1,6 @@
-![Webhooks Logo](images/webhooks.png)
-
 # Webhooks and Notifications
+
+![Webhooks Integration](images/webhooks.png)
 
 ## Webhooks
 

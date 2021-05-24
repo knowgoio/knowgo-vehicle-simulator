@@ -4,7 +4,6 @@ import 'package:knowgo_vehicle_simulator/icons.dart';
 import 'package:knowgo_vehicle_simulator/server.dart';
 import 'package:knowgo_vehicle_simulator/services.dart';
 import 'package:knowgo_vehicle_simulator/simulator.dart';
-import 'package:knowgo_vehicle_simulator/simulator/vehicle_notifications.dart';
 import 'package:knowgo_vehicle_simulator/utils.dart';
 import 'package:knowgo_vehicle_simulator/widgets.dart';
 import 'package:provider/provider.dart';
@@ -20,15 +19,16 @@ Future<void> main() async {
   if (kIsWeb) {
     vehicleSimulator = VehicleSimulator();
   } else {
-    const String portString =
-        String.fromEnvironment('KNOWGO_SIMULATOR_PORT', defaultValue: '8086');
+    const String portString = String.fromEnvironment(
+        'KNOWGO_VEHICLE_SIMULATOR_PORT',
+        defaultValue: '8086');
     final port = int.parse(portString);
 
     // Kick off the HTTP Server Isolate
     final simulatorHttpServer = SimulatorHttpServer(port);
 
-    // Instantiate the Vehicle Simulator, and hand it a ReceivePort to communicate
-    // with the HTTP Server.
+    // Instantiate the Vehicle Simulator, and hand it a ReceivePort to
+    // communicate with the HTTP Server.
     vehicleSimulator = VehicleSimulator(simulatorHttpServer.receivePort);
 
     // Start up the HTTP server, and hand it a ReceivePort to communicate with
@@ -98,13 +98,9 @@ class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
 
   @override
   void initState() {
-    var model = Provider.of<VehicleNotificationModel>(context, listen: false);
-
     super.initState();
 
-    // Write out the initial configuration
-    settingsService.saveConfig();
-
+    var model = Provider.of<VehicleNotificationModel>(context, listen: false);
     model.addListener(_vehicleNotificationListener);
   }
 
@@ -169,7 +165,7 @@ class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
             ),
             ListTile(
               title: const Text('KnowGo Server'),
-              subtitle: Text(settingsService.server!),
+              subtitle: Text(settingsService.server ?? ''),
               trailing: IconButton(
                 icon: Icon(Icons.edit),
                 onPressed: () async {
@@ -193,7 +189,7 @@ class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
             ),
             ListTile(
               title: const Text('KnowGo API Key'),
-              subtitle: Text(settingsService.apiKey!),
+              subtitle: Text(settingsService.apiKey ?? ''),
               trailing: IconButton(
                 icon: Icon(Icons.edit),
                 onPressed: () async {

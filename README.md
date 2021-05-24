@@ -3,7 +3,7 @@
 # knowgo-vehicle-simulator
 
 [![Build Status](https://travis-ci.com/knowgoio/knowgo-vehicle-simulator.svg?branch=master)](https://travis-ci.com/knowgoio/knowgo-vehicle-simulator)
-[![Coverage Status](https://coveralls.io/repos/github/knowgoio/knowgo-vehicle-simulator/badge.svg?branch=master)](https://coveralls.io/github/knowgoio/knowgo-vehicle-simulator?branch=master)
+[![knowgo-vehicle-simulator](https://snapcraft.io/knowgo-vehicle-simulator/badge.svg)](https://snapcraft.io/knowgo-vehicle-simulator)
 
 An interactive multi-platform Connected Car simulator for generating
 and streaming realistic vehicle telemetry.
@@ -112,8 +112,9 @@ A number of environment variables can also be set:
 
 Environment Variable | Description | Default value
 :-------------------|:-----------|:-------------
-*KNOWGO_SIMULATOR_CONFIG* | Location of `config.yaml` file | `config.yaml`
-*KNOWGO_SIMULATOR_PORT* | HTTP port to bind for REST API | 8086
+*KNOWGO_VEHICLE_SIMULATOR_CONFIG* | Path to config file | `<appDocDir>/knowgo_vehicle_simulator/config.yaml`
+*KNOWGO_VEHICLE_SIMULATOR_LOGS* | Path to log directory | `<appDocDir>/knowgo_vehicle_simulator/logs`
+*KNOWGO_VEHICLE_SIMULATOR_PORT* | HTTP port to bind for REST API | 8086
 
 ## Features and bugs
 

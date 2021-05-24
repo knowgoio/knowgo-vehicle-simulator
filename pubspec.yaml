@@ -28,6 +28,7 @@ dependencies:
   mqtt_client: ^8.1.0
   shelf_router: ^0.7.4
   http: ^0.12.2
+  path_provider: ^1.6.28
   # Kafka is presently holding back null safety
   kafka:
     git:
