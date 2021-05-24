@@ -29,6 +29,8 @@ nav:
   - architecture.md
   - getting-started.md
   - webhooks.md
+  - API Overview:
+    - rest-api.md
   - About:
     - changelog.md
     - license.md
