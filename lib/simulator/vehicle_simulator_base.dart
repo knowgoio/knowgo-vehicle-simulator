@@ -6,6 +6,7 @@ import 'dart:io';
 import 'dart:isolate';
 
 import 'package:flutter/foundation.dart';
+import 'package:http/http.dart' as http;
 import 'package:kafka/kafka.dart';
 import 'package:knowgo/api.dart' as knowgo;
 import 'package:knowgo_vehicle_simulator/services.dart';
@@ -161,7 +162,15 @@ class VehicleSimulator extends ChangeNotifier {
       _consoleService.write(update.toString());
     }
 
-    // Dispatch event to backend asynchronously
+    // Dispatch event to notification endpoint asynchronously
+    if (_settingsService.notificationEndpoint != null) {
+      final url = Uri.parse(_settingsService.notificationEndpoint!);
+      http.post(url,
+          headers: {'Content-Type': 'application/json'},
+          body: json.encode(update));
+    }
+
+    // Dispatch event to KnowGo backend asynchronously
     if (apiClient != null) {
       knowgo.EventsApi(apiClient).addEvent(update).catchError((e) {});
     }
@@ -255,10 +264,10 @@ class VehicleSimulator extends ChangeNotifier {
     }
 
     // Init API client connection
-    if (_settingsService.server != null) {
-      apiClient = knowgo.ApiClient(basePath: _settingsService.server);
-      if (_settingsService.apiKey != null) {
-        apiClient?.addDefaultHeader('X-API-Key', _settingsService.apiKey);
+    if (_settingsService.knowgoServer != null) {
+      apiClient = knowgo.ApiClient(basePath: _settingsService.knowgoServer);
+      if (_settingsService.knowgoApiKey != null) {
+        apiClient?.addDefaultHeader('X-API-Key', _settingsService.knowgoApiKey);
       }
     }
 

@@ -19,10 +19,10 @@ been generalized so that it may be useful both to Connected Car service
 developers and researchers.
 
 The vehicle simulator generates a single unique vehicle, which can
-be controlled either directly through the UI or through an optional REST
-API. This may be further interfaced with OEM-specific external data
-sources and models in order to permit the simulation state to act as an
-automotive digital twin. For fleet simulation workloads, multiple
+be controlled either directly through the UI or through an optional
+[REST API]. This may be further interfaced with OEM-specific external
+data sources and models in order to permit the simulation state to act
+as an automotive digital twin. For fleet simulation workloads, multiple
 instances of the simulator may be run in parallel, with each generated
 vehicle being manually joined to a specified fleet.
 
@@ -79,18 +79,22 @@ a high priority at the moment, but will eventually be implemented.
 ## Event Publication
 
 By default, generated events are only logged in the console. Events can
-be published to a KnowGo API backend, as well as MQTT and Kafka brokers.
+be published to a custom notification endpoint, a KnowGo API backend,
+as well as MQTT and Kafka brokers (as well as any combination thereof).
 The specific configuration for each is outlined below.
 
 ## Configuration
 
-Configuration of the simulator can be tuned through a `config.yaml` file,
-which will be parsed and updated by configuration changes within the UI.
-The format of the file is:
+Configuration of the simulator can be tuned through a `config.yaml`
+file, which will be parsed and updated by configuration changes within
+the UI. The format of the file is:
 
 ```yaml
 sessionLogging: true
 eventLogging: true
+
+# Optional endpoint to post generated events to
+notificationUrl: http://myserver.com/endpoint
 
 # Optional KnowGo Backend Configuration
 knowgo:
@@ -128,4 +132,5 @@ Licensed under the terms of the MIT license, the full version of which
 can be found in the [LICENSE][license] file included in the distribution.
 
 [KnowGo Car]: https://knowgo.io
+[REST API]: https://knowgoio.github.io/knowgo-vehicle-simulator/rest-api/
 [license]: https://raw.githubusercontent.com/knowgoio/knowgo-vehicle-simulator/master/LICENSE

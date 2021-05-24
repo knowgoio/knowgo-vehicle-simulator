@@ -25,13 +25,16 @@ Releases can also be obtained directly from [GitHub][releases].
 
 ## Configuration
 
-Configuration of the simulator can be tuned through a `config.yaml` file,
-which will be parsed and updated by configuration changes within the UI.
-The format of the file is:
+Configuration of the simulator can be tuned through a `config.yaml`
+file, which will be parsed and updated by configuration changes within
+the UI. The format of the file is:
 
 ```yaml
 sessionLogging: true
 eventLogging: true
+
+# Optional endpoint to post generated events to
+notificationUrl: http://myserver.com/endpoint
 
 # Optional KnowGo Backend Configuration
 knowgo:

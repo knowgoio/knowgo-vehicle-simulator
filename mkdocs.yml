@@ -20,6 +20,7 @@ extra:
       link: https://twitter.com/knowgo_io
 markdown_extensions:
   - admonition
+  - attr_list
   - def_list
   - pymdownx.highlight
   - pymdownx.superfences
@@ -27,7 +28,6 @@ nav:
   - index.md
   - architecture.md
   - getting-started.md
-  - rest-api.md
   - webhooks.md
   - About:
     - changelog.md

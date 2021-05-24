@@ -164,8 +164,8 @@ class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
               },
             ),
             ListTile(
-              title: const Text('KnowGo Server'),
-              subtitle: Text(settingsService.server ?? ''),
+              title: const Text('Event Notification Endpoint'),
+              subtitle: Text(settingsService.notificationEndpoint ?? ''),
               trailing: IconButton(
                 icon: Icon(Icons.edit),
                 onPressed: () async {
@@ -174,11 +174,11 @@ class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
                     barrierDismissible: false,
                     builder: (BuildContext buildContext) {
                       return TextFieldAlertDialog(
-                        title: 'KnowGo Server',
-                        initialValue: settingsService.server!,
+                        title: 'Event Notification Endpoint',
+                        initialValue: settingsService.notificationEndpoint,
                         onSubmitted: (value) {
                           setState(() {
-                            settingsService.server = value;
+                            settingsService.notificationEndpoint = value;
                           });
                         },
                       );
@@ -187,28 +187,69 @@ class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
                 },
               ),
             ),
-            ListTile(
-              title: const Text('KnowGo API Key'),
-              subtitle: Text(settingsService.apiKey ?? ''),
-              trailing: IconButton(
-                icon: Icon(Icons.edit),
-                onPressed: () async {
-                  await showDialog(
-                    context: context,
-                    barrierDismissible: false,
-                    builder: (BuildContext buildContext) {
-                      return TextFieldAlertDialog(
-                        title: 'KnowGo API Key',
-                        initialValue: settingsService.apiKey!,
-                        onSubmitted: (value) {
-                          setState(() {
-                            settingsService.apiKey = value;
-                          });
-                        },
-                      );
-                    },
-                  );
-                },
+            CheckboxListTile(
+              title: const Text('KnowGo Backend Support'),
+              value: settingsService.knowgoEnabled,
+              onChanged: (bool? value) {
+                if (value != null) {
+                  setState(() {
+                    settingsService.knowgoEnabled = value;
+                  });
+                }
+              },
+            ),
+            Visibility(
+              visible: settingsService.knowgoEnabled,
+              child: ListTile(
+                title: const Text('KnowGo Server'),
+                subtitle: Text(settingsService.knowgoServer ?? ''),
+                trailing: IconButton(
+                  icon: Icon(Icons.edit),
+                  onPressed: () async {
+                    await showDialog(
+                      context: context,
+                      barrierDismissible: false,
+                      builder: (BuildContext buildContext) {
+                        return TextFieldAlertDialog(
+                          title: 'KnowGo Server',
+                          initialValue: settingsService.knowgoServer,
+                          onSubmitted: (value) {
+                            setState(() {
+                              settingsService.knowgoServer = value;
+                            });
+                          },
+                        );
+                      },
+                    );
+                  },
+                ),
+              ),
+            ),
+            Visibility(
+              visible: settingsService.knowgoEnabled,
+              child: ListTile(
+                title: const Text('KnowGo API Key'),
+                subtitle: Text(settingsService.knowgoApiKey ?? ''),
+                trailing: IconButton(
+                  icon: Icon(Icons.edit),
+                  onPressed: () async {
+                    await showDialog(
+                      context: context,
+                      barrierDismissible: false,
+                      builder: (BuildContext buildContext) {
+                        return TextFieldAlertDialog(
+                          title: 'KnowGo API Key',
+                          initialValue: settingsService.knowgoApiKey,
+                          onSubmitted: (value) {
+                            setState(() {
+                              settingsService.knowgoApiKey = value;
+                            });
+                          },
+                        );
+                      },
+                    );
+                  },
+                ),
               ),
             ),
             CheckboxListTile(
@@ -236,7 +277,7 @@ class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
                       builder: (BuildContext buildContext) {
                         return TextFieldAlertDialog(
                           title: 'MQTT Broker',
-                          initialValue: settingsService.mqttBroker!,
+                          initialValue: settingsService.mqttBroker,
                           onSubmitted: (value) {
                             setState(() {
                               settingsService.mqttBroker = value;
@@ -263,7 +304,7 @@ class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
                       builder: (BuildContext buildContext) {
                         return TextFieldAlertDialog(
                           title: 'MQTT Topic',
-                          initialValue: settingsService.mqttTopic!,
+                          initialValue: settingsService.mqttTopic,
                           onSubmitted: (value) {
                             setState(() {
                               settingsService.mqttTopic = value;
@@ -301,7 +342,7 @@ class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
                       builder: (BuildContext buildContext) {
                         return TextFieldAlertDialog(
                           title: 'Kafka Broker',
-                          initialValue: settingsService.kafkaBroker!,
+                          initialValue: settingsService.kafkaBroker,
                           onSubmitted: (value) {
                             setState(() {
                               settingsService.kafkaBroker = value;
@@ -328,7 +369,7 @@ class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
                       builder: (BuildContext buildContext) {
                         return TextFieldAlertDialog(
                           title: 'Kafka Topic',
-                          initialValue: settingsService.kafkaTopic!,
+                          initialValue: settingsService.kafkaTopic,
                           onSubmitted: (value) {
                             setState(() {
                               settingsService.kafkaTopic = value;

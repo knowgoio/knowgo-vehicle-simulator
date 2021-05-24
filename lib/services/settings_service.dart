@@ -12,14 +12,42 @@ class SettingsService {
   // Initial vehicle event setting
   knowgo.Event initEvent = knowgo.Event();
 
-  String? _server;
-  String? get server => _server;
+  // Optional Notification Endpoint
+  String? _notificationEndpoint;
+  String? get notificationEndpoint => _notificationEndpoint;
 
-  set server(String? serverAddress) {
-    if (serverAddress != null) {
-      _server = serverAddress;
+  set notificationEndpoint(String? endpoint) {
+    if (endpoint != null) {
+      _notificationEndpoint = endpoint;
       saveConfig();
     }
+  }
+
+  // Optional KnowGo Car Backend Configuration
+  bool _knowgoEnabled = false;
+  bool get knowgoEnabled => _knowgoEnabled;
+
+  set knowgoEnabled(bool value) {
+    _knowgoEnabled = value;
+    saveConfig();
+  }
+
+  String? _knowgoServer;
+  String? get knowgoServer => _knowgoServer;
+
+  set knowgoServer(String? serverAddress) {
+    if (serverAddress != null) {
+      _knowgoServer = serverAddress;
+      saveConfig();
+    }
+  }
+
+  String? _knowgoApiKey;
+  String? get knowgoApiKey => _knowgoApiKey;
+
+  set knowgoApiKey(String? key) {
+    _knowgoApiKey = key;
+    saveConfig();
   }
 
   // Optional MQTT Configuration
@@ -72,14 +100,6 @@ class SettingsService {
     saveConfig();
   }
 
-  String? _apiKey;
-  String? get apiKey => _apiKey;
-
-  set apiKey(String? key) {
-    _apiKey = key;
-    saveConfig();
-  }
-
   bool _loggingEnabled = false;
   bool get loggingEnabled => _loggingEnabled;
 
@@ -107,16 +127,29 @@ class SettingsService {
     var yamlString = yamlConfig.readAsStringSync();
     var doc = loadYaml(yamlString);
 
-    _loggingEnabled = doc['sessionLogging'];
+    if (doc == null) {
+      return;
+    }
+
+    _configFile = yamlConfig;
+
+    if (doc['sessionLogging'] != null) {
+      _loggingEnabled = doc['sessionLogging'];
+    }
 
     if (doc['eventLogging'] != null) {
       _eventLoggingEnabled = doc['eventLogging'];
     }
 
-    _server = doc['knowgo']['server'];
-    _apiKey = doc['knowgo']['apiKey'];
+    if (doc['notificationUrl'] != null) {
+      _notificationEndpoint = doc['notificationUrl'];
+    }
 
-    _configFile = yamlConfig;
+    if (doc['knowgo'] != null) {
+      _knowgoServer = doc['knowgo']['server'];
+      _knowgoApiKey = doc['knowgo']['apiKey'];
+      _knowgoEnabled = true;
+    }
 
     if (doc['mqtt'] != null) {
       _mqttBroker = doc['mqtt']['broker'];
@@ -146,6 +179,16 @@ class SettingsService {
     data['sessionLogging'] = _loggingEnabled;
     data['eventLogging'] = _eventLoggingEnabled;
 
+    if (_notificationEndpoint != null) {
+      data['notificationUrl'] = _notificationEndpoint;
+    }
+
+    if (_knowgoEnabled == true) {
+      data['knowgo'] = Map<String, dynamic>();
+      data['knowgo']['server'] = _knowgoServer;
+      data['knowgo']['apiKey'] = _knowgoApiKey;
+    }
+
     if (_mqttEnabled == true) {
       data['mqtt'] = Map<String, dynamic>();
       data['mqtt']['broker'] = _mqttBroker;
@@ -158,16 +201,14 @@ class SettingsService {
       data['kafka']['topic'] = _kafkaTopic;
     }
 
-    data['knowgo'] = Map<String, dynamic>();
-    data['knowgo']['server'] = _server;
-    data['knowgo']['apiKey'] = _apiKey;
-
-    data['vehicle'] = Map<String, dynamic>();
-    data['vehicle']['name'] = autoConfig.name;
-    data['vehicle']['odometer'] = autoConfig.odometer;
-    data['vehicle']['driverId'] = autoConfig.driverID;
-    data['vehicle']['autoId'] = autoConfig.autoID;
-    data['vehicle']['licensePlate'] = autoConfig.licensePlate;
+    if (autoConfig.name != null) {
+      data['vehicle'] = Map<String, dynamic>();
+      data['vehicle']['name'] = autoConfig.name;
+      data['vehicle']['odometer'] = autoConfig.odometer;
+      data['vehicle']['driverId'] = autoConfig.driverID;
+      data['vehicle']['autoId'] = autoConfig.autoID;
+      data['vehicle']['licensePlate'] = autoConfig.licensePlate;
+    }
 
     return data;
   }
