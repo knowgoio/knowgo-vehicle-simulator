@@ -31,6 +31,7 @@ nav:
   - webhooks.md
   - API Overview:
     - rest-api.md
+    - rest-api-use.md
   - About:
     - changelog.md
     - license.md
