@@ -12,10 +12,23 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: subosito/flutter-action@v1
-      - uses: pmundt/flutter-gh-pages@v4
-        with:
-          deployTo: gh-pages-demo
-          additionalBuildFlags: --no-sound-null-safety
-          additionalDart2JsFlags: --no-sound-null-safety
-          webWorkerSource: lib/simulator/vehicle_event_worker.dart
-          webWorkerDestination: lib/simulator/vehicle_event_worker.js
+      - run: flutter config --enable-web
+        shell: bash
+      - run: flutter pub get
+        shell: bash
+      - run: flutter build web --release --no-sound-null-safety
+        shell: bash
+      - run: mkdir -p build/web/lib/simulator
+        shell: bash
+      - run: dart2js lib/simulator/vehicle_event_worker.dart -o build/web/lib/simulator/vehicle_event_worker.js
+        shell: bash
+      - run: git config user.name github-actions
+        shell: bash
+      - run: git config user.email github-actions@github.com
+        shell: bash
+      - run: git --work-tree build/web add --all
+        shell: bash
+      - run: git commit -m "Automatic deployment by github-actions"
+        shell: bash
+      - run: git push origin HEAD:gh-pages-demo --force
+        shell: bash
