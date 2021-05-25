@@ -1,6 +1,6 @@
 # ChangeLog
 
-## Latest
+## 1.1.0
 
 - Preparation for null safety (disabled by default, until all dependent
   packages have been migrated - currently blocked by [dart-kafka]).
