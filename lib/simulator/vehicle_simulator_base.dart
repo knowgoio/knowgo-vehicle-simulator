@@ -1,13 +1,13 @@
 import 'dart:async';
 import 'dart:convert';
 // ignore: avoid_web_libraries_in_flutter
-import 'dart:html' if (dart.library.io) '../worker_stub.dart';
+import 'dart:html' if (dart.library.io) '../compat/worker_stub.dart';
 import 'dart:io';
 import 'dart:isolate';
 
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
-import 'package:kafka/kafka.dart';
+import 'package:kafka/kafka.dart' if (dart.library.js) '../compat/kafka_stub.dart';
 import 'package:knowgo/api.dart' as knowgo;
 import 'package:knowgo_vehicle_simulator/services.dart';
 import 'package:knowgo_vehicle_simulator/simulator.dart';

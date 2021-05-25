@@ -175,7 +175,8 @@ class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
                     builder: (BuildContext buildContext) {
                       return TextFieldAlertDialog(
                         title: 'Event Notification Endpoint',
-                        initialValue: settingsService.notificationEndpoint,
+                        initialValue:
+                            settingsService.notificationEndpoint ?? '',
                         onSubmitted: (value) {
                           setState(() {
                             settingsService.notificationEndpoint = value;
@@ -212,7 +213,7 @@ class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
                       builder: (BuildContext buildContext) {
                         return TextFieldAlertDialog(
                           title: 'KnowGo Server',
-                          initialValue: settingsService.knowgoServer,
+                          initialValue: settingsService.knowgoServer ?? '',
                           onSubmitted: (value) {
                             setState(() {
                               settingsService.knowgoServer = value;
@@ -239,7 +240,7 @@ class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
                       builder: (BuildContext buildContext) {
                         return TextFieldAlertDialog(
                           title: 'KnowGo API Key',
-                          initialValue: settingsService.knowgoApiKey,
+                          initialValue: settingsService.knowgoApiKey ?? '',
                           onSubmitted: (value) {
                             setState(() {
                               settingsService.knowgoApiKey = value;
@@ -277,7 +278,7 @@ class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
                       builder: (BuildContext buildContext) {
                         return TextFieldAlertDialog(
                           title: 'MQTT Broker',
-                          initialValue: settingsService.mqttBroker,
+                          initialValue: settingsService.mqttBroker ?? '',
                           onSubmitted: (value) {
                             setState(() {
                               settingsService.mqttBroker = value;
@@ -304,7 +305,7 @@ class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
                       builder: (BuildContext buildContext) {
                         return TextFieldAlertDialog(
                           title: 'MQTT Topic',
-                          initialValue: settingsService.mqttTopic,
+                          initialValue: settingsService.mqttTopic ?? '',
                           onSubmitted: (value) {
                             setState(() {
                               settingsService.mqttTopic = value;
@@ -317,16 +318,20 @@ class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
                 ),
               ),
             ),
-            CheckboxListTile(
-              title: const Text('Kafka Support'),
-              value: settingsService.kafkaEnabled,
-              onChanged: (bool? value) {
-                if (value != null) {
-                  setState(() {
-                    settingsService.kafkaEnabled = value;
-                  });
-                }
-              },
+            Visibility(
+              // TODO: Re-enable for web once kafka support has migrated
+              visible: !kIsWeb,
+              child: CheckboxListTile(
+                title: const Text('Kafka Support'),
+                value: settingsService.kafkaEnabled,
+                onChanged: (bool? value) {
+                  if (value != null) {
+                    setState(() {
+                      settingsService.kafkaEnabled = value;
+                    });
+                  }
+                },
+              ),
             ),
             Visibility(
               visible: settingsService.kafkaEnabled,
@@ -342,7 +347,7 @@ class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
                       builder: (BuildContext buildContext) {
                         return TextFieldAlertDialog(
                           title: 'Kafka Broker',
-                          initialValue: settingsService.kafkaBroker,
+                          initialValue: settingsService.kafkaBroker ?? '',
                           onSubmitted: (value) {
                             setState(() {
                               settingsService.kafkaBroker = value;
@@ -369,7 +374,7 @@ class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
                       builder: (BuildContext buildContext) {
                         return TextFieldAlertDialog(
                           title: 'Kafka Topic',
-                          initialValue: settingsService.kafkaTopic,
+                          initialValue: settingsService.kafkaTopic ?? '',
                           onSubmitted: (value) {
                             setState(() {
                               settingsService.kafkaTopic = value;
