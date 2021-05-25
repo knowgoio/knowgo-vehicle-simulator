@@ -3,6 +3,7 @@ repo_url: https://github.com/knowgoio/knowgo-vehicle-simulator
 repo_name: knowgoio/knowgo-vehicle-simulator
 theme:
   name: material
+  custom_dir: docs/overrides
   logo: images/icon.png
   favicon: images/favicon.png
   palette:
@@ -24,6 +25,9 @@ markdown_extensions:
   - def_list
   - pymdownx.highlight
   - pymdownx.superfences
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
 nav:
   - index.md
   - architecture.md
