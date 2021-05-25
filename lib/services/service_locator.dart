@@ -12,7 +12,8 @@ final serviceLocator = GetIt.instance;
 
 void setupServices() {
   serviceLocator.registerSingletonAsync<SettingsService>(() async {
-    if (kIsWeb) {
+    // TODO: Investigate why this is crashing on the Pixel C tablet
+    if (kIsWeb || Platform.isAndroid) {
       return SettingsService();
     } else {
       final configDir = await getApplicationDocumentsDirectory();
