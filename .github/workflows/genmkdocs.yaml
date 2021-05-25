@@ -1,4 +1,4 @@
-name: ci
+name: Generate MkDocs Documentation
 on:
   push:
     branches:
@@ -12,4 +12,4 @@ jobs:
         with:
           python-version: 3.x
       - run: pip install mkdocs-material mkdocs-render-swagger-plugin
-      - run: mkdocs gh-deploy --force
+      - run: mkdocs gh-deploy -b gh-pages-docs --force
