@@ -64,7 +64,7 @@ msix_config:
   display_name: KnowGo Vehicle Simulator
   publisher_display_name: Adaptant Solutions AG
   identity_name: AdaptantSolutionsAG.KnowGoVehicleSimulator
-  publisher: CN=F98FFF93-A117-4459-8FFE-1761BACA0060, O=Adaptant Solutions AG, L=Berlin, S=Berlin, C=DE
+  publisher: CN=F98FFF93-A117-4459-8FFE-1761BACA0060
   msix_version: 1.0.0.0
   logo_path: web/icons/icon-512.png
   start_menu_icon_path: web/icons/icon-512.png
