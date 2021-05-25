@@ -90,7 +90,7 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "Adaptant Solutions AG" "\0"
-            VALUE "FileDescription", "A multi-platform vehicle simulator for generating KnowGo Car events." "\0"
+            VALUE "FileDescription", "An interactive Connected Car simulator for generating and streaming realistic vehicle telemetry." "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
             VALUE "InternalName", "knowgo_vehicle_simulator" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2020-2021 Adaptant Solutions AG. All rights reserved." "\0"
