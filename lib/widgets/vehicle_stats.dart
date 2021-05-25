@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:knowgo_vehicle_simulator/simulator.dart';
@@ -12,6 +13,8 @@ class VehicleStats extends StatefulWidget {
 }
 
 class _VehicleStatsState extends State<VehicleStats> {
+  var group = AutoSizeGroup();
+
   Widget fuelLevelIndicator(VehicleSimulator vehicleSimulator) {
     if (vehicleSimulator.state.fuelLevel != null) {
       return LinearProgressIndicator(
@@ -45,21 +48,51 @@ class _VehicleStatsState extends State<VehicleStats> {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Text('VIN: ${vehicleSimulator.info.VIN}'),
-          Text(
-              'Odometer: ${vehicleSimulator.state.odometer.toStringAsFixed(2)} km'),
-          Text(
-              'Lat: ${vehicleSimulator.state.latitude.toStringAsPrecision(6)}, Lng: ${vehicleSimulator.state.longitude.toStringAsPrecision(6)}, Heading: ${vehicleSimulator.state.bearing.toInt()}°'),
-          Text('Distance Traveled: ${distanceTraveled.toStringAsFixed(2)} km'),
-          Text(
-              'Vehicle Speed: ${vehicleSimulator.state.vehicleSpeed.toStringAsFixed(2)} km/h'),
-          Text(
-              'Engine Speed: ${vehicleSimulator.state.engineSpeed.toInt()} RPMs'),
-          Spacer(),
-          Text('Fuel Consumed:'),
-          fuelConsumptionIndicator(vehicleSimulator),
-          Text('Fuel Level:'),
-          fuelLevelIndicator(vehicleSimulator),
+          Expanded(
+            child: AutoSizeText(
+              'VIN: ${vehicleSimulator.info.VIN}',
+              group: group,
+            ),
+          ),
+          Expanded(
+            child: AutoSizeText(
+              'Odometer: ${vehicleSimulator.state.odometer.toStringAsFixed(2)} km',
+              group: group,
+            ),
+          ),
+          Expanded(
+            child: AutoSizeText(
+              'Lat: ${vehicleSimulator.state.latitude.toStringAsPrecision(6)}, Lng: ${vehicleSimulator.state.longitude.toStringAsPrecision(6)}, Heading: ${vehicleSimulator.state.bearing.toInt()}°',
+              group: group,
+            ),
+          ),
+          Expanded(
+            child: AutoSizeText(
+              'Distance Traveled: ${distanceTraveled.toStringAsFixed(2)} km',
+              group: group,
+            ),
+          ),
+          Expanded(
+            child: AutoSizeText(
+              'Vehicle Speed: ${vehicleSimulator.state.vehicleSpeed.toStringAsFixed(2)} km/h',
+              group: group,
+            ),
+          ),
+          Expanded(
+            child: AutoSizeText(
+              'Engine Speed: ${vehicleSimulator.state.engineSpeed.toInt()} RPMs',
+              group: group,
+            ),
+          ),
+          Expanded(
+            child: AutoSizeText(
+              'Fuel Consumed:',
+              group: group,
+            ),
+          ),
+          Expanded(child: fuelConsumptionIndicator(vehicleSimulator)),
+          Expanded(child: AutoSizeText('Fuel Level:', group: group)),
+          Expanded(child: fuelLevelIndicator(vehicleSimulator)),
         ],
       );
     }
@@ -70,7 +103,10 @@ class _VehicleStatsState extends State<VehicleStats> {
     var vehicleSimulator = context.watch<VehicleSimulator>();
     return VehicleDataCard(
       title: 'Vehicle Stats',
-      child: generateStatWidgets(vehicleSimulator),
+      child: Container(
+        height: MediaQuery.of(context).size.height,
+        child: generateStatWidgets(vehicleSimulator),
+      ),
     );
   }
 }

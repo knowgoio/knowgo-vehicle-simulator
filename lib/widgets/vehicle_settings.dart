@@ -22,7 +22,7 @@ class _VehicleSettingsState extends State<VehicleSettings> {
   Widget gearShiftButtons(VehicleSimulator vehicleSimulator) {
     return Wrap(
       crossAxisAlignment: WrapCrossAlignment.center,
-      alignment: WrapAlignment.spaceEvenly,
+      alignment: WrapAlignment.spaceBetween,
       children: [
         ElevatedButton.icon(
           onPressed: () async {
@@ -42,6 +42,7 @@ class _VehicleSettingsState extends State<VehicleSettings> {
           icon: Icon(Icons.arrow_upward, color: Colors.white),
           label: Text('Shift up', style: TextStyle(color: Colors.white)),
         ),
+        SizedBox(width: 10),
         ElevatedButton.icon(
           style: ElevatedButton.styleFrom(
             primary: Colors.grey[300],
@@ -186,8 +187,11 @@ class _VehicleSettingsState extends State<VehicleSettings> {
               border: Border.all(color: Theme.of(context).primaryColor),
             ),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Text('Gear Shift'),
+                SizedBox(height: 4),
                 gearShiftButtons(vehicleSimulator),
               ],
             ),
@@ -195,9 +199,9 @@ class _VehicleSettingsState extends State<VehicleSettings> {
           SizedBox(height: 10),
           Wrap(
             alignment: WrapAlignment.spaceEvenly,
+            crossAxisAlignment: WrapCrossAlignment.center,
             spacing: 16.0,
             runSpacing: 4.0,
-            crossAxisAlignment: WrapCrossAlignment.center,
             children: [
               Text('Switches'),
               ToggleButtons(
@@ -246,7 +250,7 @@ class _VehicleSettingsState extends State<VehicleSettings> {
               ),
             ],
           ),
-          SizedBox(height: 4),
+          SizedBox(height: 10),
           SizedBox(
             width: double.infinity,
             child: simulatorButton(vehicleSimulator),
