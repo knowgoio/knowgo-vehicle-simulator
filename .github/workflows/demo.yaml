@@ -1,9 +1,9 @@
-name: Deploy Flutter Web Demo
+name: Deploy Flutter Web Demo and Docs
 
 on:
-  push:
-    branches:
-      - master
+  workflow_run:
+    workflows: ["Generate MkDocs Documentation"]
+    types: [completed]
 
 jobs:
   build:
@@ -26,9 +26,14 @@ jobs:
         shell: bash
       - run: git config user.email github-actions@github.com
         shell: bash
+      - uses: actions/checkout@v2
+        with:
+          repository: knowgoio/knowgo-vehicle-simulator
+          path: build/web/docs
+          ref: gh-pages-docs
       - run: git --work-tree build/web add --all
         shell: bash
       - run: git commit -m "Automatic deployment by github-actions"
         shell: bash
-      - run: git push origin HEAD:gh-pages-demo --force
+      - run: git push origin HEAD:gh-pages --force
         shell: bash
