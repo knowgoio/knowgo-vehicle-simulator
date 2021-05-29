@@ -1,5 +1,10 @@
 # ChangeLog
 
+## 1.1.1
+
+- Split event updates into sub-topics nested under the vehicle ID when
+  publishing to MQTT.
+
 ## 1.1.0
 
 - Preparation for null safety (disabled by default, until all dependent

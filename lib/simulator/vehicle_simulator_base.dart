@@ -7,7 +7,8 @@ import 'dart:isolate';
 
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
-import 'package:kafka/kafka.dart' if (dart.library.js) '../compat/kafka_stub.dart';
+import 'package:kafka/kafka.dart'
+    if (dart.library.js) '../compat/kafka_stub.dart';
 import 'package:knowgo/api.dart' as knowgo;
 import 'package:knowgo_vehicle_simulator/services.dart';
 import 'package:knowgo_vehicle_simulator/simulator.dart';
@@ -177,11 +178,20 @@ class VehicleSimulator extends ChangeNotifier {
 
     // Dispatch event to MQTT broker asynchronously
     if (mqttClient != null) {
-      final builder = MqttClientPayloadBuilder();
-      builder.addString(update.toJson().toString());
-      mqttClient?.publishMessage(
-          _settingsService.mqttTopic, MqttQos.exactlyOnce, builder.payload,
-          retain: false);
+      update.toJson().forEach((key, value) {
+        // Skip creating ID sub-topics
+        if (key == 'EventID' || key == 'AutoID') {
+          return;
+        }
+
+        final builder = MqttClientPayloadBuilder();
+        builder.addString(value.toString());
+        mqttClient?.publishMessage(
+            _settingsService.mqttTopic! + '/vehicle${update.autoID}/$key',
+            MqttQos.exactlyOnce,
+            builder.payload,
+            retain: false);
+      });
     }
 
     // Dispatch event to Kafka topic asynchronously
