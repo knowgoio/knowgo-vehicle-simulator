@@ -403,7 +403,7 @@ class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
                   color: Theme.of(context).primaryColor,
                 ),
                 applicationName: 'KnowGo Vehicle Simulator',
-                applicationVersion: '1.0.0',
+                applicationVersion: '1.1.0',
                 applicationLegalese: '© 2020-2021 Adaptant Solutions AG',
               );
             },
