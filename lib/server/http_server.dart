@@ -1,9 +1,9 @@
 import 'dart:isolate';
 
+import 'package:knowgo_vehicle_simulator/server/cors_middleware.dart';
 import 'package:knowgo_vehicle_simulator/server/http_simulator_api.dart';
 import 'package:knowgo_vehicle_simulator/simulator.dart';
-import 'package:knowgo_vehicle_simulator/simulator/vehicle_exve_model.dart';
-import 'package:knowgo_vehicle_simulator/simulator/vehicle_notifications.dart';
+import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart' as shelf_io;
 
 Future<void> runHttpServer(SendPort sendPort) async {
@@ -52,8 +52,12 @@ Future<void> runHttpServer(SendPort sendPort) async {
       webhookModel: webhookModel,
     );
 
+    final handler = const Pipeline()
+        .addMiddleware(addCORSHeaders())
+        .addHandler(vehicleSimulatorApi.router);
+
     vehicleSimulator.httpServer =
-        await shelf_io.serve(vehicleSimulatorApi.router, 'localhost', port);
+        await shelf_io.serve(handler, 'localhost', port);
 
     print(
         'Vehicle Simulator listening on ${vehicleSimulator.httpServer!.address.host}:${vehicleSimulator.httpServer!.port}...');
