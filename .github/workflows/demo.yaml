@@ -31,6 +31,8 @@ jobs:
           repository: knowgoio/knowgo-vehicle-simulator
           path: build/web/docs
           ref: gh-pages-docs
+      - run: touch build/web/.nojekyll
+        shell: bash
       - run: git --work-tree build/web add --all
         shell: bash
       - run: git commit -m "Automatic deployment by github-actions"
