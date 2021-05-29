@@ -13,7 +13,7 @@ description: |
 
 confinement: strict
 base: core18
-grade: devel
+grade: stable
 architectures:
   - build-on: amd64
   - build-on: arm64
