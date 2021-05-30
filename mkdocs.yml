@@ -31,7 +31,9 @@ markdown_extensions:
 nav:
   - index.md
   - architecture.md
-  - getting-started.md
+  - Quick Start:
+    - getting-started.md
+    - mqtt.md
   - webhooks.md
   - API Overview:
     - rest-api.md
