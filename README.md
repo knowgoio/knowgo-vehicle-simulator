@@ -3,10 +3,14 @@
 # knowgo-vehicle-simulator
 
 [![Build Status](https://travis-ci.com/knowgoio/knowgo-vehicle-simulator.svg?branch=master)](https://travis-ci.com/knowgoio/knowgo-vehicle-simulator)
+![GitHub issues](https://img.shields.io/github/issues/knowgoio/knowgo-vehicle-simulator)
+![GitHub](https://img.shields.io/github/license/knowgoio/knowgo-vehicle-simulator)
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/knowgoio/knowgo-vehicle-simulator)
 [![knowgo-vehicle-simulator](https://snapcraft.io/knowgo-vehicle-simulator/badge.svg)](https://snapcraft.io/knowgo-vehicle-simulator)
 
 An interactive multi-platform Connected Car simulator for generating
 and streaming realistic vehicle telemetry.
+
 
 ## Overview
 
@@ -26,6 +30,42 @@ as an automotive digital twin. For fleet simulation workloads, multiple
 instances of the simulator may be run in parallel, with each generated
 vehicle being manually joined to a specified fleet.
 
+### Live Demo
+
+A live demonstration of the Simulator is available [here].
+
+[here]: https://knowgoio.github.io/knowgo-vehicle-simulator
+
+### Installation
+
+Installation from a binary release is recommended. Regular releases are
+made to various app stores, please refer to the one appropriate for
+your platform:
+
+[![Get it from the Snap Store](https://snapcraft.io/static/images/badges/en/snap-store-black.svg)](https://snapcraft.io/knowgo-vehicle-simulator)
+<a href='https://www.microsoft.com/store/apps/9N70DBN4ZX3W?cid=storebadge&ocid=badge'><img src='https://developer.microsoft.com/store/badges/images/English_get-it-from-MS.png' alt='Get it from Microsoft' style='width: 182px; height: 56px;'/></a>
+<a href='https://play.google.com/store/apps/details?id=io.knowgo.vehicle.simulator&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src='https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Google_Play_Store_badge_EN.svg/1280px-Google_Play_Store_badge_EN.svg.png' width=190/></a>
+
+Releases can also be obtained directly from [GitHub][releases].
+
+[releases]: https://github.com/knowgoio/knowgo-vehicle-simulator/releases
+
+### Simulator UI
+
+![KnowGo Vehicle Simulator Screenshot](docs/images/simulator.png)
+
+## Documentation
+
+For additional documentation and tutorials, please refer to the [documentation].
+
+[documentation]: https://knowgoio.github.io/knowgo-vehicle-simulator/docs
+
+### Postman Collection for Simulator REST API
+A Postman Collection and pre-configured environment for interacting with the Simulator [REST API] in a local simulation environment is available [here].
+
+[here]: https://github.com/knowgoio/knowgo-postman-collections
+
+## Architecture 
 The Simulator itself consists of several different components:
 - The Vehicle Simulation model
 - An `Event loop` for generating vehicle events, run as either
@@ -56,10 +96,6 @@ target platforms is provided in the table below:
 Flutter Web                       | Other Target Platforms
 :--------------------------------:|:----------------------------------:
 ![Web Worker-driven Simulation Flow](docs/images/overview-web.png) | ![Isolate-driven Simulation Flow](docs/images/overview.png)
-
-## Simulator UI
-
-![KnowGo Vehicle Simulator Screenshot](docs/images/simulator.png)
 
 ## Implementation Status
 
