@@ -43,7 +43,7 @@ made to various app stores, please refer to the one appropriate for
 your platform:
 
 [![Get it from the Snap Store](https://snapcraft.io/static/images/badges/en/snap-store-black.svg)](https://snapcraft.io/knowgo-vehicle-simulator)
-<a href='https://www.microsoft.com/store/apps/9N70DBN4ZX3W?cid=storebadge&ocid=badge'><img src='https://developer.microsoft.com/store/badges/images/English_get-it-from-MS.png' alt='Get it from Microsoft' style='width: 182px; height: 56px;'/></a>
+[<img src="https://developer.microsoft.com/store/badges/images/English_get-it-from-MS.png" alt="Get it from Microsoft" width="182" height=56/>](https://www.microsoft.com/store/apps/9N70DBN4ZX3W?ocid=badge)
 <a href='https://play.google.com/store/apps/details?id=io.knowgo.vehicle.simulator&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src='https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Google_Play_Store_badge_EN.svg/1280px-Google_Play_Store_badge_EN.svg.png' width=190/></a>
 
 Releases can also be obtained directly from [GitHub][releases].
