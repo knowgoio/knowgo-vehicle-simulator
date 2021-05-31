@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:knowgo_vehicle_simulator/icons.dart';
 import 'package:knowgo_vehicle_simulator/server.dart';
 import 'package:knowgo_vehicle_simulator/services.dart';
@@ -99,6 +100,12 @@ class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
   @override
   void initState() {
     super.initState();
+
+    WidgetsFlutterBinding.ensureInitialized();
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeRight,
+      DeviceOrientation.landscapeLeft,
+    ]);
 
     var model = Provider.of<VehicleNotificationModel>(context, listen: false);
     model.addListener(_vehicleNotificationListener);
