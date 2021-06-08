@@ -29,6 +29,7 @@ dependencies:
   shelf_router: ^0.7.4
   http: ^0.12.2
   path_provider: ^1.6.28
+  wearable_communicator: ^0.0.1
   # Kafka is presently holding back null safety
   kafka:
     git:

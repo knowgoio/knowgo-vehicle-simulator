@@ -270,7 +270,7 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
                 object.put("heart_rate", (int) event.values[0]);
                 object.put("timestamp", Instant.now().toString());
                 mqttPublisher.publishMessage(object.toString());
-                new MessageSender("/events", object.toString(), getApplicationContext()).start();
+                new MessageSender("/MessageChannel", object.toString(), getApplicationContext()).start();
             } catch (JSONException e) {
                 Log.e(TAG, "Failed to create JSON object");
             }
@@ -299,7 +299,7 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
             object.put("bearing", bearing);
             object.put("timestamp", Instant.now().toString());
             mqttPublisher.publishMessage(object.toString());
-            new MessageSender("/events", object.toString(), getApplicationContext()).start();
+            new MessageSender("/MessageChannel", object.toString(), getApplicationContext()).start();
         } catch (JSONException e) {
             Log.e(TAG, "Failed to create JSON object");
         }
@@ -369,9 +369,15 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
     public static class Receiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            String onMessageReceived = "I just received a message from the handheld ";
-            Toast.makeText(context, onMessageReceived, Toast.LENGTH_SHORT).show();
-            Log.i(TAG, onMessageReceived);
+            try {
+                String jsonMsg = intent.getStringExtra("message");
+                JSONObject jsonObject = new JSONObject(jsonMsg);
+                String text = jsonObject.getString("text");
+                Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
+                Log.d(TAG, "Received a message from the handheld: " + text);
+            } catch (JSONException e) {
+                Log.e(TAG, "Unable to decode message from handheld");
+            }
         }
     }
 

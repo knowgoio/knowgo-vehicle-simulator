@@ -440,6 +440,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.1.3"
+  wearable_communicator:
+    dependency: "direct main"
+    description:
+      name: wearable_communicator
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.0.1"
   win32:
     dependency: transitive
     description:
