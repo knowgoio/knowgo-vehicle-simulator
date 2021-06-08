@@ -269,7 +269,13 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
                 return;
             }
 
-            mHeartRateMeasurement.setText(String.valueOf((int) event.values[0]));
+            String updatedMeasurement = String.valueOf((int)event.values[0]);
+            if (mHeartRateMeasurement.getText() == updatedMeasurement) {
+                // No change compared to previous reading.
+                return;
+            }
+
+            mHeartRateMeasurement.setText(updatedMeasurement);
 
             try {
                 final JSONObject object = new JSONObject();
