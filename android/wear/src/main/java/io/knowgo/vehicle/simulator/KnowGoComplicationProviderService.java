@@ -1,29 +1,17 @@
-/*
- * Copyright (C) 2017 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package io.knowgo.vehicle.simulator;
 
 import android.app.PendingIntent;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.wearable.complications.ComplicationData;
 import android.support.wearable.complications.ComplicationManager;
 import android.support.wearable.complications.ComplicationProviderService;
 import android.support.wearable.complications.ComplicationText;
+import android.support.wearable.complications.ProviderUpdateRequester;
 import android.util.Log;
+
+import androidx.preference.PreferenceManager;
 
 import java.util.Locale;
 
@@ -31,8 +19,14 @@ import java.util.Locale;
  * Example watch face complication data provider provides a number that can be incremented on tap.
  */
 public class KnowGoComplicationProviderService extends ComplicationProviderService {
+    private static final String TAG = KnowGoComplicationProviderService.class.getSimpleName();
+    private SharedPreferences sharedPreferences;
 
-    private static final String TAG = "ComplicationProvider";
+    @Override
+    public void onCreate() {
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        super.onCreate();
+    }
 
     /*
      * Called when a complication has been activated. The method is for any one-time
@@ -70,15 +64,8 @@ public class KnowGoComplicationProviderService extends ComplicationProviderServi
                         this, thisProvider, complicationId);
 
         // Retrieves your data, in this case, we grab an incrementing number from SharedPrefs.
-        SharedPreferences preferences =
-                getSharedPreferences(
-                        ComplicationTapBroadcastReceiver.COMPLICATION_PROVIDER_PREFERENCES_FILE_KEY,
-                        0);
-        int number =
-                preferences.getInt(
-                        ComplicationTapBroadcastReceiver.getPreferenceKey(
-                                thisProvider, complicationId),
-                        ComplicationTapBroadcastReceiver.MIN_NUMBER);
+        int number = sharedPreferences.getInt("score",
+                ComplicationTapBroadcastReceiver.MIN_NUMBER);
         String numberText = String.format(Locale.getDefault(), "%d", number);
 
         ComplicationData complicationData = null;
@@ -103,7 +90,6 @@ public class KnowGoComplicationProviderService extends ComplicationProviderServi
 
         if (complicationData != null) {
             complicationManager.updateComplicationData(complicationId, complicationData);
-
         } else {
             // If no data is sent, we still need to inform the ComplicationManager, so the update
             // job can finish and the wake lock isn't held any longer than necessary.
@@ -117,5 +103,12 @@ public class KnowGoComplicationProviderService extends ComplicationProviderServi
     @Override
     public void onComplicationDeactivated(int complicationId) {
         Log.d(TAG, "onComplicationDeactivated(): " + complicationId);
+    }
+
+    // Force an update/redraw of the complication when new data has been pushed
+    public static void requestComplicationDataUpdate(Context context) {
+        ComponentName componentName = new ComponentName(context, KnowGoComplicationProviderService.class);
+        ProviderUpdateRequester requester = new ProviderUpdateRequester(context, componentName);
+        requester.requestUpdateAll();
     }
 }

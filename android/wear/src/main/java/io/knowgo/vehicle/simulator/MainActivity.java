@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
@@ -30,6 +31,7 @@ import android.widget.ToggleButton;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.preference.PreferenceManager;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 import androidx.wear.ambient.AmbientModeSupport;
@@ -63,6 +65,8 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
     private LocationManager locationManager;
     private ViewPager2 mPager;
     private MqttPublisher mqttPublisher;
+    SharedPreferences sharedPreferences;
+    SharedPreferences.Editor editor;
     SimpleDateFormat sdf;
 
     private Locale getLocale(Context context) {
@@ -124,6 +128,8 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
         is24HourFormat = android.text.format.DateFormat.is24HourFormat(this);
         if (is24HourFormat)
             datefmt = "HH:mm";
+
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         mIconView = mHomeView.findViewById(R.id.icon);
 
@@ -366,15 +372,31 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
         }
     }
 
-    public static class Receiver extends BroadcastReceiver {
+    public class Receiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
             try {
                 String jsonMsg = intent.getStringExtra("message");
                 JSONObject jsonObject = new JSONObject(jsonMsg);
-                String text = jsonObject.getString("text");
-                Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
-                Log.d(TAG, "Received a message from the handheld: " + text);
+
+                if (jsonObject.has("text")) {
+                    String text = jsonObject.getString("text");
+                    Log.d(TAG, "Received a text notification from the handheld: " + text);
+                    Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
+                }
+
+                if (jsonObject.has("score")) {
+                    int score = jsonObject.getInt("score");
+                    Log.d(TAG, "Received a risk score from the handheld: " + score);
+
+                    // If the message payload contains a risk score, first persist it
+                    editor = sharedPreferences.edit();
+                    editor.putInt("score", score);
+                    editor.apply();
+
+                    // Then notify the complication to redraw
+                    KnowGoComplicationProviderService.requestComplicationDataUpdate(context);
+                }
             } catch (JSONException e) {
                 Log.e(TAG, "Unable to decode message from handheld");
             }
