@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- <color name="ic_launcher_background">#303030</color> -->
+    <color name="ic_launcher_background">@color/white</color>
+    <color name="primary">#7ACE56</color>
+    <color name="knowgo_default_grey">#A6A6A6</color>
+</resources>

@@ -1,0 +1,28 @@
+<resources>
+    <!-- Splashscreen -->
+    <string name="splashscreen">KnowGo Watch Splashscreen</string>
+
+    <!-- Complications -->
+    <string name="complications_service_provider_label">Risk Score</string>
+
+    <!-- Home Page -->
+    <string name="app_name">KnowGo Watch</string>
+    <string name="start_journey">Start a new Journey</string>
+    <string name="stop_journey">Stop the active Journey</string>
+    <string name="icon">Icon</string>
+
+    <!-- Settings Page -->
+    <string name="settings_title">Settings</string>
+    <string name="option_heart_rate_monitoring">Heart Rate</string>
+    <string name="option_watch_gps_telemetry">GPS Telemetry</string>
+
+    <!-- About Page -->
+    <string name="about_title">About</string>
+    <string name="copyright">© 2019–2021 Adaptant Solutions AG</string>
+    <string name="license">Released under the terms of the Apache 2.0 License.</string>
+    <string name="contact_email">info@knowgo.io</string>
+    <string name="mqtt_broker">MQTT Broker</string>
+    <string name="mqtt_topic">MQTT Topic</string>
+    <string name="default_mqtt_broker">tcp://test.mosquitto.org:1883</string>
+    <string name="default_mqtt_topic">knowgo</string>
+</resources>

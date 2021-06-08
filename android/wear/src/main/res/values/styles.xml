@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="ColouredSwitch" parent="Widget.Wear.RoundSwitch">
+        <item name="android:thumbTint">@drawable/switch_selector</item>
+        <item name="android:textColor">@color/primary</item>
+        <item name="android:trackTint">#d7f0cc</item>
+    </style>
+
+    <style name="InputFieldStyle" parent="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="hintTextColor">@color/primary</item>
+        <item name="boxStrokeColor">@color/primary</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+</resources>

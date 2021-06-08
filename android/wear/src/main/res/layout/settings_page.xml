@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.wear.widget.BoxInsetLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/ic_launcher_background"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/inner_frame_layout_padding">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/settings_title"
+        android:layout_gravity="top|center"
+        android:textStyle="bold"
+        android:textColor="@color/primary" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        app:boxedEdges="all">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <Switch
+                android:id="@+id/switchHeartRate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:checked="true"
+                android:text="@string/option_heart_rate_monitoring"
+                style="@style/ColouredSwitch"
+                tools:ignore="UseSwitchCompatOrMaterialXml" />
+
+            <Switch
+                android:id="@+id/switchWatchTelemetry"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:checked="false"
+                android:text="@string/option_watch_gps_telemetry"
+                style="@style/ColouredSwitch"
+                tools:ignore="UseSwitchCompatOrMaterialXml" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_gravity="start"
+                android:gravity="start">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:textColor="@color/primary"
+                    android:textSize="12sp"
+                    android:text="@string/mqtt_broker"/>
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:gravity="start"
+                    android:layout_gravity="start"
+                    style="@style/InputFieldStyle">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/mqttBroker"
+                        android:autoSizeMaxTextSize="12sp"
+                        android:autoSizeMinTextSize="4sp"
+                        android:textSize="8sp"
+                        app:autoSizeTextType="uniform"
+                        android:padding="0dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="20dp"
+                        android:text="@string/default_mqtt_broker"
+                        tools:ignore="SmallSp" />
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_gravity="start"
+                android:gravity="start">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:textColor="@color/primary"
+                    android:textSize="12sp"
+                    android:text="@string/mqtt_topic"/>
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:gravity="start"
+                    android:layout_gravity="start"
+                    style="@style/InputFieldStyle">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/mqttTopic"
+                        android:autoSizeMaxTextSize="12sp"
+                        android:autoSizeMinTextSize="4sp"
+                        android:textSize="8sp"
+                        app:autoSizeTextType="uniform"
+                        android:padding="0dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="20dp"
+                        android:text="@string/default_mqtt_topic"
+                        tools:ignore="SmallSp" />
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+    <ImageView
+        android:id="@+id/icon"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center"
+        android:visibility="visible"
+        android:src="@drawable/ic_settings_icon"
+        android:contentDescription="@string/icon" />
+</androidx.wear.widget.BoxInsetLayout>

@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/boxlayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/ic_launcher_background"
+    android:fillViewport="true"
+    tools:context=".MainActivity"
+    tools:deviceIds="wear">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/inner_frame_layout_padding"
+        tools:ignore="MissingPrefix">
+        <TextView
+            android:id="@+id/date"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_gravity="top|center"
+            android:textAlignment="center"
+            android:textColor="@color/primary"
+            android:text="12:34"
+            android:textStyle="bold"
+            android:visibility="visible"
+            tools:ignore="HardcodedText" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/notice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/start_journey"
+                android:textAlignment="center"
+                android:paddingBottom="10dp"
+                android:textColor="@color/knowgo_default_grey" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:gravity="center">
+
+                <LinearLayout
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <TextView
+                        android:id="@+id/heartRateMeasurement"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="25sp"
+                        android:gravity="center"
+                        android:textColor="@color/knowgo_default_grey" />
+
+                    <ToggleButton
+                        android:id="@+id/heartRateToggleButton"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:backgroundTint="@color/red_a200"
+                        android:background="@drawable/hrm_toggle_selector"
+                        android:enabled="true"
+                        android:checked="true"
+                        android:textOn=""
+                        android:textOff=""
+                        android:textSize="0sp" />
+                </LinearLayout>
+
+                <ToggleButton
+                    android:layout_weight="1"
+                    android:id="@+id/journeyToggleButton"
+                    android:enabled="true"
+                    android:checked="false"
+                    android:background="@drawable/journey_toggle_selector"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:textOff=""
+                    android:textOn=""
+                    android:textSize="0sp"
+                    android:scaleType="fitXY"
+                    android:scaleY="1.5"
+                    android:scaleX="1.5"
+                    android:onClick="onStartStopJourney"
+                    tools:ignore="OnClick" />
+
+                <LinearLayout
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:layout_gravity="center">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="12sp"
+                        android:gravity="center"
+                        android:textColor="@color/knowgo_default_grey" />
+
+                    <ToggleButton
+                        android:id="@+id/gpsToggleButton"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:backgroundTint="@color/btn_colored_background_material"
+                        android:background="@drawable/gps_toggle_selector"
+                        android:enabled="true"
+                        android:checked="false"
+                        android:textOn=""
+                        android:textOff=""
+                        android:textSize="0sp" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+        <ImageButton
+            android:id="@+id/icon"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center"
+            android:visibility="visible"
+            android:background="@color/ic_launcher_background"
+            android:src="@drawable/ic_knowgo_icon"
+            android:contentDescription="@string/icon" />
+    </FrameLayout>
+</ScrollView>

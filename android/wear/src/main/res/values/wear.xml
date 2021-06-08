@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="android_wear_capabilities">
+        <!-- IMPORTANT NOTE: Should be different than capability in App res/values/wear.xml. -->
+        <item>knowgo_watch_wear_app</item>
+    </string-array>
+</resources>
