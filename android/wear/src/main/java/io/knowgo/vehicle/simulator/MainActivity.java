@@ -372,30 +372,48 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
         }
     }
 
+    // Handle text notifications to the Wearable
+    private void handleTextNotification(Context context, JSONObject jsonObject) throws JSONException {
+        String text = jsonObject.getString("text");
+        Log.d(TAG, "Received a text notification from the handheld: " + text);
+        Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
+    }
+
+    // Handle notifications of risk scores to the Wearable
+    private void handleRiskScoreNotification(Context context, JSONObject jsonObject) throws JSONException {
+        int score = jsonObject.getInt("score");
+        Log.d(TAG, "Received a risk score from the handheld: " + score);
+
+        // If the message payload contains a risk score, first persist it
+        editor = sharedPreferences.edit();
+        editor.putInt("score", score);
+        editor.apply();
+
+        // Then notify the complication to redraw
+        KnowGoComplicationProviderService.requestComplicationDataUpdate(context);
+    }
+
+    /*
+     * Handle all messages from the Mobile/Handheld to the Wearable
+     */
     public class Receiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
             try {
+                /*
+                 * All messages are JSON payloads wrapped in an intent bundle by the MessageService.
+                 * Unpack the bundle and briefly look at the JSON payload to determine which
+                 * handlers need to be invoked.
+                 */
                 String jsonMsg = intent.getStringExtra("message");
                 JSONObject jsonObject = new JSONObject(jsonMsg);
 
                 if (jsonObject.has("text")) {
-                    String text = jsonObject.getString("text");
-                    Log.d(TAG, "Received a text notification from the handheld: " + text);
-                    Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
+                    handleTextNotification(context, jsonObject);
                 }
 
                 if (jsonObject.has("score")) {
-                    int score = jsonObject.getInt("score");
-                    Log.d(TAG, "Received a risk score from the handheld: " + score);
-
-                    // If the message payload contains a risk score, first persist it
-                    editor = sharedPreferences.edit();
-                    editor.putInt("score", score);
-                    editor.apply();
-
-                    // Then notify the complication to redraw
-                    KnowGoComplicationProviderService.requestComplicationDataUpdate(context);
+                    handleRiskScoreNotification(context, jsonObject);
                 }
             } catch (JSONException e) {
                 Log.e(TAG, "Unable to decode message from handheld");
