@@ -378,6 +378,18 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
         }
     }
 
+    // Handle start/stop notifications to the Wearable
+    private void handleStartStopNotification(JSONObject jsonObject) throws JSONException {
+        String simulatorState = jsonObject.getString("simulator");
+        if (simulatorState.equals("start")) {
+            onStartJourney();
+        } else if (simulatorState.equals("stop")) {
+            onStopJourney();
+        } else {
+            Log.e(TAG, "Received invalid simulator control message: " + simulatorState);
+        }
+    }
+
     // Handle text notifications to the Wearable
     private void handleTextNotification(Context context, JSONObject jsonObject) throws JSONException {
         String text = jsonObject.getString("text");
@@ -413,6 +425,10 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
                  */
                 String jsonMsg = intent.getStringExtra("message");
                 JSONObject jsonObject = new JSONObject(jsonMsg);
+
+                if (jsonObject.has("simulator")) {
+                    handleStartStopNotification(jsonObject);
+                }
 
                 if (jsonObject.has("text")) {
                     handleTextNotification(context, jsonObject);
