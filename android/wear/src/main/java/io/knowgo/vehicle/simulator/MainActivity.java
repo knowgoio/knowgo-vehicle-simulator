@@ -36,6 +36,12 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 import androidx.wear.ambient.AmbientModeSupport;
 
+import com.google.android.gms.wearable.DataClient;
+import com.google.android.gms.wearable.DataEvent;
+import com.google.android.gms.wearable.DataEventBuffer;
+import com.google.android.gms.wearable.DataItem;
+import com.google.android.gms.wearable.DataMap;
+import com.google.android.gms.wearable.Wearable;
 import com.google.android.material.textfield.TextInputEditText;
 
 import org.json.JSONException;
@@ -46,7 +52,7 @@ import java.time.Instant;
 import java.util.Date;
 import java.util.Locale;
 
-public class MainActivity extends FragmentActivity implements SensorEventListener, LocationListener, AmbientModeSupport.AmbientCallbackProvider {
+public class MainActivity extends FragmentActivity implements SensorEventListener, LocationListener, AmbientModeSupport.AmbientCallbackProvider, DataClient.OnDataChangedListener {
     private static final String TAG = MainActivity.class.getName();
     private Receiver messageReceiver;
     private TextView mNoticeView;
@@ -249,6 +255,7 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
         messageReceiver = new Receiver();
         LocalBroadcastManager.getInstance(this).registerReceiver(messageReceiver, newFilter);
 
+        Wearable.getDataClient(this).addListener(this);
         mSensorManager.registerListener(this, mHeartRateSensor,
                 SensorManager.SENSOR_DELAY_NORMAL);
 
@@ -257,6 +264,7 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
 
     @Override
     protected void onStop() {
+        Wearable.getDataClient(this).removeListener(this);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(messageReceiver);
         mSensorManager.unregisterListener(this);
         super.onStop();
@@ -334,6 +342,26 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
     @Override
     public AmbientModeSupport.AmbientCallback getAmbientCallback() {
         return new MyAmbientCallback();
+    }
+
+    @Override
+    public void onDataChanged(DataEventBuffer dataEventBuffer) {
+        for (DataEvent event : dataEventBuffer) {
+            DataItem item = event.getDataItem();
+            if (event.getType() == DataEvent.TYPE_DELETED) {
+                Log.d(TAG, "DataItem deleted: " + item.getUri());
+            } else if (event.getType() == DataEvent.TYPE_CHANGED) {
+                if (item.getUri().getPath().compareTo("/knowgo/vehicle/info") == 0) {
+                    byte[] rawData = event.getDataItem().getData();
+                    DataMap info = DataMap.fromByteArray(rawData);
+                    Log.i(TAG, "Vehicle Info: " + info.toString());
+                } else if (item.getUri().getPath().compareTo("/knowgo/vehicle/state") == 0) {
+                    byte[] rawData = event.getDataItem().getData();
+                    DataMap state = DataMap.fromByteArray(rawData);
+                    Log.i(TAG, "Vehicle State: " + state.toString());
+                }
+            }
+        }
     }
 
     // Ambient mode callbacks
