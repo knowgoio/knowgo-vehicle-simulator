@@ -46,7 +46,7 @@
 
         <!-- Complications -->
         <service
-            android:name=".complications.KnowGoComplicationProviderService"
+            android:name=".complications.AppLauncherComplicationProviderService"
             android:icon="@drawable/ic_notification_icon"
             android:label="@string/complication_app_launcher"
             android:permission="com.google.android.wearable.permission.BIND_COMPLICATION_PROVIDER">
@@ -93,6 +93,42 @@
             <meta-data
                 android:name="android.support.wearable.complications.SUPPORTED_TYPES"
                 android:value="RANGED_VALUE"/>
+
+            <meta-data
+                android:name="android.support.wearable.complications.UPDATE_PERIOD_SECONDS"
+                android:value="0"/>
+        </service>
+
+        <service
+            android:name=".complications.VehicleControlsComplicationProviderService"
+            android:icon="@drawable/ic_vehicle_controls"
+            android:label="@string/complication_vehicle_controls"
+            android:permission="com.google.android.wearable.permission.BIND_COMPLICATION_PROVIDER">
+            <intent-filter>
+                <action android:name="android.support.wearable.complications.ACTION_COMPLICATION_UPDATE_REQUEST"/>
+            </intent-filter>
+
+            <meta-data
+                android:name="android.support.wearable.complications.SUPPORTED_TYPES"
+                android:value="ICON"/>
+
+            <meta-data
+                android:name="android.support.wearable.complications.UPDATE_PERIOD_SECONDS"
+                android:value="0"/>
+        </service>
+
+        <service
+            android:name=".complications.VehicleLocatorComplicationProviderService"
+            android:icon="@drawable/ic_vehicle_locator"
+            android:label="@string/complication_vehicle_locator"
+            android:permission="com.google.android.wearable.permission.BIND_COMPLICATION_PROVIDER">
+            <intent-filter>
+                <action android:name="android.support.wearable.complications.ACTION_COMPLICATION_UPDATE_REQUEST"/>
+            </intent-filter>
+
+            <meta-data
+                android:name="android.support.wearable.complications.SUPPORTED_TYPES"
+                android:value="ICON"/>
 
             <meta-data
                 android:name="android.support.wearable.complications.UPDATE_PERIOD_SECONDS"

@@ -6,6 +6,8 @@
     <string name="complication_risk_score">Risk Score</string>
     <string name="complication_fuel_level">Fuel Level</string>
     <string name="complication_app_launcher">App Launcher</string>
+    <string name="complication_vehicle_controls">Vehicle Controls</string>
+    <string name="complication_vehicle_locator">Vehicle Locator</string>
 
     <!-- Home Page -->
     <string name="app_name">KnowGo Watch</string>

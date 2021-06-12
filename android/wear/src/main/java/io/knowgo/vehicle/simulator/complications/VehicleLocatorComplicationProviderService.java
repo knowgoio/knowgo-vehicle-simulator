@@ -2,25 +2,18 @@ package io.knowgo.vehicle.simulator.complications;
 
 import android.app.PendingIntent;
 import android.content.ComponentName;
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.drawable.Icon;
 import android.support.wearable.complications.ComplicationData;
 import android.support.wearable.complications.ComplicationManager;
 import android.support.wearable.complications.ComplicationProviderService;
-import android.support.wearable.complications.ComplicationText;
-import android.support.wearable.complications.ProviderUpdateRequester;
 import android.util.Log;
 
 import androidx.annotation.DrawableRes;
-import androidx.preference.PreferenceManager;
-
-import java.util.Locale;
 
 import io.knowgo.vehicle.simulator.R;
 
-public class KnowGoComplicationProviderService extends ComplicationProviderService {
-    private static final String TAG = KnowGoComplicationProviderService.class.getSimpleName();
+public class VehicleLocatorComplicationProviderService extends ComplicationProviderService {
+    private static final String TAG = VehicleLocatorComplicationProviderService.class.getSimpleName();
 
     @Override
     public void onComplicationUpdate(
@@ -32,13 +25,13 @@ public class KnowGoComplicationProviderService extends ComplicationProviderServi
                 ComplicationTapBroadcastReceiver.getToggleIntent(
                         this, thisProvider, complicationId);
         ComplicationData complicationData = null;
-        @DrawableRes int knowgoCarIcon = R.drawable.ic_notification_icon;
+        @DrawableRes int vehicleLocatorIcon = R.drawable.ic_vehicle_locator;
 
         switch (dataType) {
             case ComplicationData.TYPE_ICON:
                 complicationData =
                         new ComplicationData.Builder(ComplicationData.TYPE_ICON)
-                                .setIcon(Icon.createWithResource(this, knowgoCarIcon))
+                                .setIcon(Icon.createWithResource(this, vehicleLocatorIcon))
                                 .setTapAction(complicationPendingIntent)
                                 .build();
                 break;
