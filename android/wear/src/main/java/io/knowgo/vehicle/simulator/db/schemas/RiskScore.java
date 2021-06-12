@@ -16,7 +16,7 @@ public final class RiskScore {
     public static final String SQL_CREATE_ENTRIES =
             "CREATE TABLE " + RiskScoreEntry.TABLE_NAME + " (" +
                     RiskScoreEntry._ID + "INTEGER PRIMARY KEY," +
-                    RiskScoreEntry.COLUMN_NAME_SCORE + " TEXT," +
+                    RiskScoreEntry.COLUMN_NAME_SCORE + " INTEGER," +
                     RiskScoreEntry.COLUMN_NAME_TIMESTAMP + " TEXT," +
                     RiskScoreEntry.COLUMN_NAME_JOURNEYID + " TEXT)";
 

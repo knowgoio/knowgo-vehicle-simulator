@@ -16,7 +16,7 @@ public final class HeartrateMeasurement {
     public static final String SQL_CREATE_ENTRIES =
             "CREATE TABLE " + HeartrateMeasurementEntry.TABLE_NAME + " (" +
                     HeartrateMeasurementEntry._ID + "INTEGER PRIMARY KEY," +
-                    HeartrateMeasurementEntry.COLUMN_NAME_HEART_RATE + " TEXT," +
+                    HeartrateMeasurementEntry.COLUMN_NAME_HEART_RATE + " INTEGER," +
                     HeartrateMeasurementEntry.COLUMN_NAME_TIMESTAMP + " TEXT," +
                     HeartrateMeasurementEntry.COLUMN_NAME_JOURNEYID + " TEXT)";
 
