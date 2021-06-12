@@ -52,6 +52,8 @@ import java.time.Instant;
 import java.util.Date;
 import java.util.Locale;
 
+import io.knowgo.vehicle.simulator.complications.RiskComplicationProviderService;
+
 public class MainActivity extends FragmentActivity implements SensorEventListener, LocationListener, AmbientModeSupport.AmbientCallbackProvider, DataClient.OnDataChangedListener {
     private static final String TAG = MainActivity.class.getName();
     private Receiver messageReceiver;
@@ -436,7 +438,7 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
         editor.apply();
 
         // Then notify the complication to redraw
-        KnowGoComplicationProviderService.requestComplicationDataUpdate(context);
+        RiskComplicationProviderService.requestComplicationDataUpdate(context);
     }
 
     /*

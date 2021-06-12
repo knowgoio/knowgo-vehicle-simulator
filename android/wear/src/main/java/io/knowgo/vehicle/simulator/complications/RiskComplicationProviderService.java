@@ -1,4 +1,4 @@
-package io.knowgo.vehicle.simulator;
+package io.knowgo.vehicle.simulator.complications;
 
 import android.app.PendingIntent;
 import android.content.ComponentName;
@@ -15,11 +15,8 @@ import androidx.preference.PreferenceManager;
 
 import java.util.Locale;
 
-/**
- * Example watch face complication data provider provides a number that can be incremented on tap.
- */
-public class KnowGoComplicationProviderService extends ComplicationProviderService {
-    private static final String TAG = KnowGoComplicationProviderService.class.getSimpleName();
+public class RiskComplicationProviderService extends ComplicationProviderService {
+    private static final String TAG = RiskComplicationProviderService.class.getSimpleName();
     private SharedPreferences sharedPreferences;
 
     @Override
@@ -28,42 +25,16 @@ public class KnowGoComplicationProviderService extends ComplicationProviderServi
         super.onCreate();
     }
 
-    /*
-     * Called when a complication has been activated. The method is for any one-time
-     * (per complication) set-up.
-     *
-     * You can continue sending data for the active complicationId until onComplicationDeactivated()
-     * is called.
-     */
-    @Override
-    public void onComplicationActivated(
-            int complicationId, int dataType, ComplicationManager complicationManager) {
-        Log.d(TAG, "onComplicationActivated(): " + complicationId);
-    }
-
-    /*
-     * Called when the complication needs updated data from your provider. There are four scenarios
-     * when this will happen:
-     *
-     *   1. An active watch face complication is changed to use this provider
-     *   2. A complication using this provider becomes active
-     *   3. The period of time you specified in the manifest has elapsed (UPDATE_PERIOD_SECONDS)
-     *   4. You triggered an update from your own class via the
-     *       ProviderUpdateRequester.requestUpdate() method.
-     */
     @Override
     public void onComplicationUpdate(
             int complicationId, int dataType, ComplicationManager complicationManager) {
         Log.d(TAG, "onComplicationUpdate() id: " + complicationId);
 
-        // Create Tap Action so that the user can trigger an update by tapping the complication.
         ComponentName thisProvider = new ComponentName(this, getClass());
-        // We pass the complication id, so we can only update the specific complication tapped.
         PendingIntent complicationPendingIntent =
                 ComplicationTapBroadcastReceiver.getToggleIntent(
                         this, thisProvider, complicationId);
 
-        // Retrieves your data, in this case, we grab an incrementing number from SharedPrefs.
         int number = sharedPreferences.getInt("score",
                 ComplicationTapBroadcastReceiver.MIN_NUMBER);
         String numberText = String.format(Locale.getDefault(), "%d", number);
@@ -97,17 +68,9 @@ public class KnowGoComplicationProviderService extends ComplicationProviderServi
         }
     }
 
-    /*
-     * Called when the complication has been deactivated.
-     */
-    @Override
-    public void onComplicationDeactivated(int complicationId) {
-        Log.d(TAG, "onComplicationDeactivated(): " + complicationId);
-    }
-
     // Force an update/redraw of the complication when new data has been pushed
     public static void requestComplicationDataUpdate(Context context) {
-        ComponentName componentName = new ComponentName(context, KnowGoComplicationProviderService.class);
+        ComponentName componentName = new ComponentName(context, RiskComplicationProviderService.class);
         ProviderUpdateRequester requester = new ProviderUpdateRequester(context, componentName);
         requester.requestUpdateAll();
     }

@@ -1,4 +1,4 @@
-package io.knowgo.vehicle.simulator;
+package io.knowgo.vehicle.simulator.complications;
 
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;

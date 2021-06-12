@@ -46,7 +46,7 @@
 
         <!-- Complication Data Provider Service -->
         <service
-            android:name=".KnowGoComplicationProviderService"
+            android:name=".complications.RiskComplicationProviderService"
             android:icon="@drawable/ic_notification_icon"
             android:label="@string/complications_service_provider_label"
             android:permission="com.google.android.wearable.permission.BIND_COMPLICATION_PROVIDER">
@@ -64,7 +64,7 @@
 
         </service>
 
-        <receiver android:name=".ComplicationTapBroadcastReceiver"/>
+        <receiver android:name=".complications.ComplicationTapBroadcastReceiver"/>
 
         <!-- Data Layer Messaging Service -->
         <service android:name=".MessageService"
