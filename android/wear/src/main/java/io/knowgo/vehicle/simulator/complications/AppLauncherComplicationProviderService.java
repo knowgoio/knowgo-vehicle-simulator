@@ -23,7 +23,7 @@ public class AppLauncherComplicationProviderService extends ComplicationProvider
         ComponentName thisProvider = new ComponentName(this, getClass());
         PendingIntent complicationPendingIntent =
                 ComplicationTapBroadcastReceiver.getToggleIntent(
-                        this, thisProvider, complicationId, R.layout.about_page);
+                        this, thisProvider, complicationId, 0);
         ComplicationData complicationData = null;
         @DrawableRes int knowgoIcon = R.drawable.ic_knowgo_icon;
 
