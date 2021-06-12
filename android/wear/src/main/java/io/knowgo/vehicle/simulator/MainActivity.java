@@ -54,6 +54,8 @@ import java.util.Locale;
 
 import io.knowgo.vehicle.simulator.complications.RiskComplicationProviderService;
 
+import static io.knowgo.vehicle.simulator.complications.ComplicationTapBroadcastReceiver.EXTRA_PAGER_DESTINATION;
+
 public class MainActivity extends FragmentActivity implements SensorEventListener, LocationListener, AmbientModeSupport.AmbientCallbackProvider, DataClient.OnDataChangedListener {
     private static final String TAG = MainActivity.class.getName();
     private Receiver messageReceiver;
@@ -214,6 +216,11 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
         mPager = findViewById(R.id.pager);
         FragmentStateAdapter pagerAdapter = new ScreenSlidePagerAdapter(this, mHomeView, mSettingsView, mAboutView);
         mPager.setAdapter(pagerAdapter);
+
+        int destinationId = getIntent().getIntExtra(EXTRA_PAGER_DESTINATION, 0);
+        if (destinationId != 0) {
+            mPager.setCurrentItem(destinationId);
+        }
 
         mqttPublisher = new MqttPublisher(getApplicationContext(),
                 mMqttBroker.getText().toString(),

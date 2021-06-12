@@ -23,7 +23,7 @@ public class VehicleLocatorComplicationProviderService extends ComplicationProvi
         ComponentName thisProvider = new ComponentName(this, getClass());
         PendingIntent complicationPendingIntent =
                 ComplicationTapBroadcastReceiver.getToggleIntent(
-                        this, thisProvider, complicationId);
+                        this, thisProvider, complicationId, 0);
         ComplicationData complicationData = null;
         @DrawableRes int vehicleLocatorIcon = R.drawable.ic_vehicle_locator;
 

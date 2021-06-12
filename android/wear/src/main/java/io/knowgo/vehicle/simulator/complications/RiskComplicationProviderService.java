@@ -33,7 +33,7 @@ public class RiskComplicationProviderService extends ComplicationProviderService
         ComponentName thisProvider = new ComponentName(this, getClass());
         PendingIntent complicationPendingIntent =
                 ComplicationTapBroadcastReceiver.getToggleIntent(
-                        this, thisProvider, complicationId);
+                        this, thisProvider, complicationId, 0);
 
         int number = sharedPreferences.getInt("score",
                 ComplicationTapBroadcastReceiver.MIN_NUMBER);
