@@ -3,7 +3,9 @@
     <string name="splashscreen">KnowGo Watch Splashscreen</string>
 
     <!-- Complications -->
-    <string name="complications_service_provider_label">Risk Score</string>
+    <string name="complication_risk_score">Risk Score</string>
+    <string name="complication_fuel_level">Fuel Level</string>
+    <string name="complication_app_launcher">App Launcher</string>
 
     <!-- Home Page -->
     <string name="app_name">KnowGo Watch</string>

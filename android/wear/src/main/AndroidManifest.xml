@@ -44,11 +44,29 @@
             </intent-filter>
         </activity>
 
-        <!-- Complication Data Provider Service -->
+        <!-- Complications -->
+        <service
+            android:name=".complications.KnowGoComplicationProviderService"
+            android:icon="@drawable/ic_notification_icon"
+            android:label="@string/complication_app_launcher"
+            android:permission="com.google.android.wearable.permission.BIND_COMPLICATION_PROVIDER">
+            <intent-filter>
+                <action android:name="android.support.wearable.complications.ACTION_COMPLICATION_UPDATE_REQUEST"/>
+            </intent-filter>
+
+            <meta-data
+                android:name="android.support.wearable.complications.SUPPORTED_TYPES"
+                android:value="ICON"/>
+
+            <meta-data
+                android:name="android.support.wearable.complications.UPDATE_PERIOD_SECONDS"
+                android:value="0"/>
+        </service>
+
         <service
             android:name=".complications.RiskComplicationProviderService"
             android:icon="@drawable/ic_notification_icon"
-            android:label="@string/complications_service_provider_label"
+            android:label="@string/complication_risk_score"
             android:permission="com.google.android.wearable.permission.BIND_COMPLICATION_PROVIDER">
             <intent-filter>
                 <action android:name="android.support.wearable.complications.ACTION_COMPLICATION_UPDATE_REQUEST"/>
@@ -61,7 +79,24 @@
             <meta-data
                 android:name="android.support.wearable.complications.UPDATE_PERIOD_SECONDS"
                 android:value="0"/>
+        </service>
 
+        <service
+            android:name=".complications.FuelLevelComplicationProviderService"
+            android:icon="@drawable/ic_petrol_pump"
+            android:label="@string/complication_fuel_level"
+            android:permission="com.google.android.wearable.permission.BIND_COMPLICATION_PROVIDER">
+            <intent-filter>
+                <action android:name="android.support.wearable.complications.ACTION_COMPLICATION_UPDATE_REQUEST"/>
+            </intent-filter>
+
+            <meta-data
+                android:name="android.support.wearable.complications.SUPPORTED_TYPES"
+                android:value="RANGED_VALUE"/>
+
+            <meta-data
+                android:name="android.support.wearable.complications.UPDATE_PERIOD_SECONDS"
+                android:value="0"/>
         </service>
 
         <receiver android:name=".complications.ComplicationTapBroadcastReceiver"/>

@@ -6,6 +6,8 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 
+import io.knowgo.vehicle.simulator.MainActivity;
+
 public class ComplicationTapBroadcastReceiver extends BroadcastReceiver {
     private static final String EXTRA_PROVIDER_COMPONENT =
             "io.knowgo.vehicle.simulator.provider.action.PROVIDER_COMPONENT";
