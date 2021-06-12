@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import io.knowgo.vehicle.simulator.db.schemas.DriverEvent;
 import io.knowgo.vehicle.simulator.db.schemas.HeartrateMeasurement;
+import io.knowgo.vehicle.simulator.db.schemas.LocationMeasurement;
 import io.knowgo.vehicle.simulator.db.schemas.RiskScore;
 
 public class KnowGoDbHelper extends SQLiteOpenHelper {
@@ -21,6 +22,7 @@ public class KnowGoDbHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(RiskScore.SQL_CREATE_ENTRIES);
         db.execSQL(HeartrateMeasurement.SQL_CREATE_ENTRIES);
+        db.execSQL(LocationMeasurement.SQL_CREATE_ENTRIES);
         db.execSQL(DriverEvent.SQL_CREATE_ENTRIES);
     }
 
@@ -28,6 +30,7 @@ public class KnowGoDbHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL(RiskScore.SQL_DELETE_ENTRIES);
         db.execSQL(HeartrateMeasurement.SQL_DELETE_ENTRIES);
+        db.execSQL(LocationMeasurement.SQL_DELETE_ENTRIES);
         db.execSQL(DriverEvent.SQL_DELETE_ENTRIES);
         onCreate(db);
     }
