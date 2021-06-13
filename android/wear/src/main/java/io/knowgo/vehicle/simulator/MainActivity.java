@@ -3,6 +3,7 @@ package io.knowgo.vehicle.simulator;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -10,6 +11,8 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -49,10 +52,16 @@ import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import io.knowgo.vehicle.simulator.complications.RiskComplicationProviderService;
+import io.knowgo.vehicle.simulator.db.KnowGoDbHelper;
+import io.knowgo.vehicle.simulator.db.schemas.HeartrateMeasurement;
+import io.knowgo.vehicle.simulator.db.schemas.LocationMeasurement;
 
 import static io.knowgo.vehicle.simulator.complications.ComplicationTapBroadcastReceiver.EXTRA_PAGER_DESTINATION;
 
@@ -75,6 +84,8 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
     private LocationManager locationManager;
     private ViewPager2 mPager;
     private MqttPublisher mqttPublisher;
+    private KnowGoDbHelper knowGoDbHelper;
+    private SQLiteDatabase db;
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
     SimpleDateFormat sdf;
@@ -140,6 +151,7 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
             datefmt = "HH:mm";
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        knowGoDbHelper = new KnowGoDbHelper(getApplicationContext());
 
         mIconView = mHomeView.findViewById(R.id.icon);
 
@@ -258,7 +270,15 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
     }
 
     @Override
+    protected void onDestroy() {
+        db.close();
+        super.onDestroy();
+    }
+
+    @Override
     public void onStart() {
+        db = knowGoDbHelper.getWritableDatabase();
+
         // Register local broadcast receiver
         IntentFilter newFilter = new IntentFilter(Intent.ACTION_SEND);
         messageReceiver = new Receiver();
@@ -294,10 +314,20 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
 
             mHeartRateMeasurement.setText(updatedMeasurement);
 
+            final int heart_rate = (int) event.values[0];
+            final String timestamp = Instant.now().toString();
+            ContentValues values = new ContentValues();
+
+            values.put(HeartrateMeasurement.HeartrateMeasurementEntry.COLUMN_NAME_HEART_RATE, heart_rate);
+            values.put(HeartrateMeasurement.HeartrateMeasurementEntry.COLUMN_NAME_TIMESTAMP, timestamp);
+            values.put(HeartrateMeasurement.HeartrateMeasurementEntry.COLUMN_NAME_JOURNEYID, "1");
+
+            db.insert(HeartrateMeasurement.HeartrateMeasurementEntry.TABLE_NAME, null, values);
+
             try {
                 final JSONObject object = new JSONObject();
-                object.put("heart_rate", (int) event.values[0]);
-                object.put("timestamp", Instant.now().toString());
+                object.put("heart_rate", heart_rate);
+                object.put("timestamp", timestamp);
                 mqttPublisher.publishMessage(object.toString());
                 new MessageSender("/MessageChannel", object.toString(), getApplicationContext()).start();
             } catch (JSONException e) {
@@ -318,15 +348,26 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
             return;
         }
 
+        final double longitude = location.getLongitude();
+        final double latitude = location.getLatitude();
+        final float bearing = location.getBearing();
+        final String timestamp = Instant.now().toString();
+        ContentValues values = new ContentValues();
+
+        values.put(LocationMeasurement.LocationMeasurementEntry.COLUMN_NAME_LATITUDE, latitude);
+        values.put(LocationMeasurement.LocationMeasurementEntry.COLUMN_NAME_LONGITUDE, longitude);
+        values.put(LocationMeasurement.LocationMeasurementEntry.COLUMN_NAME_BEARING, bearing);
+        values.put(LocationMeasurement.LocationMeasurementEntry.COLUMN_NAME_TIMESTAMP, timestamp);
+        values.put(LocationMeasurement.LocationMeasurementEntry.COLUMN_NAME_JOURNEYID, "1");
+
+        db.insert(LocationMeasurement.LocationMeasurementEntry.TABLE_NAME, null, values);
+
         try {
-            double longitude = location.getLongitude();
-            double latitude = location.getLatitude();
-            float bearing = location.getBearing();
             final JSONObject object = new JSONObject();
             object.put("longitude", longitude);
             object.put("latitude", latitude);
             object.put("bearing", bearing);
-            object.put("timestamp", Instant.now().toString());
+            object.put("timestamp", timestamp);
             mqttPublisher.publishMessage(object.toString());
             new MessageSender("/MessageChannel", object.toString(), getApplicationContext()).start();
         } catch (JSONException e) {
