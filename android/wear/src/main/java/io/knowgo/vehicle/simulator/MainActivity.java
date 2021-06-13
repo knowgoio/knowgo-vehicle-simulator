@@ -270,12 +270,6 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
     }
 
     @Override
-    protected void onDestroy() {
-        db.close();
-        super.onDestroy();
-    }
-
-    @Override
     public void onStart() {
         db = knowGoDbHelper.getWritableDatabase();
 
@@ -296,6 +290,7 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
         Wearable.getDataClient(this).removeListener(this);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(messageReceiver);
         mSensorManager.unregisterListener(this);
+        db.close();
         super.onStop();
     }
 
