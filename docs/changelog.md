@@ -4,6 +4,7 @@
 
 - Split event updates into sub-topics nested under the vehicle ID when
   publishing to MQTT.
+- Add automation level support and notification webhook
 
 ## 1.1.0
 

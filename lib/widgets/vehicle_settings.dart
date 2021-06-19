@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:knowgo/api.dart' as knowgo;
@@ -16,6 +17,15 @@ class VehicleSettings extends StatefulWidget {
 class _VehicleSettingsState extends State<VehicleSettings> {
   final calculator = VehicleDataCalculator();
   var simulatorRunning = false;
+  static const automationLevelsDesc = [
+    'No driving automation',
+    'Driver assistance',
+    'Partial driving automation',
+    'Conditional driving automation',
+    'High driving automation',
+    'Full driving automation'
+  ];
+
   List<bool> _selections = List.generate(3, (_) => false);
   final _consoleService = serviceLocator<ConsoleService>();
 
@@ -249,6 +259,31 @@ class _VehicleSettingsState extends State<VehicleSettings> {
                 },
               ),
             ],
+          ),
+          SizedBox(height: 10),
+          SizedBox(
+            width: double.infinity,
+            child: DropdownButton(
+              value:
+                  automationLevelsDesc[vehicleSimulator.state.automationLevel]
+                      .toString(),
+              icon: Icon(Icons.arrow_drop_down),
+              items: automationLevelsDesc.map((level) {
+                return DropdownMenuItem<String>(
+                  value: level,
+                  child: AutoSizeText(level.toString()),
+                );
+              }).toList(),
+              onChanged: (String? value) async {
+                if (value != null) {
+                  var update = vehicleSimulator.state;
+                  update.automationLevel = automationLevelsDesc.indexOf(value);
+                  await vehicleSimulator.update(update);
+                  _consoleService.write(
+                      'Setting automation level to ${update.automationLevel}');
+                }
+              },
+            ),
           ),
           SizedBox(height: 10),
           SizedBox(

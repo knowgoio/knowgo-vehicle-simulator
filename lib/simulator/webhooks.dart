@@ -9,6 +9,7 @@ import 'package:uuid/uuid.dart';
 
 enum EventTrigger {
   none,
+  automation_level_changed,
   journey_begin,
   journey_end,
   ignition_changed,
@@ -19,6 +20,8 @@ enum EventTrigger {
 
 EventTrigger eventTriggerStringToEnum(String eventTrigger) {
   switch (eventTrigger) {
+    case 'automation_level_changed':
+      return EventTrigger.automation_level_changed;
     case 'journey_begin':
       return EventTrigger.journey_begin;
     case 'journey_end':
@@ -196,11 +199,32 @@ class WebhookModel extends ChangeNotifier {
     });
   }
 
+  void _processAutomationLevelChange(knowgo.Auto info, knowgo.Event event) {
+    var subscribers = _subscriptions.where((subscription) =>
+        subscription.triggers.contains(EventTrigger.automation_level_changed));
+    subscribers.forEach((subscriber) {
+      final url = Uri.parse(subscriber.notificationUrl);
+      Map<String, dynamic> payload = {};
+      Map<String, dynamic> nested = {};
+      nested['vehicleId'] = info.autoID;
+      nested['level'] = event.automationLevel;
+      nested['timestamp'] = event.timestamp.toIso8601String();
+      payload['automation_level_changed'] = nested;
+      http.post(url,
+          headers: {'Content-Type': 'application/json'},
+          body: json.encode(payload));
+    });
+  }
+
   void processWebhooks(
       knowgo.Auto info, knowgo.Event prevState, knowgo.Event newState) {
     if (prevState.longitude != newState.longitude ||
         prevState.latitude != newState.latitude) {
       _processLocationChange(info, newState);
+    }
+
+    if (prevState.automationLevel != newState.automationLevel) {
+      _processAutomationLevelChange(info, newState);
     }
 
     if (prevState.ignitionStatus != newState.ignitionStatus) {

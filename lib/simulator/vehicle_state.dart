@@ -80,6 +80,7 @@ void initVehicleState(knowgo.Event state) {
   state.acceleratorPedalPosition = 10.0;
   state.brakePedalPosition = 0.0;
   state.bearing = 0;
+  state.automationLevel = 0;
 
   if (initEvent.odometer != null) {
     state.odometer = initEvent.odometer;
@@ -97,6 +98,9 @@ void initVehicleState(knowgo.Event state) {
 void updateVehicleState(knowgo.Event state, knowgo.Event update) {
   if (update.journeyID != null) {
     state.journeyID = update.journeyID;
+  }
+  if (update.automationLevel != null) {
+    state.automationLevel = update.automationLevel;
   }
   if (update.steeringWheelAngle != null) {
     state.steeringWheelAngle = update.steeringWheelAngle;
