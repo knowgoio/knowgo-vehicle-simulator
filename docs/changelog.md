@@ -4,7 +4,11 @@
 
 - Split event updates into sub-topics nested under the vehicle ID when
   publishing to MQTT.
-- Add automation level support and notification webhook
+- Add [SAE J3016] automation level support and notification webhook
+- Add support for vehicle event export direct to CSV (not available on
+  Web).
+
+[SAE J3016]: https://www.sae.org/standards/content/j3016_202104/
 
 ## 1.1.0
 
