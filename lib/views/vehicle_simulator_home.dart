@@ -1,14 +1,14 @@
-import 'dart:io';
+import 'dart:convert';
 
 import 'package:csv/csv.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:knowgo_vehicle_simulator/compat/file_downloader.dart';
 import 'package:knowgo_vehicle_simulator/icons.dart';
 import 'package:knowgo_vehicle_simulator/services.dart';
 import 'package:knowgo_vehicle_simulator/simulator.dart';
 import 'package:knowgo_vehicle_simulator/widgets.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 
 class VehicleSimulatorHome extends StatefulWidget {
@@ -49,29 +49,39 @@ class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
     model.clear();
   }
 
+  String? _generateCsvData() {
+    var vehicleSimulator = context.watch<VehicleSimulator>();
+    if (vehicleSimulator.journey.events.isNotEmpty) {
+      List<List<dynamic>> eventData = [];
+      eventData
+          .add(vehicleSimulator.journey.events.first.toJson().keys.toList());
+      vehicleSimulator.journey.events.forEach((element) {
+        eventData.add(element.toJson().values.toList());
+      });
+      return ListToCsvConverter().convert(eventData);
+    } else {
+      return null;
+    }
+  }
+
   Future<void> _exportEventsToCSV() async {
-    final String directory = (await getApplicationSupportDirectory()).path;
-    final path = "$directory/Simulator-${DateTime.now()}.csv";
+    final fileDownloader = FileDownloader();
+    await fileDownloader.init();
     return showDialog(
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
-        var vehicleSimulator = context.watch<VehicleSimulator>();
-        String msg = 'No Events to export, generate some Events first!';
+        final csvFile = 'Simulator-${DateTime.now()}.csv';
+        final csvData = _generateCsvData();
+        String? path = null;
 
-        if (vehicleSimulator.journey.events.isNotEmpty) {
-          List<List<dynamic>> eventData = [];
-          eventData.add(
-              vehicleSimulator.journey.events.first.toJson().keys.toList());
-          vehicleSimulator.journey.events.forEach((element) {
-            eventData.add(element.toJson().values.toList());
-            msg = 'Events saved to $path';
-            String csvData = ListToCsvConverter().convert(eventData);
-            final File file = File(path);
-            file.writeAsStringSync(csvData);
-          });
+        if (csvData != null) {
+          path = fileDownloader.download(utf8.encode(csvData), csvFile);
         }
 
+        String msg = path == null
+            ? 'No Events to export, generate some Events first!'
+            : 'Events saved to $path';
         return AlertDialog(
           title: Text('CSV Exporter',
               style: TextStyle(color: Theme.of(context).primaryColor)),
@@ -364,13 +374,10 @@ class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
       appBar: AppBar(
         iconTheme: IconThemeData(color: Colors.white),
         actions: [
-          Visibility(
-            visible: !kIsWeb,
-            child: IconButton(
-              icon: Icon(Icons.file_download, color: Colors.white),
-              tooltip: 'Export Vehicle Events to CSV file',
-              onPressed: _exportEventsToCSV,
-            ),
+          IconButton(
+            icon: Icon(Icons.file_download, color: Colors.white),
+            tooltip: 'Export Vehicle Events to CSV file',
+            onPressed: _exportEventsToCSV,
           ),
           IconButton(
             icon: Icon(KnowGoIcons.knowgo, color: Colors.white),
