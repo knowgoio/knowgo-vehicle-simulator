@@ -6,6 +6,7 @@
   publishing to MQTT.
 - Add [SAE J3016] automation level support and notification webhook.
 - Add support for vehicle event export direct to CSV.
+- Fix fuel consumption rate calculation
 
 [SAE J3016]: https://www.sae.org/standards/content/j3016_202104/
 

@@ -86,8 +86,7 @@ class VehicleDataCalculator {
 
   double fuelLevel(knowgo.Auto auto, knowgo.Event state) {
     final capacity = _tankCapacity(auto);
-    return state.fuelLevel *
-        ((capacity - state.fuelConsumedSinceRestart) / capacity);
+    return 100 * ((capacity - state.fuelConsumedSinceRestart) / capacity);
   }
 
   double torque(knowgo.Event state) {
