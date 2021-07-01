@@ -337,6 +337,10 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
     }
 
+    private double lastLongitude = 0.0;
+    private double lastLatitude = 0.0;
+    private float lastBearing = 0;
+
     @Override
     public void onLocationChanged(Location location) {
         if (!mGPSToggleButton.isChecked()) {
@@ -346,6 +350,16 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
         final double longitude = location.getLongitude();
         final double latitude = location.getLatitude();
         final float bearing = location.getBearing();
+
+        // If there are no updates in the position, do not emit an update.
+        if (longitude == lastLongitude && latitude == lastLatitude && bearing == lastBearing) {
+            return;
+        } else {
+            lastBearing = bearing;
+            lastLatitude = latitude;
+            lastLongitude = longitude;
+        }
+
         final String timestamp = Instant.now().toString();
         ContentValues values = new ContentValues();
 
