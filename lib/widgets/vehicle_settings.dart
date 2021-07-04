@@ -79,15 +79,17 @@ class _VehicleSettingsState extends State<VehicleSettings> {
         ),
         onPressed: () async {
           _consoleService.write('Starting vehicle');
-          WearableCommunicator.setData(
-              '/knowgo/vehicle/info', vehicleSimulator.info.toJson());
-          WearableCommunicator.setData(
-              '/knowgo/vehicle/state', vehicleSimulator.state.toJson());
           WearableCommunicator.sendMessage({
             'text': 'starting vehicle',
             'simulator': 'start',
           });
           await vehicleSimulator.start();
+          WearableCommunicator.setData(
+              '/knowgo/vehicle/info', vehicleSimulator.info.toJson());
+          WearableCommunicator.setData(
+              '/knowgo/vehicle/journey', vehicleSimulator.journey.toJson());
+          WearableCommunicator.setData(
+              '/knowgo/vehicle/state', vehicleSimulator.state.toJson());
           setState(() {
             simulatorRunning = true;
           });

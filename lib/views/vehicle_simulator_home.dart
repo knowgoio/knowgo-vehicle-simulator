@@ -6,6 +6,7 @@ import 'package:knowgo_vehicle_simulator/services.dart';
 import 'package:knowgo_vehicle_simulator/simulator.dart';
 import 'package:knowgo_vehicle_simulator/widgets.dart';
 import 'package:provider/provider.dart';
+import 'package:wearable_communicator/wearable_communicator.dart';
 
 class VehicleSimulatorHome extends StatefulWidget {
   VehicleSimulatorHome({Key? key}) : super(key: key);
@@ -29,6 +30,29 @@ class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
 
     var model = Provider.of<VehicleNotificationModel>(context, listen: false);
     model.addListener(_vehicleNotificationListener);
+
+    var vehicleSimulator =
+        Provider.of<VehicleSimulator>(context, listen: false);
+
+    WearableListener.listenForMessage((msg) async {
+      if (msg is Map) {
+        if (msg.containsKey('ignition_status')) {
+          if (msg['ignition_status'] == 'run') {
+            await vehicleSimulator.start();
+          } else {
+            vehicleSimulator.stop();
+          }
+        }
+
+        if (msg.containsKey('notification')) {
+          model.push(VehicleNotification(text: msg['notification']));
+        }
+      }
+    });
+
+    WearableListener.listenForDataLayer((msg) {
+      print('Received DataLayer event: $msg');
+    });
   }
 
   void _vehicleNotificationListener() {

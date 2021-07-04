@@ -11,7 +11,6 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.hardware.Sensor;
@@ -52,10 +51,7 @@ import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
 import io.knowgo.vehicle.simulator.complications.RiskComplicationProviderService;
@@ -414,6 +410,10 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
                     byte[] rawData = event.getDataItem().getData();
                     DataMap info = DataMap.fromByteArray(rawData);
                     Log.i(TAG, "Vehicle Info: " + info.toString());
+                } else if (item.getUri().getPath().compareTo("/knowgo/vehicle/journey") == 0) {
+                    byte[] rawData = event.getDataItem().getData();
+                    DataMap state = DataMap.fromByteArray(rawData);
+                    Log.i(TAG, "Journey: " + state.toString());
                 } else if (item.getUri().getPath().compareTo("/knowgo/vehicle/state") == 0) {
                     byte[] rawData = event.getDataItem().getData();
                     DataMap state = DataMap.fromByteArray(rawData);
@@ -549,10 +549,22 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
     }
 
     public void onStartStopJourney(View view) {
-        if (mStartStopButton.isChecked()) {
-            onStartJourney();
-        } else {
-            onStopJourney();
+        final JSONObject object = new JSONObject();
+
+        try {
+            if (mStartStopButton.isChecked()) {
+                onStartJourney();
+                object.put("notification", "Starting simulation from watch");
+                object.put("ignition_status", "run");
+            } else {
+                onStopJourney();
+                object.put("notification", "Stopping simulation from watch");
+                object.put("ignition_status", "stop");
+            }
+        } catch (JSONException e) {
+            Log.e(TAG, "Unable to encode JSON object");
         }
+
+        new MessageSender("/MessageChannel", object.toString(), getApplicationContext()).start();
     }
 }
