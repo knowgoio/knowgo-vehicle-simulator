@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:knowgo/api.dart';
 import 'package:knowgo_vehicle_simulator/icons.dart';
 import 'package:knowgo_vehicle_simulator/services.dart';
 import 'package:knowgo_vehicle_simulator/simulator.dart';
@@ -37,7 +38,7 @@ class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
     WearableListener.listenForMessage((msg) async {
       if (msg is Map) {
         if (msg.containsKey('ignition_status')) {
-          if (msg['ignition_status'] == 'run') {
+          if (msg['ignition_status'] == describeEnum(IgnitionStatus.run)) {
             await vehicleSimulator.start();
           } else {
             vehicleSimulator.stop();

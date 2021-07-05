@@ -53,6 +53,8 @@ import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Objects;
+import java.util.UUID;
 
 import io.knowgo.vehicle.simulator.complications.RiskComplicationProviderService;
 import io.knowgo.vehicle.simulator.db.KnowGoDbHelper;
@@ -82,6 +84,7 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
     private MqttPublisher mqttPublisher;
     private KnowGoDbHelper knowGoDbHelper;
     private SQLiteDatabase db;
+    private String journeyId;
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
     SimpleDateFormat sdf;
@@ -231,8 +234,8 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
         }
 
         mqttPublisher = new MqttPublisher(getApplicationContext(),
-                mMqttBroker.getText().toString(),
-                mMqttTopic.getText().toString());
+                Objects.requireNonNull(mMqttBroker.getText()).toString(),
+                Objects.requireNonNull(mMqttTopic.getText()).toString());
 
         mMqttBroker.addTextChangedListener(new TextWatcher() {
             @Override
@@ -311,12 +314,13 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
 
             values.put(HeartrateMeasurement.HeartrateMeasurementEntry.COLUMN_NAME_HEART_RATE, heart_rate);
             values.put(HeartrateMeasurement.HeartrateMeasurementEntry.COLUMN_NAME_TIMESTAMP, timestamp);
-            values.put(HeartrateMeasurement.HeartrateMeasurementEntry.COLUMN_NAME_JOURNEYID, "1");
+            values.put(HeartrateMeasurement.HeartrateMeasurementEntry.COLUMN_NAME_JOURNEYID, journeyId);
 
             db.insert(HeartrateMeasurement.HeartrateMeasurementEntry.TABLE_NAME, null, values);
 
             try {
                 final JSONObject object = new JSONObject();
+                object.put("journeyId", journeyId);
                 object.put("heart_rate", heart_rate);
                 object.put("timestamp", timestamp);
                 mqttPublisher.publishMessage(object.toString());
@@ -363,12 +367,13 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
         values.put(LocationMeasurement.LocationMeasurementEntry.COLUMN_NAME_LONGITUDE, longitude);
         values.put(LocationMeasurement.LocationMeasurementEntry.COLUMN_NAME_BEARING, bearing);
         values.put(LocationMeasurement.LocationMeasurementEntry.COLUMN_NAME_TIMESTAMP, timestamp);
-        values.put(LocationMeasurement.LocationMeasurementEntry.COLUMN_NAME_JOURNEYID, "1");
+        values.put(LocationMeasurement.LocationMeasurementEntry.COLUMN_NAME_JOURNEYID, journeyId);
 
         db.insert(LocationMeasurement.LocationMeasurementEntry.TABLE_NAME, null, values);
 
         try {
             final JSONObject object = new JSONObject();
+            object.put("journeyId", journeyId);
             object.put("longitude", longitude);
             object.put("latitude", latitude);
             object.put("bearing", bearing);
@@ -530,10 +535,12 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
         }
     }
 
+    // Check if a journey is in progress
     public boolean isRunning() {
         return mStartStopButton.isChecked();
     }
 
+    // Start a new Journey, either from button click or backend notification
     private void onStartJourney() {
         Log.d(TAG, "Starting journey...");
         mStartStopButton.setChecked(true);
@@ -541,6 +548,7 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
         startLocationUpdates();
     }
 
+    // Stop a Journey, either from button click or backend notification
     private void onStopJourney() {
         Log.d(TAG, "Stopping journey...");
         stopLocationUpdates();
@@ -548,23 +556,30 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
         mStartStopButton.setChecked(false);
     }
 
+    // Handle journey start/stop from button click
     public void onStartStopJourney(View view) {
         final JSONObject object = new JSONObject();
 
         try {
             if (mStartStopButton.isChecked()) {
+                // Generate a new JourneyID
+                journeyId = UUID.randomUUID().toString();
+
                 onStartJourney();
-                object.put("notification", "Starting simulation from watch");
+                object.put("journeyId", journeyId);
                 object.put("ignition_status", "run");
+                object.put("notification", "Starting simulation from watch");
             } else {
                 onStopJourney();
-                object.put("notification", "Stopping simulation from watch");
+                object.put("journeyId", journeyId);
                 object.put("ignition_status", "stop");
+                object.put("notification", "Stopping simulation from watch");
             }
         } catch (JSONException e) {
             Log.e(TAG, "Unable to encode JSON object");
         }
 
+        // Notify app of journey start/stop event
         new MessageSender("/MessageChannel", object.toString(), getApplicationContext()).start();
     }
 }
