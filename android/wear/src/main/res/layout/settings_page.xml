@@ -51,7 +51,7 @@
                     android:textColor="@color/primary"
                     android:textSize="12sp"
                     android:gravity="center"
-                    android:text="Min"/>
+                    android:text="@string/heartrate_min_bpm"/>
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_height="wrap_content"
                     android:layout_width="match_parent"
@@ -69,7 +69,7 @@
                         android:padding="0dp"
                         android:layout_width="50dp"
                         android:layout_height="wrap_content"
-                        android:text="60"
+                        android:text="@string/heartrate_min_default"
                         android:inputType="number"
                         tools:ignore="SmallSp" />
                 </com.google.android.material.textfield.TextInputLayout>
@@ -90,7 +90,7 @@
                     android:textColor="@color/primary"
                     android:textSize="12sp"
                     android:gravity="center"
-                    android:text="Max"/>
+                    android:text="@string/heartrate_max_bpm"/>
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_height="wrap_content"
                     android:layout_width="match_parent"
@@ -108,7 +108,7 @@
                         android:padding="0dp"
                         android:layout_width="50dp"
                         android:layout_height="wrap_content"
-                        android:text="180"
+                        android:text="@string/heartrate_max_default"
                         android:inputType="number"
                         tools:ignore="SmallSp" />
                 </com.google.android.material.textfield.TextInputLayout>
@@ -130,7 +130,7 @@
                 android:layout_height="wrap_content"
                 android:textSize="12sp"
                 android:checked="false"
-                android:text="@string/mqtt_support"
+                android:text="@string/option_mqtt_support"
                 android:onClick="toggleMqttSettings"
                 style="@style/ColouredSwitch"
                 tools:ignore="UseSwitchCompatOrMaterialXml" />

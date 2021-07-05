@@ -17,17 +17,21 @@
 
     <!-- Settings Page -->
     <string name="settings_title">Settings</string>
-    <string name="option_heart_rate_monitoring">Heart Rate</string>
+    <string name="option_heart_rate_monitoring">Heart Rate Monitor</string>
+    <string name="heartrate_min_bpm">Min BPM</string>
+    <string name="heartrate_min_default">60</string>
+    <string name="heartrate_max_bpm">Max BPM</string>
+    <string name="heartrate_max_default">180</string>
     <string name="option_watch_gps_telemetry">GPS Telemetry</string>
+    <string name="option_mqtt_support">MQTT Support</string>
+    <string name="mqtt_broker">MQTT Broker</string>
+    <string name="mqtt_topic">MQTT Topic</string>
+    <string name="default_mqtt_broker">tcp://test.mosquitto.org:1883</string>
+    <string name="default_mqtt_topic">knowgo</string>
 
     <!-- About Page -->
     <string name="about_title">About</string>
     <string name="copyright">© 2019–2021 Adaptant Solutions AG</string>
     <string name="license">Released under the terms of the Apache 2.0 License.</string>
     <string name="contact_email">info@knowgo.io</string>
-    <string name="mqtt_broker">MQTT Broker</string>
-    <string name="mqtt_topic">MQTT Topic</string>
-    <string name="default_mqtt_broker">tcp://test.mosquitto.org:1883</string>
-    <string name="default_mqtt_topic">knowgo</string>
-    <string name="mqtt_support">MQTT Support</string>
 </resources>
