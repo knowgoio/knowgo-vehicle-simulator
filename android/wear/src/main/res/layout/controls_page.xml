@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.wear.widget.BoxInsetLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/ic_launcher_background"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/inner_frame_layout_padding">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/vehicle_name_title"
+            android:layout_gravity="top|center"
+            android:textStyle="bold"
+            android:textColor="@color/primary" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="10dp" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/ignitionStatus"
+                android:visibility="visible"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/ignition_off" />
+            <com.google.android.material.button.MaterialButtonToggleGroup
+                android:visibility="visible"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/ignitionOnButton"
+                    android:visibility="visible"
+                    android:layout_width="wrap_content"
+                    android:layout_height="24dp"
+                    android:onClick="ignitionOn"
+                    app:icon="@drawable/ic_power_on"
+                    app:iconTint="@color/light_grey"
+                    app:strokeColor="@color/primary"
+                    style="@style/Widget.App.Button.OutlinedButton.IconOnly" />
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/ignitionOffButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="24dp"
+                    android:backgroundTint="#d7f0cc"
+                    android:onClick="ignitionOff"
+                    app:icon="@drawable/ic_power_on"
+                    app:iconTint="@color/black"
+                    app:strokeColor="@color/primary"
+                    style="@style/Widget.App.Button.OutlinedButton.IconOnly" />
+            </com.google.android.material.button.MaterialButtonToggleGroup>
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="horizontal"
+        android:gravity="start">
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="vertical"
+            tools:ignore="UselessParent">
+            <TextView
+                android:id="@+id/lockStatus"
+                android:visibility="visible"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/doors_unlocked" />
+            <com.google.android.material.button.MaterialButtonToggleGroup
+                android:visibility="visible"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/doorLockButton"
+                    android:visibility="visible"
+                    android:layout_width="wrap_content"
+                    android:layout_height="24dp"
+                    android:onClick="doorsLock"
+                    app:icon="@drawable/ic_lock_locked"
+                    app:iconTint="@color/light_grey"
+                    app:strokeColor="@color/primary"
+                    style="@style/Widget.App.Button.OutlinedButton.IconOnly" />
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/doorUnlockButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="24dp"
+                    android:backgroundTint="#d7f0cc"
+                    android:onClick="doorsUnlock"
+                    app:icon="@drawable/ic_lock_unlocked"
+                    app:iconTint="@color/black"
+                    app:strokeColor="@color/primary"
+                    style="@style/Widget.App.Button.OutlinedButton.IconOnly" />
+            </com.google.android.material.button.MaterialButtonToggleGroup>
+        </LinearLayout>
+    </LinearLayout>
+    <ImageView
+        android:id="@+id/carIcon"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center"
+        android:visibility="visible"
+            android:src="@drawable/ic_car"
+            android:contentDescription="@string/icon" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="horizontal"
+        android:gravity="end">
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="vertical"
+            tools:ignore="UselessParent">
+            <TextView
+                android:id="@+id/headlampStatus"
+                android:visibility="visible"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/headlamp_off" />
+            <com.google.android.material.button.MaterialButtonToggleGroup
+                android:visibility="visible"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/headlampOnButton"
+                    android:visibility="visible"
+                    android:layout_width="wrap_content"
+                    android:layout_height="24dp"
+                    android:onClick="headlampOn"
+                    app:icon="@drawable/ic_lights_on"
+                    app:iconTint="@color/light_grey"
+                    app:strokeColor="@color/primary"
+                    style="@style/Widget.App.Button.OutlinedButton.IconOnly" />
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/headlampOffButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="24dp"
+                    android:backgroundTint="#d7f0cc"
+                    android:onClick="headlampOff"
+                    app:icon="@drawable/ic_lights_off"
+                    app:iconTint="@color/black"
+                    app:strokeColor="@color/primary"
+                    style="@style/Widget.App.Button.OutlinedButton.IconOnly" />
+            </com.google.android.material.button.MaterialButtonToggleGroup>
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="vertical"
+        android:layout_marginHorizontal="30dp"
+        android:layout_marginTop="50dp">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Fuel Level"/>
+        <ProgressBar
+            style="@android:style/Widget.ProgressBar.Horizontal"
+            android:layout_gravity="start"
+            android:layout_width="match_parent"
+            android:layout_height="10dp"
+            android:progressBackgroundTint="#d7f0cc"
+            android:progressTint="@color/primary"
+            android:progress="25"/>
+    </LinearLayout>
+    <ImageView
+        android:id="@+id/icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center"
+        android:visibility="visible"
+        android:src="@drawable/ic_knowgo_icon"
+        android:contentDescription="@string/icon" />
+</androidx.wear.widget.BoxInsetLayout>

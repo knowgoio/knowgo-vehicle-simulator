@@ -15,6 +15,16 @@
     <string name="stop_journey">Stop the active Journey</string>
     <string name="icon">Icon</string>
 
+    <!-- Controls Page -->
+    <string name="vehicle_controls_title">Controls</string>
+    <string name="vehicle_name_title">My Car</string>
+    <string name="ignition_off">Ignition: off</string>
+    <string name="ignition_on">Ignition: on</string>
+    <string name="doors_locked">Locked</string>
+    <string name="doors_unlocked">Unlocked</string>
+    <string name="headlamp_off">Lights: off</string>
+    <string name="headlamp_on">Lights: on</string>
+
     <!-- Settings Page -->
     <string name="settings_title">Settings</string>
     <string name="option_notifications">Notifications</string>

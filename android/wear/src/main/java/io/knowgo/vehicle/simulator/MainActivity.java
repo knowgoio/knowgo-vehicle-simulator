@@ -47,6 +47,7 @@ import com.google.android.gms.wearable.DataEventBuffer;
 import com.google.android.gms.wearable.DataItem;
 import com.google.android.gms.wearable.DataMap;
 import com.google.android.gms.wearable.Wearable;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 
 import org.json.JSONException;
@@ -76,6 +77,7 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
     private ToggleButton mGPSToggleButton;
     private ImageView mIconView;
     private View mBackground;
+    private View mControlsView;
     private View mSettingsView;
     private int mActiveTextColor;
     private int mHeartRateIconColor;
@@ -153,6 +155,7 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
 
         View mAboutView = getLayoutInflater().inflate(R.layout.about_page, null);
         View mHomeView = getLayoutInflater().inflate(R.layout.activity_main, null);
+        mControlsView = getLayoutInflater().inflate(R.layout.controls_page, null);
         mSettingsView = getLayoutInflater().inflate(R.layout.settings_page, null);
         mActiveTextColor = getResources().getColor(R.color.primary, null);
 
@@ -307,7 +310,7 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
         mHeartRateSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_HEART_RATE);
 
         mPager = findViewById(R.id.pager);
-        FragmentStateAdapter pagerAdapter = new ScreenSlidePagerAdapter(this, mHomeView, mSettingsView, mAboutView);
+        FragmentStateAdapter pagerAdapter = new ScreenSlidePagerAdapter(this, mHomeView, mControlsView, mSettingsView, mAboutView);
         mPager.setAdapter(pagerAdapter);
 
         int destinationId = getIntent().getIntExtra(EXTRA_PAGER_DESTINATION, 0);
@@ -756,5 +759,83 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
         editor = sharedPreferences.edit();
         editor.putBoolean("notifications_enabled", mNotificationsSwitch.isChecked());
         editor.apply();
+    }
+
+    public void ignitionOn(View view) {
+        final TextView ignitionStatus = mControlsView.findViewById(R.id.ignitionStatus);
+        final MaterialButton onButton = mControlsView.findViewById(R.id.ignitionOnButton);
+        final MaterialButton offButton = mControlsView.findViewById(R.id.ignitionOffButton);
+
+        ignitionStatus.setText(R.string.ignition_on);
+
+        onButton.setBackgroundColor(Color.parseColor("#d7f0cc"));
+        onButton.setIconTint(ColorStateList.valueOf(Color.BLACK));
+        offButton.setBackgroundColor(Color.WHITE);
+        offButton.setIconTint(ColorStateList.valueOf(Color.LTGRAY));
+    }
+
+    public void ignitionOff(View view) {
+        final TextView ignitionStatus = mControlsView.findViewById(R.id.ignitionStatus);
+        final MaterialButton onButton = mControlsView.findViewById(R.id.ignitionOnButton);
+        final MaterialButton offButton = mControlsView.findViewById(R.id.ignitionOffButton);
+
+        ignitionStatus.setText(R.string.ignition_off);
+
+        offButton.setBackgroundColor(Color.parseColor("#d7f0cc"));
+        offButton.setIconTint(ColorStateList.valueOf(Color.BLACK));
+        onButton.setBackgroundColor(Color.WHITE);
+        onButton.setIconTint(ColorStateList.valueOf(Color.LTGRAY));
+    }
+
+    public void doorsLock(View view) {
+        final TextView lockStatus = mControlsView.findViewById(R.id.lockStatus);
+        final MaterialButton lockButton = mControlsView.findViewById(R.id.doorLockButton);
+        final MaterialButton unlockButton = mControlsView.findViewById(R.id.doorUnlockButton);
+
+        lockStatus.setText(R.string.doors_locked);
+
+        lockButton.setBackgroundColor(Color.parseColor("#d7f0cc"));
+        lockButton.setIconTint(ColorStateList.valueOf(Color.BLACK));
+        unlockButton.setBackgroundColor(Color.WHITE);
+        unlockButton.setIconTint(ColorStateList.valueOf(Color.LTGRAY));
+    }
+
+    public void doorsUnlock(View view) {
+        final TextView lockStatus = mControlsView.findViewById(R.id.lockStatus);
+        final MaterialButton lockButton = mControlsView.findViewById(R.id.doorLockButton);
+        final MaterialButton unlockButton = mControlsView.findViewById(R.id.doorUnlockButton);
+
+        lockStatus.setText(R.string.doors_unlocked);
+
+        unlockButton.setBackgroundColor(Color.parseColor("#d7f0cc"));
+        unlockButton.setIconTint(ColorStateList.valueOf(Color.BLACK));
+        lockButton.setBackgroundColor(Color.WHITE);
+        lockButton.setIconTint(ColorStateList.valueOf(Color.LTGRAY));
+    }
+
+    public void headlampOn(View view) {
+        final TextView headlampStatus = mControlsView.findViewById(R.id.headlampStatus);
+        final MaterialButton onButton = mControlsView.findViewById(R.id.headlampOnButton);
+        final MaterialButton offButton = mControlsView.findViewById(R.id.headlampOffButton);
+
+        headlampStatus.setText(R.string.headlamp_on);
+
+        onButton.setBackgroundColor(Color.parseColor("#d7f0cc"));
+        onButton.setIconTint(ColorStateList.valueOf(Color.BLACK));
+        offButton.setBackgroundColor(Color.WHITE);
+        offButton.setIconTint(ColorStateList.valueOf(Color.LTGRAY));
+    }
+
+    public void headlampOff(View view) {
+        final TextView headlampStatus = mControlsView.findViewById(R.id.headlampStatus);
+        final MaterialButton onButton = mControlsView.findViewById(R.id.headlampOnButton);
+        final MaterialButton offButton = mControlsView.findViewById(R.id.headlampOffButton);
+
+        headlampStatus.setText(R.string.headlamp_off);
+
+        offButton.setBackgroundColor(Color.parseColor("#d7f0cc"));
+        offButton.setIconTint(ColorStateList.valueOf(Color.BLACK));
+        onButton.setBackgroundColor(Color.WHITE);
+        onButton.setIconTint(ColorStateList.valueOf(Color.LTGRAY));
     }
 }
