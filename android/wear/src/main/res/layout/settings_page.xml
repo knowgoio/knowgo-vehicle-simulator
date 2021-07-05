@@ -34,7 +34,85 @@
                 android:checked="true"
                 android:text="@string/option_heart_rate_monitoring"
                 style="@style/ColouredSwitch"
+                android:onClick="toggleHeartRateSettings"
                 tools:ignore="UseSwitchCompatOrMaterialXml" />
+
+            <LinearLayout
+                android:id="@+id/minHeartRateSetting"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_gravity="center"
+                android:gravity="center">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:textColor="@color/primary"
+                    android:textSize="12sp"
+                    android:gravity="center"
+                    android:text="Min"/>
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:gravity="end"
+                    android:layout_gravity="end"
+                    style="@style/InputFieldStyle">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/minHeartRate"
+                        android:autoSizeMaxTextSize="12sp"
+                        android:autoSizeMinTextSize="4sp"
+                        android:textSize="8sp"
+                        android:textAlignment="center"
+                        app:autoSizeTextType="uniform"
+                        android:padding="0dp"
+                        android:layout_width="50dp"
+                        android:layout_height="wrap_content"
+                        android:text="60"
+                        android:inputType="number"
+                        tools:ignore="SmallSp" />
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/maxHearRateSetting"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:visibility="visible">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:textColor="@color/primary"
+                    android:textSize="12sp"
+                    android:gravity="center"
+                    android:text="Max"/>
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:gravity="end"
+                    android:layout_gravity="end"
+                    style="@style/InputFieldStyle">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/maxHeartRate"
+                        android:autoSizeMaxTextSize="12sp"
+                        android:autoSizeMinTextSize="4sp"
+                        android:textAlignment="center"
+                        android:textSize="8sp"
+                        app:autoSizeTextType="uniform"
+                        android:padding="0dp"
+                        android:layout_width="50dp"
+                        android:layout_height="wrap_content"
+                        android:text="180"
+                        android:inputType="number"
+                        tools:ignore="SmallSp" />
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
 
             <Switch
                 android:id="@+id/switchWatchTelemetry"

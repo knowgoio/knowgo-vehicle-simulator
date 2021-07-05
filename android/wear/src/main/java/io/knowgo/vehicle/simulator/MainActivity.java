@@ -26,6 +26,8 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -63,6 +65,7 @@ import io.knowgo.vehicle.simulator.db.schemas.LocationMeasurement;
 
 import static io.knowgo.vehicle.simulator.complications.ComplicationTapBroadcastReceiver.EXTRA_PAGER_DESTINATION;
 
+@SuppressLint("UseSwitchCompatOrMaterialCode")
 public class MainActivity extends FragmentActivity implements SensorEventListener, LocationListener, AmbientModeSupport.AmbientCallbackProvider, DataClient.OnDataChangedListener {
     private static final String TAG = MainActivity.class.getName();
     private Receiver messageReceiver;
@@ -72,6 +75,7 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
     private ToggleButton mGPSToggleButton;
     private ImageView mIconView;
     private View mBackground;
+    private View mSettingsView;
     private int mActiveTextColor;
     private int mHeartRateIconColor;
     private int mGPSIconColor;
@@ -79,6 +83,7 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
     private SensorManager mSensorManager;
     private TextView dateText;
     private TextView mHeartRateMeasurement;
+    private Switch mHeartRateSwitch;
     private LocationManager locationManager;
     private ViewPager2 mPager;
     private MqttPublisher mqttPublisher;
@@ -139,7 +144,7 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
 
         View mAboutView = getLayoutInflater().inflate(R.layout.about_page, null);
         View mHomeView = getLayoutInflater().inflate(R.layout.activity_main, null);
-        View mSettingsView = getLayoutInflater().inflate(R.layout.settings_page, null);
+        mSettingsView = getLayoutInflater().inflate(R.layout.settings_page, null);
         mActiveTextColor = getResources().getColor(R.color.primary, null);
 
         // Ambient mode support
@@ -186,6 +191,53 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
 
         sdf = new SimpleDateFormat(datefmt, getLocale(this));
         dateText.setText(sdf.format(new Date()));
+
+        mHeartRateSwitch = mSettingsView.findViewById(R.id.switchHeartRate);
+        TextInputEditText mMinHeartRate = mSettingsView.findViewById(R.id.minHeartRate);
+        TextInputEditText mMaxHeartRate = mSettingsView.findViewById(R.id.maxHeartRate);
+
+        if (mHeartRateSwitch.isChecked()) {
+            final int minHeartRate = sharedPreferences.getInt("heartrate_min", Integer.parseInt(Objects.requireNonNull(mMinHeartRate.getText()).toString()));
+            final int maxHeartRate = sharedPreferences.getInt("heartrate_max", Integer.parseInt(Objects.requireNonNull(mMaxHeartRate.getText()).toString()));
+
+            mMinHeartRate.setText(String.valueOf(minHeartRate));
+            mMaxHeartRate.setText(String.valueOf(maxHeartRate));
+        }
+
+        mMinHeartRate.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                editor = sharedPreferences.edit();
+                editor.putInt("heartrate_min", Integer.parseInt(s.toString()));
+                editor.apply();
+            }
+        });
+
+        mMaxHeartRate.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                editor = sharedPreferences.edit();
+                editor.putInt("heartrate_max", Integer.parseInt(s.toString()));
+                editor.apply();
+            }
+        });
 
         TextInputEditText mMqttBroker = mSettingsView.findViewById(R.id.mqttBroker);
         TextInputEditText mMqttTopic = mSettingsView.findViewById(R.id.mqttTopic);
@@ -581,5 +633,18 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
 
         // Notify app of journey start/stop event
         new MessageSender("/MessageChannel", object.toString(), getApplicationContext()).start();
+    }
+
+    public void toggleHeartRateSettings(View view) {
+        final LinearLayout mMinHeartRateSetting = mSettingsView.findViewById(R.id.minHeartRateSetting);
+        final LinearLayout mMaxHeartRateSetting = mSettingsView.findViewById(R.id.maxHearRateSetting);
+
+        if (mHeartRateSwitch.isChecked()) {
+            mMinHeartRateSetting.setVisibility(View.VISIBLE);
+            mMaxHeartRateSetting.setVisibility(View.VISIBLE);
+        } else {
+            mMinHeartRateSetting.setVisibility(View.GONE);
+            mMaxHeartRateSetting.setVisibility(View.GONE);
+        }
     }
 }
