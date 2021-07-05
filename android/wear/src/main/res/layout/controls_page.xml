@@ -192,12 +192,13 @@
             android:progressTint="@color/primary"
             android:progress="100"/>
     </LinearLayout>
-    <ImageView
+    <ImageButton
         android:id="@+id/icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|center"
         android:visibility="visible"
         android:src="@drawable/ic_knowgo_icon"
+        android:onClick="navigateToAboutView"
         android:contentDescription="@string/icon" />
 </androidx.wear.widget.BoxInsetLayout>

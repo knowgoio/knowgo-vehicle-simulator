@@ -178,8 +178,6 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
         fuelLevelBar.setProgress(sharedPreferences.getInt("fuel_level", 100));
 
         mIconView = mHomeView.findViewById(R.id.icon);
-        mIconView.setOnClickListener(v -> mPager.setCurrentItem(R.layout.about_page));
-
         mNoticeView = mHomeView.findViewById(R.id.notice);
         mStartStopButton = mHomeView.findViewById(R.id.journeyToggleButton);
         mHeartRateToggleButton = mHomeView.findViewById(R.id.heartRateToggleButton);
@@ -734,6 +732,10 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
 
         // Notify app of journey start/stop event
         new MessageSender("/MessageChannel", object.toString(), getApplicationContext()).start();
+    }
+
+    public void navigateToAboutView(View view) {
+        mPager.setCurrentItem(R.layout.about_page);
     }
 
     // Collapse/expand the heart rate monitoring settings depending on the switch position
