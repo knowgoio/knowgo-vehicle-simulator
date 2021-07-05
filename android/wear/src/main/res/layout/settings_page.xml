@@ -133,6 +133,7 @@
                 android:textSize="12sp"
                 android:checked="false"
                 android:text="@string/option_watch_gps_telemetry"
+                android:onClick="toggleGPS"
                 style="@style/ColouredSwitch"
                 tools:ignore="UseSwitchCompatOrMaterialXml" />
 

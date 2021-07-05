@@ -87,6 +87,7 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
     private LocationManager locationManager;
     private ViewPager2 mPager;
     private Switch mNotificationsSwitch;
+    private Switch mGPSSwitch;
     private Switch mMqttSettingsSwitch;
     private MqttPublisher mqttPublisher;
     private TextInputEditText mMqttBroker;
@@ -200,6 +201,11 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
         final boolean notificationsOpt = sharedPreferences.getBoolean("notifications_enabled", true);
         mNotificationsSwitch.setChecked(notificationsOpt);
 
+        mGPSSwitch = mSettingsView.findViewById(R.id.switchWatchTelemetry);
+        final boolean gpsOpt = sharedPreferences.getBoolean("gps_enabled", true);
+        mGPSSwitch.setChecked(gpsOpt);
+        toggleGPS(mSettingsView);
+
         mHeartRateSwitch = mSettingsView.findViewById(R.id.switchHeartRate);
         TextInputEditText mMinHeartRate = mSettingsView.findViewById(R.id.minHeartRate);
         TextInputEditText mMaxHeartRate = mSettingsView.findViewById(R.id.maxHeartRate);
@@ -279,10 +285,13 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
 
         if (hasGPS()) {
             Log.i(TAG, "GPS available");
+            mGPSSwitch.setVisibility(View.VISIBLE);
             locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         } else {
             // As GPS is unavailable on this watch, disable the icon completely
             Log.i(TAG, "GPS unavailable");
+            mGPSSwitch.setVisibility(View.GONE);
+            mGPSSwitch.setChecked(false);
             mGPSToggleButton.setChecked(false);
             mGPSToggleButton.setEnabled(false);
             mGPSIconColor = getColor(R.color.knowgo_default_grey);
@@ -711,6 +720,23 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
 
         editor = sharedPreferences.edit();
         editor.putBoolean("mqtt_enabled", mMqttSettingsSwitch.isChecked());
+        editor.apply();
+    }
+
+    // Toggle global GPS telemetry setting
+    public void toggleGPS(View view) {
+        if (mGPSSwitch.isChecked()) {
+            mGPSToggleButton.setChecked(true);
+            mGPSToggleButton.setEnabled(true);
+            mGPSToggleButton.setVisibility(View.VISIBLE);
+        } else {
+            mGPSToggleButton.setChecked(false);
+            mGPSToggleButton.setEnabled(false);
+            mGPSToggleButton.setVisibility(View.INVISIBLE);
+        }
+
+        editor = sharedPreferences.edit();
+        editor.putBoolean("gps_enabled", mGPSSwitch.isChecked());
         editor.apply();
     }
 
