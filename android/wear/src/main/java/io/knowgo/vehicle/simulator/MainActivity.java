@@ -28,6 +28,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -60,6 +61,7 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.UUID;
 
+import io.knowgo.vehicle.simulator.complications.FuelLevelComplicationProviderService;
 import io.knowgo.vehicle.simulator.complications.RiskComplicationProviderService;
 import io.knowgo.vehicle.simulator.db.KnowGoDbHelper;
 import io.knowgo.vehicle.simulator.db.schemas.DriverEvent;
@@ -103,6 +105,7 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
     private final long[] vibrationPattern = {0, 500, 50, 300};
     private final static int VIBRATION_NO_REPEAT = -1;
     private int minHeartRate, maxHeartRate;
+    private ProgressBar fuelLevelBar;
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
     SimpleDateFormat sdf;
@@ -160,6 +163,8 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
         mControlsView = getLayoutInflater().inflate(R.layout.controls_page, null);
         mSettingsView = getLayoutInflater().inflate(R.layout.settings_page, null);
         mActiveTextColor = getResources().getColor(R.color.primary, null);
+
+        fuelLevelBar = mControlsView.findViewById(R.id.fuelLevel);
 
         // Ambient mode support
         AmbientModeSupport.attach(this);
@@ -548,6 +553,21 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
                     byte[] rawData = event.getDataItem().getData();
                     DataMap state = DataMap.fromByteArray(rawData);
                     Log.i(TAG, "Vehicle State: " + state.toString());
+
+                    if (state.containsKey("fuel_level")) {
+                        final double fuel_level = Objects.requireNonNull(state.get("fuel_level"));
+
+                        // Persist last known fuel level
+                        editor = sharedPreferences.edit();
+                        editor.putInt("fuel_level", (int) fuel_level);
+                        editor.apply();
+
+                        // Update the progress bar in the controls view
+                        fuelLevelBar.setProgress((int) fuel_level);
+
+                        // Force complication to redraw
+                        FuelLevelComplicationProviderService.requestComplicationDataUpdate(this);
+                    }
                 }
             }
         }

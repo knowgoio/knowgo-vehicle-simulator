@@ -181,15 +181,16 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Fuel Level"/>
+            android:text="@string/fuel_level"/>
         <ProgressBar
             style="@android:style/Widget.ProgressBar.Horizontal"
+            android:id="@+id/fuelLevel"
             android:layout_gravity="start"
             android:layout_width="match_parent"
             android:layout_height="10dp"
             android:progressBackgroundTint="#d7f0cc"
             android:progressTint="@color/primary"
-            android:progress="25"/>
+            android:progress="100"/>
     </LinearLayout>
     <ImageView
         android:id="@+id/icon"

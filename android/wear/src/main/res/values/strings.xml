@@ -24,6 +24,7 @@
     <string name="doors_unlocked">Unlocked</string>
     <string name="headlamp_off">Lights: off</string>
     <string name="headlamp_on">Lights: on</string>
+    <string name="fuel_level">Fuel Level</string>
 
     <!-- Settings Page -->
     <string name="settings_title">Settings</string>
