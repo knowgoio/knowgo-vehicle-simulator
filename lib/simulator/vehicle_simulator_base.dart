@@ -153,6 +153,11 @@ class VehicleSimulator extends ChangeNotifier {
       journey.journeyBegin = DateTime.now();
       journey.odometerBegin = info.odometer;
       journey.events = [];
+    } else {
+      // For an already initialized journey, update the initial odometer
+      if (journey.odometerBegin == null) {
+        journey.odometerBegin = info.odometer;
+      }
     }
 
     // Add to event list
@@ -262,8 +267,14 @@ class VehicleSimulator extends ChangeNotifier {
     });
   }
 
-  Future<void> start() async {
+  Future<void> start([String? journeyId = null]) async {
     var _settingsService = serviceLocator.get<SettingsService>();
+
+    if (journeyId != null) {
+      journey.journeyID = journeyId;
+      journey.journeyBegin = DateTime.now();
+      journey.events = [];
+    }
 
     // Nothing to do if the simulator is already running
     if (running == true) {
@@ -329,6 +340,11 @@ class VehicleSimulator extends ChangeNotifier {
     } else {
       _stopIsolates();
     }
+
+    // Log the journeyEnd time and final odometer position after the background
+    // threads have finished
+    journey.journeyEnd = DateTime.now();
+    journey.odometerEnd = info.odometer;
   }
 
   Future<void> update(knowgo.Event update) async {

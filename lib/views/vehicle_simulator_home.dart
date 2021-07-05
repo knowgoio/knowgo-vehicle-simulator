@@ -36,10 +36,11 @@ class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
         Provider.of<VehicleSimulator>(context, listen: false);
 
     WearableListener.listenForMessage((msg) async {
+      print('Received MessageClient event: $msg');
       if (msg is Map) {
         if (msg.containsKey('ignition_status')) {
           if (msg['ignition_status'] == describeEnum(IgnitionStatus.run)) {
-            await vehicleSimulator.start();
+            await vehicleSimulator.start(msg['journeyId']);
           } else {
             vehicleSimulator.stop();
           }
