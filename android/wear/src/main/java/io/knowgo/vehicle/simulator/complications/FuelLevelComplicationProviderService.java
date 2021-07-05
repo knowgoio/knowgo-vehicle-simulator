@@ -37,7 +37,7 @@ public class FuelLevelComplicationProviderService extends ComplicationProviderSe
         ComponentName thisProvider = new ComponentName(this, getClass());
         PendingIntent complicationPendingIntent =
                 ComplicationTapBroadcastReceiver.getToggleIntent(
-                        this, thisProvider, complicationId, 1);
+                        this, thisProvider, complicationId, R.layout.controls_page);
 
         int number = sharedPreferences.getInt("fuel_level",
                 ComplicationTapBroadcastReceiver.MAX_NUMBER);
