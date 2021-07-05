@@ -21,6 +21,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -95,6 +96,9 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
     private KnowGoDbHelper knowGoDbHelper;
     private SQLiteDatabase db;
     private String journeyId;
+    private Vibrator vibrator;
+    private final long[] vibrationPattern = {0, 500, 50, 300};
+    private final static int VIBRATION_NO_REPEAT = -1;
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
     SimpleDateFormat sdf;
@@ -200,6 +204,7 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
         mNotificationsSwitch = mSettingsView.findViewById(R.id.switchNotifications);
         final boolean notificationsOpt = sharedPreferences.getBoolean("notifications_enabled", true);
         mNotificationsSwitch.setChecked(notificationsOpt);
+        vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
 
         mGPSSwitch = mSettingsView.findViewById(R.id.switchWatchTelemetry);
         final boolean gpsOpt = sharedPreferences.getBoolean("gps_enabled", true);
@@ -581,6 +586,7 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
         String text = jsonObject.getString("text");
         Log.d(TAG, "Received a text notification from the handheld: " + text);
         if (notificationsEnabled()) {
+            vibrator.vibrate(vibrationPattern, VIBRATION_NO_REPEAT);
             Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
         }
     }
