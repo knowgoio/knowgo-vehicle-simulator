@@ -393,6 +393,11 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
             final String timestamp = Instant.now().toString();
             ContentValues values = new ContentValues();
 
+            // Don't log events if there's no active journey
+            if (heart_rate == 0 || !isRunning()) {
+                return;
+            }
+
             values.put(HeartrateMeasurement.HeartrateMeasurementEntry.COLUMN_NAME_HEART_RATE, heart_rate);
             values.put(HeartrateMeasurement.HeartrateMeasurementEntry.COLUMN_NAME_TIMESTAMP, timestamp);
             values.put(HeartrateMeasurement.HeartrateMeasurementEntry.COLUMN_NAME_JOURNEYID, journeyId);
@@ -428,7 +433,7 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
 
     @Override
     public void onLocationChanged(Location location) {
-        if (!mGPSToggleButton.isChecked()) {
+        if (!mGPSToggleButton.isChecked() || !isRunning()) {
             return;
         }
 
@@ -657,7 +662,7 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
         final JSONObject object = new JSONObject();
 
         try {
-            if (mStartStopButton.isChecked()) {
+            if (isRunning()) {
                 // Generate a new JourneyID
                 journeyId = UUID.randomUUID().toString();
 
