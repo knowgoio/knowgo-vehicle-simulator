@@ -86,7 +86,10 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
     private Switch mHeartRateSwitch;
     private LocationManager locationManager;
     private ViewPager2 mPager;
+    private Switch mMqttSettingsSwitch;
     private MqttPublisher mqttPublisher;
+    private TextInputEditText mMqttBroker;
+    private TextInputEditText mMqttTopic;
     private KnowGoDbHelper knowGoDbHelper;
     private SQLiteDatabase db;
     private String journeyId;
@@ -239,8 +242,16 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
             }
         });
 
-        TextInputEditText mMqttBroker = mSettingsView.findViewById(R.id.mqttBroker);
-        TextInputEditText mMqttTopic = mSettingsView.findViewById(R.id.mqttTopic);
+        mMqttSettingsSwitch = mSettingsView.findViewById(R.id.switchMqttSettings);
+
+        final boolean mqttEnabled = sharedPreferences.getBoolean("mqtt_enabled", mMqttSettingsSwitch.isChecked());
+        mMqttSettingsSwitch.setChecked(mqttEnabled);
+        mMqttBroker = mSettingsView.findViewById(R.id.mqttBroker);
+        mMqttTopic = mSettingsView.findViewById(R.id.mqttTopic);
+
+        if (mqttEnabled) {
+            toggleMqttSettings(mSettingsView);
+        }
 
         // Verify internet permissions, try to obtain at run-time.
         if ((ActivityCompat.checkSelfPermission(this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED) ||
@@ -285,10 +296,6 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
             mPager.setCurrentItem(destinationId);
         }
 
-        mqttPublisher = new MqttPublisher(getApplicationContext(),
-                Objects.requireNonNull(mMqttBroker.getText()).toString(),
-                Objects.requireNonNull(mMqttTopic.getText()).toString());
-
         mMqttBroker.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -300,6 +307,10 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
 
             @Override
             public void afterTextChanged(Editable s) {
+                editor = sharedPreferences.edit();
+                editor.putString("mqtt_broker", s.toString());
+                editor.apply();
+
                 mqttPublisher.setServerUri(s.toString());
             }
         });
@@ -315,6 +326,10 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
 
             @Override
             public void afterTextChanged(Editable s) {
+                editor = sharedPreferences.edit();
+                editor.putString("mqtt_topic", s.toString());
+                editor.apply();
+
                 mqttPublisher.setTopic(s.toString());
             }
         });
@@ -375,7 +390,11 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
                 object.put("journeyId", journeyId);
                 object.put("heart_rate", heart_rate);
                 object.put("timestamp", timestamp);
-                mqttPublisher.publishMessage(object.toString());
+
+                if (mqttPublisher != null) {
+                    mqttPublisher.publishMessage(object.toString());
+                }
+
                 new MessageSender("/MessageChannel", object.toString(), getApplicationContext()).start();
             } catch (JSONException e) {
                 Log.e(TAG, "Failed to create JSON object");
@@ -430,7 +449,11 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
             object.put("latitude", latitude);
             object.put("bearing", bearing);
             object.put("timestamp", timestamp);
-            mqttPublisher.publishMessage(object.toString());
+
+            if (mqttPublisher != null) {
+                mqttPublisher.publishMessage(object.toString());
+            }
+
             new MessageSender("/MessageChannel", object.toString(), getApplicationContext()).start();
         } catch (JSONException e) {
             Log.e(TAG, "Failed to create JSON object");
@@ -635,6 +658,7 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
         new MessageSender("/MessageChannel", object.toString(), getApplicationContext()).start();
     }
 
+    // Collapse/expand the heart rate monitoring settings depending on the switch position
     public void toggleHeartRateSettings(View view) {
         final LinearLayout mMinHeartRateSetting = mSettingsView.findViewById(R.id.minHeartRateSetting);
         final LinearLayout mMaxHeartRateSetting = mSettingsView.findViewById(R.id.maxHearRateSetting);
@@ -646,5 +670,35 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
             mMinHeartRateSetting.setVisibility(View.GONE);
             mMaxHeartRateSetting.setVisibility(View.GONE);
         }
+    }
+
+    // Collapse/expand the MQTT Settings depending on the switch position
+    public void toggleMqttSettings(View view) {
+        final LinearLayout mMqttBrokerSetting = mSettingsView.findViewById(R.id.mqttBrokerSetting);
+        final LinearLayout mMqttTopicSetting = mSettingsView.findViewById(R.id.mqttTopicSetting);
+
+        if (mMqttSettingsSwitch.isChecked()) {
+            final String mqttBroker = sharedPreferences.getString("mqtt_broker", Objects.requireNonNull(mMqttBroker.getText()).toString());
+            final String mqttTopic = sharedPreferences.getString("mqtt_topic", Objects.requireNonNull(mMqttBroker.getText()).toString());
+
+            mqttPublisher = new MqttPublisher(getApplicationContext(), mqttBroker, mqttTopic);
+
+            Log.d(TAG, "Initializing MQTT Publisher at " + mqttBroker + "/" + mqttTopic);
+
+            mMqttBroker.setText(mqttBroker);
+            mMqttTopic.setText(mqttTopic);
+
+            mMqttBrokerSetting.setVisibility(View.VISIBLE);
+            mMqttTopicSetting.setVisibility(View.VISIBLE);
+        } else {
+            mMqttBrokerSetting.setVisibility(View.GONE);
+            mMqttTopicSetting.setVisibility(View.GONE);
+
+            mqttPublisher = null;
+        }
+
+        editor = sharedPreferences.edit();
+        editor.putBoolean("mqtt_enabled", mMqttSettingsSwitch.isChecked());
+        editor.apply();
     }
 }

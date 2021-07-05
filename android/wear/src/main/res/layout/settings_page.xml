@@ -124,11 +124,24 @@
                 style="@style/ColouredSwitch"
                 tools:ignore="UseSwitchCompatOrMaterialXml" />
 
+            <Switch
+                android:id="@+id/switchMqttSettings"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:checked="false"
+                android:text="@string/mqtt_support"
+                android:onClick="toggleMqttSettings"
+                style="@style/ColouredSwitch"
+                tools:ignore="UseSwitchCompatOrMaterialXml" />
+
             <LinearLayout
+                android:id="@+id/mqttBrokerSetting"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:layout_gravity="start"
+                android:visibility="gone"
                 android:gravity="start">
                 <TextView
                     android:layout_width="wrap_content"
@@ -157,10 +170,12 @@
                 </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>
             <LinearLayout
+                android:id="@+id/mqttTopicSetting"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:layout_gravity="start"
+                android:visibility="gone"
                 android:gravity="start">
                 <TextView
                     android:layout_width="wrap_content"

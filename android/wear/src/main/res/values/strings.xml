@@ -29,4 +29,5 @@
     <string name="mqtt_topic">MQTT Topic</string>
     <string name="default_mqtt_broker">tcp://test.mosquitto.org:1883</string>
     <string name="default_mqtt_topic">knowgo</string>
+    <string name="mqtt_support">MQTT Support</string>
 </resources>
