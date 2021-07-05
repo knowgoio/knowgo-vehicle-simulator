@@ -27,6 +27,17 @@
             android:orientation="vertical">
 
             <Switch
+                android:id="@+id/switchNotifications"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:checked="true"
+                android:text="@string/option_notifications"
+                android:onClick="toggleNotifications"
+                style="@style/ColouredSwitch"
+                tools:ignore="UseSwitchCompatOrMaterialXml" />
+
+            <Switch
                 android:id="@+id/switchHeartRate"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -52,6 +63,7 @@
                     android:textSize="12sp"
                     android:gravity="center"
                     android:text="@string/heartrate_min_bpm"/>
+
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_height="wrap_content"
                     android:layout_width="match_parent"

@@ -17,6 +17,7 @@
 
     <!-- Settings Page -->
     <string name="settings_title">Settings</string>
+    <string name="option_notifications">Notifications</string>
     <string name="option_heart_rate_monitoring">Heart Rate Monitor</string>
     <string name="heartrate_min_bpm">Min BPM</string>
     <string name="heartrate_min_default">60</string>

@@ -86,6 +86,7 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
     private Switch mHeartRateSwitch;
     private LocationManager locationManager;
     private ViewPager2 mPager;
+    private Switch mNotificationsSwitch;
     private Switch mMqttSettingsSwitch;
     private MqttPublisher mqttPublisher;
     private TextInputEditText mMqttBroker;
@@ -194,6 +195,10 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
 
         sdf = new SimpleDateFormat(datefmt, getLocale(this));
         dateText.setText(sdf.format(new Date()));
+
+        mNotificationsSwitch = mSettingsView.findViewById(R.id.switchNotifications);
+        final boolean notificationsOpt = sharedPreferences.getBoolean("notifications_enabled", true);
+        mNotificationsSwitch.setChecked(notificationsOpt);
 
         mHeartRateSwitch = mSettingsView.findViewById(R.id.switchHeartRate);
         TextInputEditText mMinHeartRate = mSettingsView.findViewById(R.id.minHeartRate);
@@ -561,7 +566,9 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
     private void handleTextNotification(Context context, JSONObject jsonObject) throws JSONException {
         String text = jsonObject.getString("text");
         Log.d(TAG, "Received a text notification from the handheld: " + text);
-        Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
+        if (notificationsEnabled()) {
+            Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
+        }
     }
 
     // Handle notifications of risk scores to the Wearable
@@ -610,8 +617,13 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
         }
     }
 
+    // Check if notifications are enabled
+    private boolean notificationsEnabled() {
+        return mNotificationsSwitch.isChecked();
+    }
+
     // Check if a journey is in progress
-    public boolean isRunning() {
+    private boolean isRunning() {
         return mStartStopButton.isChecked();
     }
 
@@ -699,6 +711,13 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
 
         editor = sharedPreferences.edit();
         editor.putBoolean("mqtt_enabled", mMqttSettingsSwitch.isChecked());
+        editor.apply();
+    }
+
+    // Toggle notifications
+    public void toggleNotifications(View view) {
+        editor = sharedPreferences.edit();
+        editor.putBoolean("notifications_enabled", mNotificationsSwitch.isChecked());
         editor.apply();
     }
 }
