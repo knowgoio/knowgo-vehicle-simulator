@@ -1,6 +1,7 @@
 package io.knowgo.vehicle.simulator.db;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -16,6 +17,28 @@ public class KnowGoDbHelper extends SQLiteOpenHelper {
 
     public KnowGoDbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+    }
+
+    public boolean columnExists(SQLiteDatabase db, String tableName, String columnName, String value) {
+        String sql = "SELECT EXISTS (SELECT * FROM " + tableName + " WHERE " +
+                columnName + "='" + value + "' LIMIT 1)";
+        Cursor cursor = db.rawQuery(sql, null);
+        cursor.moveToFirst();
+
+        // cursor.getInt(0) is 1 if column with value exists
+        if (cursor.getInt(0) == 1) {
+            cursor.close();
+            return true;
+        } else {
+            cursor.close();
+            return false;
+        }
+    }
+
+    public void incrementCounter(SQLiteDatabase db, String tableName, String updateColumn, String matchColumn, String matchValue) {
+        String sql = "UPDATE " + tableName + " SET " + updateColumn + " = " +
+                updateColumn + " + 1 WHERE " + matchColumn + "='" + matchValue + "'";
+        db.execSQL(sql);
     }
 
     @Override

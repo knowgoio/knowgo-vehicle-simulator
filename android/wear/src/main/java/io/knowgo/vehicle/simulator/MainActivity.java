@@ -62,6 +62,7 @@ import java.util.UUID;
 
 import io.knowgo.vehicle.simulator.complications.RiskComplicationProviderService;
 import io.knowgo.vehicle.simulator.db.KnowGoDbHelper;
+import io.knowgo.vehicle.simulator.db.schemas.DriverEvent;
 import io.knowgo.vehicle.simulator.db.schemas.HeartrateMeasurement;
 import io.knowgo.vehicle.simulator.db.schemas.LocationMeasurement;
 
@@ -101,6 +102,7 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
     private Vibrator vibrator;
     private final long[] vibrationPattern = {0, 500, 50, 300};
     private final static int VIBRATION_NO_REPEAT = -1;
+    private int minHeartRate, maxHeartRate;
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
     SimpleDateFormat sdf;
@@ -219,8 +221,8 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
         TextInputEditText mMaxHeartRate = mSettingsView.findViewById(R.id.maxHeartRate);
 
         if (mHeartRateSwitch.isChecked()) {
-            final int minHeartRate = sharedPreferences.getInt("heartrate_min", Integer.parseInt(Objects.requireNonNull(mMinHeartRate.getText()).toString()));
-            final int maxHeartRate = sharedPreferences.getInt("heartrate_max", Integer.parseInt(Objects.requireNonNull(mMaxHeartRate.getText()).toString()));
+            minHeartRate = sharedPreferences.getInt("heartrate_min", Integer.parseInt(Objects.requireNonNull(mMinHeartRate.getText()).toString()));
+            maxHeartRate = sharedPreferences.getInt("heartrate_max", Integer.parseInt(Objects.requireNonNull(mMaxHeartRate.getText()).toString()));
 
             mMinHeartRate.setText(String.valueOf(minHeartRate));
             mMaxHeartRate.setText(String.valueOf(maxHeartRate));
@@ -240,6 +242,8 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
                 editor = sharedPreferences.edit();
                 editor.putInt("heartrate_min", Integer.parseInt(s.toString()));
                 editor.apply();
+
+                minHeartRate = Integer.parseInt(s.toString());
             }
         });
 
@@ -258,6 +262,8 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
                 editor = sharedPreferences.edit();
                 editor.putInt("heartrate_max", Integer.parseInt(s.toString()));
                 editor.apply();
+
+                maxHeartRate = Integer.parseInt(s.toString());
             }
         });
 
@@ -411,6 +417,23 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
             values.put(HeartrateMeasurement.HeartrateMeasurementEntry.COLUMN_NAME_JOURNEYID, journeyId);
 
             db.insert(HeartrateMeasurement.HeartrateMeasurementEntry.TABLE_NAME, null, values);
+
+            if (heart_rate > maxHeartRate || heart_rate < minHeartRate) {
+                if (knowGoDbHelper.columnExists(db, DriverEvent.DriverEventEntry.TABLE_NAME,
+                        DriverEvent.DriverEventEntry.COLUMN_NAME_JOURNEYID, journeyId)) {
+                    knowGoDbHelper.incrementCounter(db, DriverEvent.DriverEventEntry.TABLE_NAME,
+                            DriverEvent.DriverEventEntry.COLUMN_NAME_HR_THRESHOLD_EXCEEDED,
+                            DriverEvent.DriverEventEntry.COLUMN_NAME_JOURNEYID,
+                            journeyId);
+                } else {
+                    ContentValues driverEventValues = new ContentValues();
+                    driverEventValues.put(DriverEvent.DriverEventEntry.COLUMN_NAME_JOURNEYID, journeyId);
+                    driverEventValues.put(DriverEvent.DriverEventEntry.COLUMN_NAME_HR_THRESHOLD_EXCEEDED, 1);
+                    driverEventValues.put(DriverEvent.DriverEventEntry.COLUMN_NAME_TIMESTAMP, timestamp);
+
+                    db.insert(DriverEvent.DriverEventEntry.TABLE_NAME, null, driverEventValues);
+                }
+            }
 
             try {
                 final JSONObject object = new JSONObject();
