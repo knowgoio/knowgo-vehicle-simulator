@@ -198,6 +198,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|center"
         android:visibility="visible"
+        android:background="@color/ic_launcher_background"
         android:src="@drawable/ic_knowgo_icon"
         android:onClick="navigateToAboutView"
         android:contentDescription="@string/icon" />
