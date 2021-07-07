@@ -19,26 +19,34 @@ public class KnowGoDbHelper extends SQLiteOpenHelper {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
-    public boolean columnExists(SQLiteDatabase db, String tableName, String columnName, String value) {
-        String sql = "SELECT EXISTS (SELECT * FROM " + tableName + " WHERE " +
-                columnName + "='" + value + "' LIMIT 1)";
+    // Sum a specific column matching the selection criteria. Returns the summed total, or -1 if
+    // no entries are matched.
+    public int sumColumn(SQLiteDatabase db, String tableName, String columnName, String matchColumn, String matchValue) {
+        String sql = "SELECT SUM(" + columnName + ") FROM " + tableName + " WHERE " + matchColumn + "='" + matchValue + "'";
         Cursor cursor = db.rawQuery(sql, null);
-        cursor.moveToFirst();
+        int total;
 
-        // cursor.getInt(0) is 1 if column with value exists
-        if (cursor.getInt(0) == 1) {
-            cursor.close();
-            return true;
+        if (cursor.moveToFirst()) {
+            total = cursor.getInt(0);
         } else {
-            cursor.close();
-            return false;
+            total = -1;
         }
+
+        cursor.close();
+        return total;
     }
 
-    public void incrementCounter(SQLiteDatabase db, String tableName, String updateColumn, String matchColumn, String matchValue) {
-        String sql = "UPDATE " + tableName + " SET " + updateColumn + " = " +
-                updateColumn + " + 1 WHERE " + matchColumn + "='" + matchValue + "'";
-        db.execSQL(sql);
+    public int numRows(SQLiteDatabase db, String tableName, String matchColumn, String matchValue) {
+        String sql = "SELECT COUNT (*) FROM " + tableName + " WHERE " + matchColumn + "='" + matchValue + "'";
+        Cursor cursor = db.rawQuery(sql, null);
+        int count = 0;
+
+        if (cursor.moveToFirst()) {
+            count = cursor.getInt(0);
+        }
+
+        cursor.close();
+        return count;
     }
 
     @Override

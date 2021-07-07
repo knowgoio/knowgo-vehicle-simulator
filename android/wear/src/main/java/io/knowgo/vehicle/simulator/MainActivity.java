@@ -55,6 +55,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
+import java.time.Duration;
 import java.time.Instant;
 import java.util.Date;
 import java.util.Locale;
@@ -106,6 +107,8 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
     private final static int VIBRATION_NO_REPEAT = -1;
     private int minHeartRate, maxHeartRate;
     private ProgressBar fuelLevelBar;
+    private Instant journeyBegin;
+    private HeartRateRiskScorer heartRateRiskScorer;
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
     SimpleDateFormat sdf;
@@ -226,6 +229,8 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
         if (mHeartRateSwitch.isChecked()) {
             minHeartRate = sharedPreferences.getInt("heartrate_min", Integer.parseInt(Objects.requireNonNull(mMinHeartRate.getText()).toString()));
             maxHeartRate = sharedPreferences.getInt("heartrate_max", Integer.parseInt(Objects.requireNonNull(mMaxHeartRate.getText()).toString()));
+
+            heartRateRiskScorer = new HeartRateRiskScorer(minHeartRate, maxHeartRate, this);
 
             mMinHeartRate.setText(String.valueOf(minHeartRate));
             mMaxHeartRate.setText(String.valueOf(maxHeartRate));
@@ -428,20 +433,14 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
             db.insert(HeartrateMeasurement.HeartrateMeasurementEntry.TABLE_NAME, null, values);
 
             if (heart_rate > maxHeartRate || heart_rate < minHeartRate) {
-                if (knowGoDbHelper.columnExists(db, DriverEvent.DriverEventEntry.TABLE_NAME,
-                        DriverEvent.DriverEventEntry.COLUMN_NAME_JOURNEYID, journeyId)) {
-                    knowGoDbHelper.incrementCounter(db, DriverEvent.DriverEventEntry.TABLE_NAME,
-                            DriverEvent.DriverEventEntry.COLUMN_NAME_HR_THRESHOLD_EXCEEDED,
-                            DriverEvent.DriverEventEntry.COLUMN_NAME_JOURNEYID,
-                            journeyId);
-                } else {
-                    ContentValues driverEventValues = new ContentValues();
-                    driverEventValues.put(DriverEvent.DriverEventEntry.COLUMN_NAME_JOURNEYID, journeyId);
-                    driverEventValues.put(DriverEvent.DriverEventEntry.COLUMN_NAME_HR_THRESHOLD_EXCEEDED, 1);
-                    driverEventValues.put(DriverEvent.DriverEventEntry.COLUMN_NAME_TIMESTAMP, timestamp);
+                ContentValues driverEventValues = new ContentValues();
 
-                    db.insert(DriverEvent.DriverEventEntry.TABLE_NAME, null, driverEventValues);
-                }
+                driverEventValues.put(DriverEvent.DriverEventEntry.COLUMN_NAME_JOURNEYID, journeyId);
+                driverEventValues.put(DriverEvent.DriverEventEntry.COLUMN_NAME_HR_THRESHOLD_EXCEEDED,
+                        heartRateRiskScorer.calculatePercentageExceeded(heart_rate));
+                driverEventValues.put(DriverEvent.DriverEventEntry.COLUMN_NAME_TIMESTAMP, timestamp);
+
+                db.insert(DriverEvent.DriverEventEntry.TABLE_NAME, null, driverEventValues);
             }
 
             try {
@@ -700,6 +699,7 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
     // Start a new Journey, either from button click or backend notification
     private void onStartJourney() {
         Log.d(TAG, "Starting journey...");
+        journeyBegin = Instant.now();
         mStartStopButton.setChecked(true);
         mNoticeView.setText(getResources().getText(R.string.stop_journey));
         startLocationUpdates();
@@ -711,6 +711,19 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
         stopLocationUpdates();
         mNoticeView.setText(getResources().getText(R.string.start_journey));
         mStartStopButton.setChecked(false);
+
+        Instant journeyEnd = Instant.now();
+        Duration journeyDuration = Duration.between(journeyBegin, journeyEnd);
+        int numHeartRateEvents = knowGoDbHelper.numRows(db, DriverEvent.DriverEventEntry.TABLE_NAME,
+                DriverEvent.DriverEventEntry.COLUMN_NAME_JOURNEYID, journeyId);
+        if (numHeartRateEvents > 0) {
+            float totalExceeded = knowGoDbHelper.sumColumn(db, DriverEvent.DriverEventEntry.TABLE_NAME,
+                    DriverEvent.DriverEventEntry.COLUMN_NAME_HR_THRESHOLD_EXCEEDED,
+                    DriverEvent.DriverEventEntry.COLUMN_NAME_JOURNEYID, journeyId);
+            int averageExceeded = (int) totalExceeded / numHeartRateEvents;
+
+            Log.i(TAG, "Risk Score: " + heartRateRiskScorer.score(numHeartRateEvents, averageExceeded, journeyDuration));
+        }
     }
 
     // Handle journey start/stop from button click
@@ -752,9 +765,13 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
         if (mHeartRateSwitch.isChecked()) {
             mMinHeartRateSetting.setVisibility(View.VISIBLE);
             mMaxHeartRateSetting.setVisibility(View.VISIBLE);
+            if (heartRateRiskScorer == null) {
+                heartRateRiskScorer = new HeartRateRiskScorer(minHeartRate, maxHeartRate, this);
+            }
         } else {
             mMinHeartRateSetting.setVisibility(View.GONE);
             mMaxHeartRateSetting.setVisibility(View.GONE);
+            heartRateRiskScorer = null;
         }
     }
 
