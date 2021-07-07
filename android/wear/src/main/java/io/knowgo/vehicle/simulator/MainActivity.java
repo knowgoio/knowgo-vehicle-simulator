@@ -242,11 +242,14 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
 
             @Override
             public void afterTextChanged(Editable s) {
-                editor = sharedPreferences.edit();
-                editor.putInt("heartrate_min", Integer.parseInt(s.toString()));
-                editor.apply();
+                try {
+                    int newMinValue = Integer.parseInt(s.toString());
+                    editor = sharedPreferences.edit();
+                    editor.putInt("heartrate_min", newMinValue);
+                    editor.apply();
 
-                minHeartRate = Integer.parseInt(s.toString());
+                    minHeartRate = newMinValue;
+                } catch (NumberFormatException ignored) {}
             }
         });
 
@@ -262,11 +265,14 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
 
             @Override
             public void afterTextChanged(Editable s) {
-                editor = sharedPreferences.edit();
-                editor.putInt("heartrate_max", Integer.parseInt(s.toString()));
-                editor.apply();
+                try {
+                    int newMaxValue = Integer.parseInt(s.toString());
+                    editor = sharedPreferences.edit();
+                    editor.putInt("heartrate_max", newMaxValue);
+                    editor.apply();
 
-                maxHeartRate = Integer.parseInt(s.toString());
+                    maxHeartRate = newMaxValue;
+                } catch (NumberFormatException ignored) {}
             }
         });
 
