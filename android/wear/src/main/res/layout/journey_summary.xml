@@ -53,9 +53,60 @@
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center">
+        android:layout_gravity="center"
+        android:layout_marginStart="5dp">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical"
+            tools:ignore="UselessParent">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/primary"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:text="@string/heartrate_min_bpm"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/primary"
+                android:textSize="12sp"
+                android:text="@string/heartrate_min_default"/>
+
+            <Space
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minHeight="4dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/primary"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:text="@string/heartrate_max_bpm"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/primary"
+                android:textSize="12sp"
+                android:text="@string/heartrate_max_default"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="end"
+        android:layout_marginEnd="5dp">
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -68,37 +119,14 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/primary"
                 android:textStyle="bold"
-                android:text="@string/heartrate_min_bpm"/>
-
+                android:textSize="12sp"
+                android:text="@string/heartrate_avg_bpm"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/primary"
-                android:text="@string/heartrate_min_default"/>
-        </LinearLayout>
-
-        <Space
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:minWidth="108dp"/>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="vertical">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/primary"
-                android:textStyle="bold"
-                android:text="@string/heartrate_max_bpm"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/primary"
-                android:text="@string/heartrate_max_default"/>
+                android:textSize="12sp"
+                android:text="@string/heartrate_avg_default"/>
         </LinearLayout>
     </LinearLayout>
 

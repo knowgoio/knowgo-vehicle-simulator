@@ -55,4 +55,6 @@
     <string name="default_risk_score">65</string>
     <string name="default_journey_time">1h2m</string>
     <string name="default_journey_distance">100km</string>
+    <string name="heartrate_avg_bpm">Avg BPM</string>
+    <string name="heartrate_avg_default">80</string>
 </resources>
