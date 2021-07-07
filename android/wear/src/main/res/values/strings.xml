@@ -46,4 +46,13 @@
     <string name="copyright">© 2019–2021 Adaptant Solutions AG</string>
     <string name="license">Released under the terms of the Apache 2.0 License.</string>
     <string name="contact_email">info@knowgo.io</string>
+
+    <!-- Journey Summary Page -->
+    <string name="summary_title">Summary</string>
+    <string name="risk_title">Risk</string>
+    <string name="journey_duration_label">Duration:</string>
+    <string name="journey_distance_label">Distance:</string>
+    <string name="default_risk_score">65</string>
+    <string name="default_journey_time">1h2m</string>
+    <string name="default_journey_distance">100km</string>
 </resources>
