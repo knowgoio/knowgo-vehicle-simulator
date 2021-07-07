@@ -39,7 +39,7 @@ public class HeartRateRiskScorer implements SharedPreferences.OnSharedPreference
 
         if (heartRateMeasurement > maxHeartRateThreshold) {
             exceeded = ((heartRateMeasurement - maxHeartRateThreshold) / maxHeartRateThreshold) * 100;
-        } else if (heartRateMeasurement < maxHeartRateThreshold) {
+        } else if (heartRateMeasurement < minHeartRateThreshold) {
             exceeded = ((minHeartRateThreshold - heartRateMeasurement) / minHeartRateThreshold) * 100;
         }
 
