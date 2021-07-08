@@ -65,6 +65,7 @@ import java.util.UUID;
 
 import io.knowgo.vehicle.simulator.complications.FuelLevelComplicationProviderService;
 import io.knowgo.vehicle.simulator.complications.RiskComplicationProviderService;
+import io.knowgo.vehicle.simulator.db.DatabaseManager;
 import io.knowgo.vehicle.simulator.db.KnowGoDbHelper;
 import io.knowgo.vehicle.simulator.db.schemas.DriverEvent;
 import io.knowgo.vehicle.simulator.db.schemas.HeartrateMeasurement;
@@ -177,6 +178,7 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         knowGoDbHelper = new KnowGoDbHelper(getApplicationContext());
+        DatabaseManager.initializeInstance(knowGoDbHelper);
 
         fuelLevelBar = mControlsView.findViewById(R.id.fuelLevel);
         fuelLevelBar.setProgress(sharedPreferences.getInt("fuel_level", 100));
@@ -380,7 +382,7 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
 
     @Override
     public void onStart() {
-        db = knowGoDbHelper.getWritableDatabase();
+        db = DatabaseManager.getInstance().openDatabase();
 
         // Register local broadcast receiver
         IntentFilter newFilter = new IntentFilter(Intent.ACTION_SEND);
@@ -399,7 +401,7 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
         Wearable.getDataClient(this).removeListener(this);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(messageReceiver);
         mSensorManager.unregisterListener(this);
-        db.close();
+        DatabaseManager.getInstance().closeDatabase();
         super.onStop();
     }
 

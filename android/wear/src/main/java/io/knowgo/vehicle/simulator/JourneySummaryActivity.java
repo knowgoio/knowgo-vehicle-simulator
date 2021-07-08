@@ -1,6 +1,7 @@
 package io.knowgo.vehicle.simulator;
 
 import android.annotation.SuppressLint;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
@@ -19,31 +20,34 @@ import androidx.preference.PreferenceManager;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Objects;
 
+import io.knowgo.vehicle.simulator.complications.RiskComplicationProviderService;
+import io.knowgo.vehicle.simulator.db.DatabaseManager;
 import io.knowgo.vehicle.simulator.db.KnowGoDbHelper;
 import io.knowgo.vehicle.simulator.db.schemas.DriverEvent;
 import io.knowgo.vehicle.simulator.db.schemas.HeartrateMeasurement;
 import io.knowgo.vehicle.simulator.db.schemas.LocationMeasurement;
+import io.knowgo.vehicle.simulator.db.schemas.RiskScore;
 import io.knowgo.vehicle.simulator.util.HaversineDistance;
 
 public class JourneySummaryActivity extends FragmentActivity {
     private static final String TAG = JourneySummaryActivity.class.getSimpleName();
-    private KnowGoDbHelper knowGoDbHelper;
     private HeartRateRiskScorer heartRateRiskScorer;
     private SQLiteDatabase db;
     private View mSummaryView;
+    private static Instant journeyEnd;
     private static String journeyId;
+    private SharedPreferences sharedPreferences;
 
     private String journeyDurationString(Duration duration) {
         long secondsTotal = duration.getSeconds();
-        long hours = (secondsTotal % 86400 ) / 3600;
-        long minutes = ((secondsTotal % 86400 ) % 3600 ) / 60;
-        long seconds = ((secondsTotal % 86400 ) % 3600 ) % 60;
+        long hours = (secondsTotal % 86400) / 3600;
+        long minutes = ((secondsTotal % 86400) % 3600) / 60;
+        long seconds = ((secondsTotal % 86400) % 3600) % 60;
         StringBuilder stringBuilder = new StringBuilder();
 
         if (hours > 0)
@@ -57,10 +61,10 @@ public class JourneySummaryActivity extends FragmentActivity {
     }
 
     private int calculateHeartRateRisk(Duration journeyDuration) {
-        int numHeartRateEvents = knowGoDbHelper.numRows(db, DriverEvent.DriverEventEntry.TABLE_NAME,
+        int numHeartRateEvents = KnowGoDbHelper.numRows(db, DriverEvent.DriverEventEntry.TABLE_NAME,
                 DriverEvent.DriverEventEntry.COLUMN_NAME_JOURNEYID, journeyId);
         if (numHeartRateEvents > 0) {
-            float totalExceeded = knowGoDbHelper.sumColumn(db, DriverEvent.DriverEventEntry.TABLE_NAME,
+            float totalExceeded = KnowGoDbHelper.sumColumn(db, DriverEvent.DriverEventEntry.TABLE_NAME,
                     DriverEvent.DriverEventEntry.COLUMN_NAME_HR_THRESHOLD_EXCEEDED,
                     DriverEvent.DriverEventEntry.COLUMN_NAME_JOURNEYID, journeyId);
             int averageExceeded = (int) totalExceeded / numHeartRateEvents;
@@ -72,9 +76,7 @@ public class JourneySummaryActivity extends FragmentActivity {
 
     // Round double to 2 decimal places
     private static double roundDouble(double value) {
-        BigDecimal bd = BigDecimal.valueOf(value);
-        bd = bd.setScale(2, RoundingMode.HALF_UP);
-        return bd.doubleValue();
+        return BigDecimal.valueOf(value).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
     }
 
     private double calculateJourneyDistance() {
@@ -124,19 +126,19 @@ public class JourneySummaryActivity extends FragmentActivity {
         TextView maxHeartRateReading = mSummaryView.findViewById(R.id.heartRateMaxReading);
         TextView avgHeartRateReading = mSummaryView.findViewById(R.id.heartRateAvgReading);
 
-        int maxHeartRate = knowGoDbHelper.maxColumnValue(db,
+        int maxHeartRate = KnowGoDbHelper.maxColumnValue(db,
                 HeartrateMeasurement.HeartrateMeasurementEntry.TABLE_NAME,
                 HeartrateMeasurement.HeartrateMeasurementEntry.COLUMN_NAME_HEART_RATE,
                 HeartrateMeasurement.HeartrateMeasurementEntry.COLUMN_NAME_JOURNEYID,
                 journeyId);
 
-        long summedReadings = knowGoDbHelper.sumColumn(db,
+        long summedReadings = KnowGoDbHelper.sumColumn(db,
                 HeartrateMeasurement.HeartrateMeasurementEntry.TABLE_NAME,
                 HeartrateMeasurement.HeartrateMeasurementEntry.COLUMN_NAME_HEART_RATE,
                 HeartrateMeasurement.HeartrateMeasurementEntry.COLUMN_NAME_JOURNEYID,
                 journeyId);
 
-        int numReadings = knowGoDbHelper.numRows(db,
+        int numReadings = KnowGoDbHelper.numRows(db,
                 HeartrateMeasurement.HeartrateMeasurementEntry.TABLE_NAME,
                 HeartrateMeasurement.HeartrateMeasurementEntry.COLUMN_NAME_JOURNEYID,
                 journeyId);
@@ -155,6 +157,25 @@ public class JourneySummaryActivity extends FragmentActivity {
         avgHeartRateReading.setText(String.valueOf(average));
     }
 
+    void persistRiskScore(int score) {
+        // Save journey score to DB
+        ContentValues values = new ContentValues();
+
+        values.put(RiskScore.RiskScoreEntry.COLUMN_NAME_TIMESTAMP, journeyEnd.toString());
+        values.put(RiskScore.RiskScoreEntry.COLUMN_NAME_JOURNEYID, journeyId);
+        values.put(RiskScore.RiskScoreEntry.COLUMN_NAME_SCORE, score);
+
+        db.insert(RiskScore.RiskScoreEntry.TABLE_NAME, null, values);
+
+        // Update latest score
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt("score", score);
+        editor.apply();
+
+        // Then notify the complication to redraw
+        RiskComplicationProviderService.requestComplicationDataUpdate(getApplicationContext());
+    }
+
     @SuppressLint("UseSwitchCompatOrMaterialCode")
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -167,9 +188,8 @@ public class JourneySummaryActivity extends FragmentActivity {
         setContentView(mSummaryView);
 
         View mSettingsView = getLayoutInflater().inflate(R.layout.settings_page, null);
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        knowGoDbHelper = new KnowGoDbHelper(getApplicationContext());
-        db = knowGoDbHelper.getReadableDatabase();
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        db = DatabaseManager.getInstance().openDatabase();
 
         Switch mHeartRateSwitch = mSettingsView.findViewById(R.id.switchHeartRate);
         if (mHeartRateSwitch.isChecked()) {
@@ -185,13 +205,13 @@ public class JourneySummaryActivity extends FragmentActivity {
 
         journeyId = extras.getString("journeyId");
         Instant journeyBegin = (Instant) extras.get("journeyBegin");
-        Instant journeyEnd = (Instant) extras.get("journeyEnd");
+        journeyEnd = (Instant) extras.get("journeyEnd");
         Duration journeyDuration = Duration.between(journeyBegin, journeyEnd);
 
         TextView journeyDurationTime = mSummaryView.findViewById(R.id.journeyDurationTime);
         journeyDurationTime.setText(journeyDurationString(journeyDuration));
 
-        int minHeartRate = knowGoDbHelper.minColumnValue(db,
+        int minHeartRate = KnowGoDbHelper.minColumnValue(db,
                 HeartrateMeasurement.HeartrateMeasurementEntry.TABLE_NAME,
                 HeartrateMeasurement.HeartrateMeasurementEntry.COLUMN_NAME_HEART_RATE,
                 HeartrateMeasurement.HeartrateMeasurementEntry.COLUMN_NAME_JOURNEYID,
@@ -211,9 +231,12 @@ public class JourneySummaryActivity extends FragmentActivity {
 
             riskSummaryProgress.setProgress(score);
             riskSummaryText.setText(String.valueOf(score));
+
+            // Persist risk score
+            persistRiskScore(score);
         }
 
-        int numLocationReadings = knowGoDbHelper.numRows(db,
+        int numLocationReadings = KnowGoDbHelper.numRows(db,
                 LocationMeasurement.LocationMeasurementEntry.TABLE_NAME,
                 LocationMeasurement.LocationMeasurementEntry.COLUMN_NAME_JOURNEYID, journeyId);
 
@@ -225,5 +248,12 @@ public class JourneySummaryActivity extends FragmentActivity {
             // Haversine formula across all lat/lng pairs to derive the distance travelled.
             updateDistanceSummary();
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.i(TAG, "onDestroy(): Closing DB connection");
+        DatabaseManager.getInstance().closeDatabase();
     }
 }

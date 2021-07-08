@@ -19,7 +19,7 @@ public class KnowGoDbHelper extends SQLiteOpenHelper {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
-    public int minColumnValue(SQLiteDatabase db, String tableName, String columnName, String matchColumn, String matchValue) {
+    public static int minColumnValue(SQLiteDatabase db, String tableName, String columnName, String matchColumn, String matchValue) {
         String sql = "SELECT MIN(" + columnName + ") FROM " + tableName + " WHERE " + matchColumn + "='" + matchValue + "'";
         Cursor cursor = db.rawQuery(sql, null);
         int total = 0;
@@ -32,7 +32,7 @@ public class KnowGoDbHelper extends SQLiteOpenHelper {
         return total;
     }
 
-    public int maxColumnValue(SQLiteDatabase db, String tableName, String columnName, String matchColumn, String matchValue) {
+    public static int maxColumnValue(SQLiteDatabase db, String tableName, String columnName, String matchColumn, String matchValue) {
         String sql = "SELECT MAX(" + columnName + ") FROM " + tableName + " WHERE " + matchColumn + "='" + matchValue + "'";
         Cursor cursor = db.rawQuery(sql, null);
         int total = 0;
@@ -47,7 +47,7 @@ public class KnowGoDbHelper extends SQLiteOpenHelper {
 
     // Sum a specific column matching the selection criteria. Returns the summed total, or -1 if
     // no entries are matched.
-    public int sumColumn(SQLiteDatabase db, String tableName, String columnName, String matchColumn, String matchValue) {
+    public static int sumColumn(SQLiteDatabase db, String tableName, String columnName, String matchColumn, String matchValue) {
         String sql = "SELECT SUM(" + columnName + ") FROM " + tableName + " WHERE " + matchColumn + "='" + matchValue + "'";
         Cursor cursor = db.rawQuery(sql, null);
         int total;
@@ -62,7 +62,7 @@ public class KnowGoDbHelper extends SQLiteOpenHelper {
         return total;
     }
 
-    public int numRows(SQLiteDatabase db, String tableName, String matchColumn, String matchValue) {
+    public static int numRows(SQLiteDatabase db, String tableName, String matchColumn, String matchValue) {
         String sql = "SELECT COUNT (*) FROM " + tableName + " WHERE " + matchColumn + "='" + matchValue + "'";
         Cursor cursor = db.rawQuery(sql, null);
         int count = 0;
