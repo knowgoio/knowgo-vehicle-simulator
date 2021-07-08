@@ -54,8 +54,8 @@ public class JourneySummaryActivity extends FragmentActivity {
             stringBuilder.append(hours).append("h");
         if (minutes > 0)
             stringBuilder.append(minutes).append("m");
-        if (seconds > 0)
-            stringBuilder.append(seconds).append("s");
+
+        stringBuilder.append(seconds).append("s");
 
         return stringBuilder.toString();
     }

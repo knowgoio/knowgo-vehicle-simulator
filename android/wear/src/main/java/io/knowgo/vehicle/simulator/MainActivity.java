@@ -733,21 +733,26 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
                 journeyId = UUID.randomUUID().toString();
 
                 onStartJourney();
+
                 object.put("journeyId", journeyId);
                 object.put("ignition_status", "run");
                 object.put("notification", "Starting simulation from watch");
+
+                // Notify app of journey start event
+                new MessageSender("/MessageChannel", object.toString(), getApplicationContext()).start();
             } else {
-                onStopJourney();
                 object.put("journeyId", journeyId);
                 object.put("ignition_status", "stop");
                 object.put("notification", "Stopping simulation from watch");
+
+                // Notify app of journey stop event
+                new MessageSender("/MessageChannel", object.toString(), getApplicationContext()).start();
+
+                onStopJourney();
             }
         } catch (JSONException e) {
             Log.e(TAG, "Unable to encode JSON object");
         }
-
-        // Notify app of journey start/stop event
-        new MessageSender("/MessageChannel", object.toString(), getApplicationContext()).start();
     }
 
     public void navigateToAboutView(View view) {
