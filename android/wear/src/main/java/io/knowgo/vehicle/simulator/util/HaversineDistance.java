@@ -31,5 +31,4 @@ public class HaversineDistance {
 
         return EARTH_RADIUS * c;
     }
-
 }

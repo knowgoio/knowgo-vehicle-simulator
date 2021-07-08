@@ -18,13 +18,18 @@ import androidx.preference.PreferenceManager;
 
 import com.google.android.material.textfield.TextInputEditText;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Objects;
 
 import io.knowgo.vehicle.simulator.db.KnowGoDbHelper;
 import io.knowgo.vehicle.simulator.db.schemas.DriverEvent;
 import io.knowgo.vehicle.simulator.db.schemas.HeartrateMeasurement;
+import io.knowgo.vehicle.simulator.db.schemas.LocationMeasurement;
+import io.knowgo.vehicle.simulator.util.HaversineDistance;
 
 public class JourneySummaryActivity extends FragmentActivity {
     private static final String TAG = JourneySummaryActivity.class.getSimpleName();
@@ -63,6 +68,43 @@ public class JourneySummaryActivity extends FragmentActivity {
         }
 
         return -1;
+    }
+
+    // Round double to 2 decimal places
+    private static double roundDouble(double value) {
+        BigDecimal bd = BigDecimal.valueOf(value);
+        bd = bd.setScale(2, RoundingMode.HALF_UP);
+        return bd.doubleValue();
+    }
+
+    private double calculateJourneyDistance() {
+        double distance = 0.00;
+        ArrayList<LocationMeasurement.Coordinates> coordinatesList = LocationMeasurement.getJourneyCoordinates(db, journeyId);
+        if (coordinatesList.size() < 2) {
+            Log.e(TAG, "Insufficient telemetry for journey");
+            return -1;
+        }
+
+        LocationMeasurement.Coordinates prevCoordinates = coordinatesList.get(0);
+        for (int idx = 1; idx < coordinatesList.size(); idx++) {
+            LocationMeasurement.Coordinates currCoordinates = coordinatesList.get(idx);
+            distance += HaversineDistance.distance(prevCoordinates.latitude, prevCoordinates.longitude,
+                    currCoordinates.latitude, currCoordinates.longitude);
+            prevCoordinates = currCoordinates;
+        }
+        return roundDouble(distance);
+    }
+
+    private void updateDistanceSummary() {
+        TextView journeyDistanceText = mSummaryView.findViewById(R.id.journeyDistance);
+        double distance = calculateJourneyDistance();
+        if (distance < 0) {
+            hideDistanceSummary();
+            return;
+        }
+
+        String distanceString = distance + "km";
+        journeyDistanceText.setText(distanceString);
     }
 
     private void hideDistanceSummary() {
@@ -171,7 +213,17 @@ public class JourneySummaryActivity extends FragmentActivity {
             riskSummaryText.setText(String.valueOf(score));
         }
 
-        // TODO: Hide for now, update with calculation from GPS telemetry records
-        hideDistanceSummary();
+        int numLocationReadings = knowGoDbHelper.numRows(db,
+                LocationMeasurement.LocationMeasurementEntry.TABLE_NAME,
+                LocationMeasurement.LocationMeasurementEntry.COLUMN_NAME_JOURNEYID, journeyId);
+
+        // No GPS telemetry available, hide distance summary.
+        if (numLocationReadings <= 0) {
+            hideDistanceSummary();
+        } else {
+            // If we have valid GPS telemetry for this journey persisted on-watch, apply the
+            // Haversine formula across all lat/lng pairs to derive the distance travelled.
+            updateDistanceSummary();
+        }
     }
 }
