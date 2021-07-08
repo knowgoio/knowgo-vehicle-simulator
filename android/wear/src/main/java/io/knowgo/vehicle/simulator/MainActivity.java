@@ -36,6 +36,7 @@ import android.widget.ToggleButton;
 
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.preference.PreferenceManager;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
@@ -713,17 +714,11 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
         mStartStopButton.setChecked(false);
 
         Instant journeyEnd = Instant.now();
-        Duration journeyDuration = Duration.between(journeyBegin, journeyEnd);
-        int numHeartRateEvents = knowGoDbHelper.numRows(db, DriverEvent.DriverEventEntry.TABLE_NAME,
-                DriverEvent.DriverEventEntry.COLUMN_NAME_JOURNEYID, journeyId);
-        if (numHeartRateEvents > 0) {
-            float totalExceeded = knowGoDbHelper.sumColumn(db, DriverEvent.DriverEventEntry.TABLE_NAME,
-                    DriverEvent.DriverEventEntry.COLUMN_NAME_HR_THRESHOLD_EXCEEDED,
-                    DriverEvent.DriverEventEntry.COLUMN_NAME_JOURNEYID, journeyId);
-            int averageExceeded = (int) totalExceeded / numHeartRateEvents;
-
-            Log.i(TAG, "Risk Score: " + heartRateRiskScorer.score(numHeartRateEvents, averageExceeded, journeyDuration));
-        }
+        Intent intent = new Intent(getApplicationContext(), JourneySummaryActivity.class);
+        intent.putExtra("journeyId", journeyId);
+        intent.putExtra("journeyBegin", journeyBegin);
+        intent.putExtra("journeyEnd", journeyEnd);
+        startActivity(intent);
     }
 
     // Handle journey start/stop from button click
