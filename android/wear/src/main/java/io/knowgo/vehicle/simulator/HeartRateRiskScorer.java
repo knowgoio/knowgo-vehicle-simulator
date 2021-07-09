@@ -6,21 +6,30 @@ import android.util.Log;
 
 import androidx.preference.PreferenceManager;
 
+import org.tensorflow.lite.DataType;
+import org.tensorflow.lite.support.tensorbuffer.TensorBuffer;
+
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.Duration;
+
+import io.knowgo.vehicle.simulator.ml.HeartrateRiskDnnModel;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 
 /**
- * A simple watch-local risk scorer for approximating risk based on measured heart rate levels
- * and pre-defined min/max thresholds. This is not expected to take the place of a more robust
- * ML-based scorer provided by KnowGo Score, but can provide approximate functionality when
- * no backend connectivity is possible, or when using offline.
+ * Watch-local Heartrate risk scorer for approximating risk based on measured heart rate levels
+ * and pre-defined min/max thresholds. Implemented either through a bundled TFLite DNN model,
+ * or through a fallback algorithm.
+ *
+ * In either case, the input features are the number of times a heartrate measurement has exceeded
+ * the pre-defined thresholds, the average extent at which the thresholds have been exceeded, and
+ * the duration of the journey.
  */
 public class HeartRateRiskScorer implements SharedPreferences.OnSharedPreferenceChangeListener {
     private static final String TAG = HeartRateRiskScorer.class.getSimpleName();
-
+    private HeartrateRiskDnnModel model;
     private int minHeartRateThreshold;
     private int maxHeartRateThreshold;
 
@@ -29,6 +38,14 @@ public class HeartRateRiskScorer implements SharedPreferences.OnSharedPreference
 
         this.minHeartRateThreshold = minThreshold;
         this.maxHeartRateThreshold = maxThreshold;
+
+        // Try to load the TFLite DNN model. Fall back on approximate scoring if this fails.
+        try {
+            this.model = HeartrateRiskDnnModel.newInstance(context);
+        } catch (IOException e) {
+            Log.e(TAG, "Failed to load DNN, falling back on approximate scoring");
+            this.model = null;
+        }
 
         prefs.registerOnSharedPreferenceChangeListener(this);
     }
@@ -51,12 +68,27 @@ public class HeartRateRiskScorer implements SharedPreferences.OnSharedPreference
         return BigDecimal.valueOf(d).setScale(2, BigDecimal.ROUND_HALF_UP).floatValue();
     }
 
-    // Calculate approximate risk score
-    public float score(int numEvents, int avgExceeded, Duration journeyDuration) {
+    // Predict a risk score using the bundled TFLite DNN model
+    public float scoreDNN(int numEvents, int avgExceeded, Duration journeyDuration) {
         long minutes = max(journeyDuration.toMinutes(), 5);
-        float score = min(roundFloat(((numEvents * 15F) / minutes) * avgExceeded), 100);
-        Log.d(TAG, "score(): " + score);
-        return min(score, 100);
+        TensorBuffer tensorBuffer = TensorBuffer.createFixedSize(new int[]{1, 3}, DataType.FLOAT32);
+        tensorBuffer.loadArray(new float[]{numEvents, avgExceeded, minutes});
+        HeartrateRiskDnnModel.Outputs outputs = this.model.process(tensorBuffer);
+        TensorBuffer outputFeature = outputs.getOutputFeature0AsTensorBuffer();
+        return outputFeature.getIntValue(0);
+    }
+
+    // Calculate risk score, either with the TFLite DNN model, or as an approximation
+    public float score(int numEvents, int avgExceeded, Duration journeyDuration) {
+        if (this.model != null) {
+            return scoreDNN(numEvents, avgExceeded, journeyDuration);
+        } else {
+            // Calculate an approximate risk score
+            long minutes = max(journeyDuration.toMinutes(), 5);
+            float score = min(roundFloat(((numEvents * 15F) / minutes) * avgExceeded), 100);
+            Log.d(TAG, "score(): " + score);
+            return min(score, 100);
+        }
     }
 
     @Override
