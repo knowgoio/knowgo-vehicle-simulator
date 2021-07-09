@@ -254,10 +254,17 @@ public class JourneySummaryActivity extends FragmentActivity {
     protected void onStart() {
         super.onStart();
         ProgressBar riskSummaryProgress = mSummaryView.findViewById(R.id.riskSummaryProgressBar);
+        int score = riskSummaryProgress.getProgress();
         ProgressBarAnimation progressBarAnimation = new ProgressBarAnimation(riskSummaryProgress,
-                0, riskSummaryProgress.getProgress());
+                0, score);
         progressBarAnimation.setDuration(1000);
         riskSummaryProgress.startAnimation(progressBarAnimation);
+
+        TextView riskSummaryText = mSummaryView.findViewById(R.id.riskSummaryText);
+        TextViewNumberAnimation numberAnimation = new TextViewNumberAnimation(riskSummaryText,
+                0, score);
+        numberAnimation.setDuration(1000);
+        riskSummaryText.startAnimation(numberAnimation);
     }
 
     @Override
