@@ -69,14 +69,13 @@ public class HeartRateRiskScorer implements SharedPreferences.OnSharedPreference
     }
 
     // Predict a risk score using the bundled TFLite DNN model
-    public float scoreDNN(int numEvents, int avgExceeded, Duration journeyDuration) {
+    private float scoreDNN(int numEvents, int avgExceeded, Duration journeyDuration) {
         TensorBuffer tensorBuffer = TensorBuffer.createFixedSize(new int[]{1, 3}, DataType.FLOAT32);
         tensorBuffer.loadArray(new float[]{numEvents, avgExceeded, journeyDuration.toMinutes()});
         HeartrateRiskDnnModel.Outputs outputs = this.model.process(tensorBuffer);
-        TensorBuffer outputFeature = outputs.getOutputFeature0AsTensorBuffer();
-        float score = roundFloat(outputFeature.getFloatValue(0));
+        float score = roundFloat(outputs.getOutputFeature0AsTensorBuffer().getFloatValue(0));
         Log.d(TAG, "scoreDNN(): " + score);
-        return score;
+        return min(score, 100);
     }
 
     // Calculate risk score, either with the TFLite DNN model, or as an approximation
