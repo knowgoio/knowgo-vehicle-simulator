@@ -251,9 +251,18 @@ public class JourneySummaryActivity extends FragmentActivity {
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        ProgressBar riskSummaryProgress = mSummaryView.findViewById(R.id.riskSummaryProgressBar);
+        ProgressBarAnimation progressBarAnimation = new ProgressBarAnimation(riskSummaryProgress,
+                0, riskSummaryProgress.getProgress());
+        progressBarAnimation.setDuration(1000);
+        riskSummaryProgress.startAnimation(progressBarAnimation);
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.i(TAG, "onDestroy(): Closing DB connection");
         DatabaseManager.getInstance().closeDatabase();
     }
 }
