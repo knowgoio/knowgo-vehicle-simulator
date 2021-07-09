@@ -22,8 +22,6 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Vibrator;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -36,7 +34,6 @@ import android.widget.ToggleButton;
 
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.preference.PreferenceManager;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
@@ -50,13 +47,11 @@ import com.google.android.gms.wearable.DataItem;
 import com.google.android.gms.wearable.DataMap;
 import com.google.android.gms.wearable.Wearable;
 import com.google.android.material.button.MaterialButton;
-import com.google.android.material.textfield.TextInputEditText;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
-import java.time.Duration;
 import java.time.Instant;
 import java.util.Date;
 import java.util.Locale;
@@ -74,7 +69,7 @@ import io.knowgo.vehicle.simulator.db.schemas.LocationMeasurement;
 import static io.knowgo.vehicle.simulator.complications.ComplicationTapBroadcastReceiver.EXTRA_PAGER_DESTINATION;
 
 @SuppressLint("UseSwitchCompatOrMaterialCode")
-public class MainActivity extends FragmentActivity implements SensorEventListener, LocationListener, AmbientModeSupport.AmbientCallbackProvider, DataClient.OnDataChangedListener {
+public class MainActivity extends FragmentActivity implements SensorEventListener, LocationListener, AmbientModeSupport.AmbientCallbackProvider, DataClient.OnDataChangedListener, SharedPreferences.OnSharedPreferenceChangeListener {
     private static final String TAG = MainActivity.class.getName();
     private Receiver messageReceiver;
     private TextView mNoticeView;
@@ -84,33 +79,25 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
     private ImageView mIconView;
     private View mBackground;
     private View mControlsView;
-    private View mSettingsView;
     private int mActiveTextColor;
     private int mHeartRateIconColor;
     private int mGPSIconColor;
+    private int minHeartRate, maxHeartRate;
     private Sensor mHeartRateSensor;
     private SensorManager mSensorManager;
     private TextView dateText;
     private TextView mHeartRateMeasurement;
-    private Switch mHeartRateSwitch;
     private LocationManager locationManager;
     private ViewPager2 mPager;
-    private Switch mNotificationsSwitch;
-    private Switch mGPSSwitch;
-    private Switch mMqttSettingsSwitch;
-    private MqttPublisher mqttPublisher;
-    private TextInputEditText mMqttBroker;
-    private TextInputEditText mMqttTopic;
-    private KnowGoDbHelper knowGoDbHelper;
     private SQLiteDatabase db;
     private String journeyId;
     private Vibrator vibrator;
     private final long[] vibrationPattern = {0, 500, 50, 300};
     private final static int VIBRATION_NO_REPEAT = -1;
-    private int minHeartRate, maxHeartRate;
     private ProgressBar fuelLevelBar;
-    private Instant journeyBegin;
     private HeartRateRiskScorer heartRateRiskScorer;
+    private Instant journeyBegin;
+    private MqttPublisher mqttPublisher;
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
     SimpleDateFormat sdf;
@@ -160,13 +147,12 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
         String datefmt = "hh:mm a";
 
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_screen_slide);
 
         View mAboutView = getLayoutInflater().inflate(R.layout.about_page, null);
         View mHomeView = getLayoutInflater().inflate(R.layout.activity_main, null);
+        View mSettingsView = getLayoutInflater().inflate(R.layout.settings_page, null);
         mControlsView = getLayoutInflater().inflate(R.layout.controls_page, null);
-        mSettingsView = getLayoutInflater().inflate(R.layout.settings_page, null);
         mActiveTextColor = getResources().getColor(R.color.primary, null);
 
         // Ambient mode support
@@ -177,7 +163,9 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
             datefmt = "HH:mm";
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        knowGoDbHelper = new KnowGoDbHelper(getApplicationContext());
+        sharedPreferences.registerOnSharedPreferenceChangeListener(this);
+
+        KnowGoDbHelper knowGoDbHelper = new KnowGoDbHelper(getApplicationContext());
         DatabaseManager.initializeInstance(knowGoDbHelper);
 
         fuelLevelBar = mControlsView.findViewById(R.id.fuelLevel);
@@ -212,88 +200,14 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
         mGPSIconColor = mGPSToggleButton.getBackgroundTintList().getDefaultColor();
         mHeartRateIconColor = mHeartRateToggleButton.getBackgroundTintList().getDefaultColor();
 
+        minHeartRate = sharedPreferences.getInt("heartrate_min",
+                Integer.parseInt(getString(R.string.heartrate_min_default)));
+        maxHeartRate = sharedPreferences.getInt("heartrate_max",
+                Integer.parseInt(getString(R.string.heartrate_max_default)));
+
         sdf = new SimpleDateFormat(datefmt, getLocale(this));
         dateText.setText(sdf.format(new Date()));
-
-        mNotificationsSwitch = mSettingsView.findViewById(R.id.switchNotifications);
-        final boolean notificationsOpt = sharedPreferences.getBoolean("notifications_enabled", true);
-        mNotificationsSwitch.setChecked(notificationsOpt);
         vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
-
-        mGPSSwitch = mSettingsView.findViewById(R.id.switchWatchTelemetry);
-        final boolean gpsOpt = sharedPreferences.getBoolean("gps_enabled", true);
-        mGPSSwitch.setChecked(gpsOpt);
-        toggleGPS(mSettingsView);
-
-        mHeartRateSwitch = mSettingsView.findViewById(R.id.switchHeartRate);
-        TextInputEditText mMinHeartRate = mSettingsView.findViewById(R.id.minHeartRate);
-        TextInputEditText mMaxHeartRate = mSettingsView.findViewById(R.id.maxHeartRate);
-
-        if (mHeartRateSwitch.isChecked()) {
-            minHeartRate = sharedPreferences.getInt("heartrate_min", Integer.parseInt(Objects.requireNonNull(mMinHeartRate.getText()).toString()));
-            maxHeartRate = sharedPreferences.getInt("heartrate_max", Integer.parseInt(Objects.requireNonNull(mMaxHeartRate.getText()).toString()));
-
-            heartRateRiskScorer = new HeartRateRiskScorer(minHeartRate, maxHeartRate, this);
-
-            mMinHeartRate.setText(String.valueOf(minHeartRate));
-            mMaxHeartRate.setText(String.valueOf(maxHeartRate));
-        }
-
-        mMinHeartRate.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                try {
-                    int newMinValue = Integer.parseInt(s.toString());
-                    editor = sharedPreferences.edit();
-                    editor.putInt("heartrate_min", newMinValue);
-                    editor.apply();
-
-                    minHeartRate = newMinValue;
-                } catch (NumberFormatException ignored) {}
-            }
-        });
-
-        mMaxHeartRate.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                try {
-                    int newMaxValue = Integer.parseInt(s.toString());
-                    editor = sharedPreferences.edit();
-                    editor.putInt("heartrate_max", newMaxValue);
-                    editor.apply();
-
-                    maxHeartRate = newMaxValue;
-                } catch (NumberFormatException ignored) {}
-            }
-        });
-
-        mMqttSettingsSwitch = mSettingsView.findViewById(R.id.switchMqttSettings);
-
-        final boolean mqttEnabled = sharedPreferences.getBoolean("mqtt_enabled", mMqttSettingsSwitch.isChecked());
-        mMqttSettingsSwitch.setChecked(mqttEnabled);
-        mMqttBroker = mSettingsView.findViewById(R.id.mqttBroker);
-        mMqttTopic = mSettingsView.findViewById(R.id.mqttTopic);
-
-        if (mqttEnabled) {
-            toggleMqttSettings(mSettingsView);
-        }
 
         // Verify internet permissions, try to obtain at run-time.
         if ((ActivityCompat.checkSelfPermission(this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED) ||
@@ -314,6 +228,7 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
                     "android.permission.ACCESS_COARSE_LOCATION"}, 0);
         }
 
+        Switch mGPSSwitch = mSettingsView.findViewById(R.id.switchWatchTelemetry);
         if (hasGPS()) {
             Log.i(TAG, "GPS available");
             mGPSSwitch.setVisibility(View.VISIBLE);
@@ -329,55 +244,26 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
             mGPSToggleButton.setBackgroundTintList(ColorStateList.valueOf(mGPSIconColor));
         }
 
+        Switch mMqttSettingsSwitch = mSettingsView.findViewById(R.id.switchMqttSettings);
+        final boolean mqttEnabled = sharedPreferences.getBoolean("mqtt_enabled", mMqttSettingsSwitch.isChecked());
+        if (mqttEnabled) {
+            final String mqttBroker = sharedPreferences.getString("mqtt_broker", getString(R.string.default_mqtt_broker));
+            final String mqttTopic = sharedPreferences.getString("mqtt_topic", getString(R.string.default_mqtt_topic));
+
+            mqttPublisher = new MqttPublisher(getApplicationContext(), mqttBroker, mqttTopic);
+        }
+
         mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         mHeartRateSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_HEART_RATE);
 
         mPager = findViewById(R.id.pager);
-        FragmentStateAdapter pagerAdapter = new ScreenSlidePagerAdapter(this, mHomeView, mControlsView, mSettingsView, mAboutView);
+        FragmentStateAdapter pagerAdapter = new ScreenSlidePagerAdapter(this, mHomeView, mControlsView, mAboutView);
         mPager.setAdapter(pagerAdapter);
 
         int destinationId = getIntent().getIntExtra(EXTRA_PAGER_DESTINATION, 0);
         if (destinationId != 0) {
             mPager.setCurrentItem(destinationId);
         }
-
-        mMqttBroker.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                editor = sharedPreferences.edit();
-                editor.putString("mqtt_broker", s.toString());
-                editor.apply();
-
-                mqttPublisher.setServerUri(s.toString());
-            }
-        });
-
-        mMqttTopic.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                editor = sharedPreferences.edit();
-                editor.putString("mqtt_topic", s.toString());
-                editor.apply();
-
-                mqttPublisher.setTopic(s.toString());
-            }
-        });
     }
 
     @Override
@@ -388,6 +274,8 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
         IntentFilter newFilter = new IntentFilter(Intent.ACTION_SEND);
         messageReceiver = new Receiver();
         LocalBroadcastManager.getInstance(this).registerReceiver(messageReceiver, newFilter);
+
+        heartRateRiskScorer = new HeartRateRiskScorer(minHeartRate, maxHeartRate, this);
 
         Wearable.getDataClient(this).addListener(this);
         mSensorManager.registerListener(this, mHeartRateSensor,
@@ -579,6 +467,18 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
         }
     }
 
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        switch (key) {
+            case "mqtt_broker":
+                mqttPublisher.setServerUri(sharedPreferences.getString("mqtt_broker", getString(R.string.default_mqtt_broker)));
+                break;
+            case "mqtt_topic":
+                mqttPublisher.setTopic(sharedPreferences.getString("mqtt_topic", getString(R.string.default_mqtt_topic)));
+                break;
+        }
+    }
+
     // Ambient mode callbacks
     private class MyAmbientCallback extends AmbientModeSupport.AmbientCallback {
         @Override
@@ -691,7 +591,7 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
 
     // Check if notifications are enabled
     private boolean notificationsEnabled() {
-        return mNotificationsSwitch.isChecked();
+        return sharedPreferences.getBoolean("notifications_enabled", true);
     }
 
     // Check if a journey is in progress
@@ -759,76 +659,9 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
         mPager.setCurrentItem(R.layout.about_page);
     }
 
-    // Collapse/expand the heart rate monitoring settings depending on the switch position
-    public void toggleHeartRateSettings(View view) {
-        final LinearLayout mMinHeartRateSetting = mSettingsView.findViewById(R.id.minHeartRateSetting);
-        final LinearLayout mMaxHeartRateSetting = mSettingsView.findViewById(R.id.maxHearRateSetting);
-
-        if (mHeartRateSwitch.isChecked()) {
-            mMinHeartRateSetting.setVisibility(View.VISIBLE);
-            mMaxHeartRateSetting.setVisibility(View.VISIBLE);
-            if (heartRateRiskScorer == null) {
-                heartRateRiskScorer = new HeartRateRiskScorer(minHeartRate, maxHeartRate, this);
-            }
-        } else {
-            mMinHeartRateSetting.setVisibility(View.GONE);
-            mMaxHeartRateSetting.setVisibility(View.GONE);
-            heartRateRiskScorer = null;
-        }
-    }
-
-    // Collapse/expand the MQTT Settings depending on the switch position
-    public void toggleMqttSettings(View view) {
-        final LinearLayout mMqttBrokerSetting = mSettingsView.findViewById(R.id.mqttBrokerSetting);
-        final LinearLayout mMqttTopicSetting = mSettingsView.findViewById(R.id.mqttTopicSetting);
-
-        if (mMqttSettingsSwitch.isChecked()) {
-            final String mqttBroker = sharedPreferences.getString("mqtt_broker", Objects.requireNonNull(mMqttBroker.getText()).toString());
-            final String mqttTopic = sharedPreferences.getString("mqtt_topic", Objects.requireNonNull(mMqttBroker.getText()).toString());
-
-            mqttPublisher = new MqttPublisher(getApplicationContext(), mqttBroker, mqttTopic);
-
-            Log.d(TAG, "Initializing MQTT Publisher at " + mqttBroker + "/" + mqttTopic);
-
-            mMqttBroker.setText(mqttBroker);
-            mMqttTopic.setText(mqttTopic);
-
-            mMqttBrokerSetting.setVisibility(View.VISIBLE);
-            mMqttTopicSetting.setVisibility(View.VISIBLE);
-        } else {
-            mMqttBrokerSetting.setVisibility(View.GONE);
-            mMqttTopicSetting.setVisibility(View.GONE);
-
-            mqttPublisher = null;
-        }
-
-        editor = sharedPreferences.edit();
-        editor.putBoolean("mqtt_enabled", mMqttSettingsSwitch.isChecked());
-        editor.apply();
-    }
-
-    // Toggle global GPS telemetry setting
-    public void toggleGPS(View view) {
-        if (mGPSSwitch.isChecked()) {
-            mGPSToggleButton.setChecked(true);
-            mGPSToggleButton.setEnabled(true);
-            mGPSToggleButton.setVisibility(View.VISIBLE);
-        } else {
-            mGPSToggleButton.setChecked(false);
-            mGPSToggleButton.setEnabled(false);
-            mGPSToggleButton.setVisibility(View.INVISIBLE);
-        }
-
-        editor = sharedPreferences.edit();
-        editor.putBoolean("gps_enabled", mGPSSwitch.isChecked());
-        editor.apply();
-    }
-
-    // Toggle notifications
-    public void toggleNotifications(View view) {
-        editor = sharedPreferences.edit();
-        editor.putBoolean("notifications_enabled", mNotificationsSwitch.isChecked());
-        editor.apply();
+    public void navigateToSettingsView(View view) {
+        Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
+        startActivity(intent);
     }
 
     public void ignitionOn(View view) {

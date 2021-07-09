@@ -19,6 +19,7 @@ public class MqttPublisher {
     private final MqttAndroidClient mqttAndroidClient;
 
     public MqttPublisher(Context context, String serverUri, String topic) {
+        Log.d(TAG, "Initializing MQTT Publisher at " + serverUri + "/" + topic);
         this.serverUri = serverUri;
         this.topic = topic;
         String clientId = "knowgo-watch";

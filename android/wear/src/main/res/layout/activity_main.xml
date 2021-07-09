@@ -129,7 +129,7 @@
             android:visibility="visible"
             android:background="@color/ic_launcher_background"
             android:src="@drawable/ic_knowgo_icon"
-            android:onClick="navigateToAboutView"
+            android:onClick="navigateToSettingsView"
             android:contentDescription="@string/icon" />
     </FrameLayout>
 </ScrollView>
