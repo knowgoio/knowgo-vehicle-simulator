@@ -118,6 +118,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|center"
         android:visibility="visible"
-        android:src="@drawable/ic_knowgo_icon"
+        android:src="@drawable/ic_arrow_back"
+        android:onClick="navigateToSettingsView"
         android:contentDescription="@string/icon" />
 </androidx.wear.widget.BoxInsetLayout>

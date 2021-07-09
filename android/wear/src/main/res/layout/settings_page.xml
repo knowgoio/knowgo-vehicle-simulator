@@ -216,7 +216,15 @@
                         tools:ignore="SmallSp" />
                 </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>
+            <TextView
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:textColor="@color/primary"
+                android:textSize="12sp"
+                android:onClick="navigateToAboutView"
+                android:text="@string/about_knowgo_watch"/>
         </LinearLayout>
+
     </ScrollView>
 
     <ImageView

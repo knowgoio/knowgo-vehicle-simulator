@@ -40,6 +40,7 @@
     <string name="mqtt_topic">MQTT Topic</string>
     <string name="default_mqtt_broker">tcp://test.mosquitto.org:1883</string>
     <string name="default_mqtt_topic">knowgo</string>
+    <string name="about_knowgo_watch">About KnowGo Watch</string>
 
     <!-- About Page -->
     <string name="about_title">About</string>

@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.database.sqlite.SQLiteDatabase;
@@ -25,7 +24,6 @@ import android.os.Vibrator;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -149,7 +147,6 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_screen_slide);
 
-        View mAboutView = getLayoutInflater().inflate(R.layout.about_page, null);
         View mHomeView = getLayoutInflater().inflate(R.layout.activity_main, null);
         View mSettingsView = getLayoutInflater().inflate(R.layout.settings_page, null);
         mControlsView = getLayoutInflater().inflate(R.layout.controls_page, null);
@@ -186,16 +183,6 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
                 mHeartRateMeasurement.setText("--");
             }
         });
-
-        // Update the app version
-        try {
-            Context context = getApplicationContext();
-            PackageInfo pInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
-            final TextView appVersion = mAboutView.findViewById(R.id.appVersion);
-            appVersion.setText(pInfo.versionName);
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
 
         mGPSIconColor = mGPSToggleButton.getBackgroundTintList().getDefaultColor();
         mHeartRateIconColor = mHeartRateToggleButton.getBackgroundTintList().getDefaultColor();
@@ -257,7 +244,7 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
         mHeartRateSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_HEART_RATE);
 
         mPager = findViewById(R.id.pager);
-        FragmentStateAdapter pagerAdapter = new ScreenSlidePagerAdapter(this, mHomeView, mControlsView, mAboutView);
+        FragmentStateAdapter pagerAdapter = new ScreenSlidePagerAdapter(this, mHomeView, mControlsView);
         mPager.setAdapter(pagerAdapter);
 
         int destinationId = getIntent().getIntExtra(EXTRA_PAGER_DESTINATION, 0);

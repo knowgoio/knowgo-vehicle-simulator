@@ -1,13 +1,17 @@
 package io.knowgo.vehicle.simulator;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import androidx.annotation.Nullable;
@@ -22,6 +26,7 @@ import java.util.Objects;
 public class SettingsActivity extends FragmentActivity {
     private final static String TAG = SettingsActivity.class.getSimpleName();
     private View mSettingsView;
+    private View mAboutView;
     private View mHomeView;
     private Switch mHeartRateSwitch;
     private Switch mNotificationsSwitch;
@@ -40,7 +45,18 @@ public class SettingsActivity extends FragmentActivity {
         mSettingsView = getLayoutInflater().inflate(R.layout.settings_page, null);
         setContentView(mSettingsView);
 
+        mAboutView = getLayoutInflater().inflate(R.layout.about_page, null);
         mHomeView = getLayoutInflater().inflate(R.layout.activity_main, null);
+
+        // Update the app version
+        try {
+            Context context = getApplicationContext();
+            PackageInfo pInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
+            final TextView appVersion = mAboutView.findViewById(R.id.appVersion);
+            appVersion.setText(pInfo.versionName);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         mNotificationsSwitch = mSettingsView.findViewById(R.id.switchNotifications);
@@ -117,7 +133,7 @@ public class SettingsActivity extends FragmentActivity {
         mMqttBroker = mSettingsView.findViewById(R.id.mqttBroker);
         mMqttTopic = mSettingsView.findViewById(R.id.mqttTopic);
         toggleMqttSettings(mSettingsView);
-        
+
         mMqttBroker.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -219,5 +235,13 @@ public class SettingsActivity extends FragmentActivity {
         editor = sharedPreferences.edit();
         editor.putBoolean("notifications_enabled", mNotificationsSwitch.isChecked());
         editor.apply();
+    }
+
+    public void navigateToAboutView(View view) {
+        setContentView(mAboutView);
+    }
+
+    public void navigateToSettingsView(View view) {
+        setContentView(mSettingsView);
     }
 }
