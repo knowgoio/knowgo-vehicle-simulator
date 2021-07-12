@@ -76,6 +76,7 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
     private ToggleButton mGPSToggleButton;
     private ImageView mIconView;
     private View mBackground;
+    private View mHomeView;
     private View mControlsView;
     private int mActiveTextColor;
     private int mHeartRateIconColor;
@@ -147,8 +148,7 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_screen_slide);
 
-        View mHomeView = getLayoutInflater().inflate(R.layout.activity_main, null);
-        View mSettingsView = getLayoutInflater().inflate(R.layout.settings_page, null);
+        mHomeView = getLayoutInflater().inflate(R.layout.activity_main, null);
         mControlsView = getLayoutInflater().inflate(R.layout.controls_page, null);
         mActiveTextColor = getResources().getColor(R.color.primary, null);
 
@@ -184,6 +184,8 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
             }
         });
 
+        toggleHeartRateMonitoring(mHomeView);
+
         mGPSIconColor = mGPSToggleButton.getBackgroundTintList().getDefaultColor();
         mHeartRateIconColor = mHeartRateToggleButton.getBackgroundTintList().getDefaultColor();
 
@@ -215,24 +217,25 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
                     "android.permission.ACCESS_COARSE_LOCATION"}, 0);
         }
 
-        Switch mGPSSwitch = mSettingsView.findViewById(R.id.switchWatchTelemetry);
-        if (hasGPS()) {
+        boolean gps_available = hasGPS();
+        editor = sharedPreferences.edit();
+        editor.putBoolean("gps_available", gps_available);
+        editor.apply();
+
+        if (gps_available) {
             Log.i(TAG, "GPS available");
-            mGPSSwitch.setVisibility(View.VISIBLE);
             locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         } else {
             // As GPS is unavailable on this watch, disable the icon completely
             Log.i(TAG, "GPS unavailable");
-            mGPSSwitch.setVisibility(View.GONE);
-            mGPSSwitch.setChecked(false);
             mGPSToggleButton.setChecked(false);
             mGPSToggleButton.setEnabled(false);
             mGPSIconColor = getColor(R.color.knowgo_default_grey);
             mGPSToggleButton.setBackgroundTintList(ColorStateList.valueOf(mGPSIconColor));
         }
+        toggleGPS(mHomeView);
 
-        Switch mMqttSettingsSwitch = mSettingsView.findViewById(R.id.switchMqttSettings);
-        final boolean mqttEnabled = sharedPreferences.getBoolean("mqtt_enabled", mMqttSettingsSwitch.isChecked());
+        final boolean mqttEnabled = sharedPreferences.getBoolean("mqtt_enabled", false);
         if (mqttEnabled) {
             final String mqttBroker = sharedPreferences.getString("mqtt_broker", getString(R.string.default_mqtt_broker));
             final String mqttTopic = sharedPreferences.getString("mqtt_topic", getString(R.string.default_mqtt_topic));
@@ -247,6 +250,8 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
         FragmentStateAdapter pagerAdapter = new ScreenSlidePagerAdapter(this, mHomeView, mControlsView);
         mPager.setAdapter(pagerAdapter);
 
+        // The activity may have been launched by a complication, in which case a pager destination
+        // may have been specified. If so, navigate the pager to the specified destination.
         int destinationId = getIntent().getIntExtra(EXTRA_PAGER_DESTINATION, 0);
         if (destinationId != 0) {
             mPager.setCurrentItem(destinationId);
@@ -457,6 +462,12 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         switch (key) {
+            case "gps_enabled":
+                toggleGPS(mHomeView);
+                break;
+            case "heartrate_monitoring_enabled":
+                toggleHeartRateMonitoring(mHomeView);
+                break;
             case "mqtt_broker":
                 mqttPublisher.setServerUri(sharedPreferences.getString("mqtt_broker", getString(R.string.default_mqtt_broker)));
                 break;
@@ -727,5 +738,32 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
         offButton.setIconTint(ColorStateList.valueOf(Color.BLACK));
         onButton.setBackgroundColor(Color.WHITE);
         onButton.setIconTint(ColorStateList.valueOf(Color.LTGRAY));
+    }
+
+    private void toggleHeartRateMonitoring(View view) {
+        final boolean heartrateMonitoringEnabled = sharedPreferences.getBoolean("heartrate_monitoring_enabled", true);
+        if (heartrateMonitoringEnabled) {
+            mHeartRateToggleButton.setVisibility(View.VISIBLE);
+            mHeartRateMeasurement.setVisibility(View.VISIBLE);
+        } else {
+            mHeartRateToggleButton.setVisibility(View.GONE);
+            mHeartRateMeasurement.setVisibility(View.GONE);
+        }
+    }
+
+    private void toggleGPS(View view) {
+        ToggleButton mGPSToggleButton = mHomeView.findViewById(R.id.gpsToggleButton);
+        boolean gps_enabled = sharedPreferences.getBoolean("gps_enabled", true);
+        boolean gps_available = sharedPreferences.getBoolean("gps_available", false);
+
+        if (gps_available && gps_enabled) {
+            mGPSToggleButton.setChecked(true);
+            mGPSToggleButton.setEnabled(true);
+            mGPSToggleButton.setVisibility(View.VISIBLE);
+        } else {
+            mGPSToggleButton.setChecked(false);
+            mGPSToggleButton.setEnabled(false);
+            mGPSToggleButton.setVisibility(View.INVISIBLE);
+        }
     }
 }

@@ -64,13 +64,22 @@ public class SettingsActivity extends FragmentActivity {
         mNotificationsSwitch.setChecked(notificationsOpt);
 
         mGPSSwitch = mSettingsView.findViewById(R.id.switchWatchTelemetry);
-        final boolean gpsOpt = sharedPreferences.getBoolean("gps_enabled", true);
-        mGPSSwitch.setChecked(gpsOpt);
-        toggleGPS(mSettingsView);
+        final boolean gpsAvailable = sharedPreferences.getBoolean("gps_available", false);
+        if (gpsAvailable) {
+            final boolean gpsOpt = sharedPreferences.getBoolean("gps_enabled", true);
+            mGPSSwitch.setChecked(gpsOpt);
+            toggleGPS(mSettingsView);
+        } else {
+            mGPSSwitch.setChecked(false);
+            mGPSSwitch.setVisibility(View.GONE);
+        }
 
         mHeartRateSwitch = mSettingsView.findViewById(R.id.switchHeartRate);
         TextInputEditText mMinHeartRate = mSettingsView.findViewById(R.id.minHeartRate);
         TextInputEditText mMaxHeartRate = mSettingsView.findViewById(R.id.maxHeartRate);
+
+        final boolean heartrateMonitoringEnabled = sharedPreferences.getBoolean("heartrate_monitoring_enabled", true);
+        mHeartRateSwitch.setChecked(heartrateMonitoringEnabled);
 
         if (mHeartRateSwitch.isChecked()) {
             minHeartRate = sharedPreferences.getInt("heartrate_min", Integer.parseInt(Objects.requireNonNull(mMinHeartRate.getText()).toString()));
@@ -213,18 +222,6 @@ public class SettingsActivity extends FragmentActivity {
 
     // Toggle global GPS telemetry setting
     public void toggleGPS(View view) {
-        ToggleButton mGPSToggleButton = mHomeView.findViewById(R.id.gpsToggleButton);
-
-        if (mGPSSwitch.isChecked()) {
-            mGPSToggleButton.setChecked(true);
-            mGPSToggleButton.setEnabled(true);
-            mGPSToggleButton.setVisibility(View.VISIBLE);
-        } else {
-            mGPSToggleButton.setChecked(false);
-            mGPSToggleButton.setEnabled(false);
-            mGPSToggleButton.setVisibility(View.INVISIBLE);
-        }
-
         editor = sharedPreferences.edit();
         editor.putBoolean("gps_enabled", mGPSSwitch.isChecked());
         editor.apply();
