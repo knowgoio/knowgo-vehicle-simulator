@@ -480,6 +480,49 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
                         // Force complication to redraw
                         FuelLevelComplicationProviderService.requestComplicationDataUpdate(this);
                     }
+
+                    if (state.containsKey("ignition_status")) {
+                        final String ignitionStatus = state.getString("ignition_status");
+
+                        editor = sharedPreferences.edit();;
+                        editor.putString("ignition_status", ignitionStatus);
+                        editor.apply();
+
+                        assert ignitionStatus != null;
+                        if (ignitionStatus.equals("run")) {
+                            ignitionOn(mControlsView);
+                        } else {
+                            ignitionOff(mControlsView);
+                        }
+                    }
+
+                    if (state.containsKey("headlamp_status")) {
+                        final boolean headlampStatus = state.getBoolean("headlamp_status", false);
+
+                        editor = sharedPreferences.edit();
+                        editor.putBoolean("headlamp_status", headlampStatus);
+                        editor.apply();
+
+                        if (headlampStatus) {
+                            headlampOn(mControlsView);
+                        } else {
+                            headlampOff(mControlsView);
+                        }
+                    }
+
+                    if (state.containsKey("door_status")) {
+                        final String doorStatus = state.getString("door_status", "all_unlocked");
+
+                        editor = sharedPreferences.edit();
+                        editor.putString("door_status", doorStatus);
+                        editor.apply();
+
+                        if (doorStatus.equals("all_unlocked")) {
+                            doorsUnlock(mControlsView);
+                        } else {
+                            doorsLock(mControlsView);
+                        }
+                    }
                 }
             }
         }

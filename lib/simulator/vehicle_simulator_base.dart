@@ -14,6 +14,7 @@ import 'package:knowgo_vehicle_simulator/services.dart';
 import 'package:knowgo_vehicle_simulator/simulator.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
+import 'package:wearable_communicator/wearable_communicator.dart';
 
 import 'vehicle_data_generator.dart';
 import 'vehicle_event_loop.dart';
@@ -167,6 +168,8 @@ class VehicleSimulator extends ChangeNotifier {
     if (_settingsService.eventLoggingEnabled) {
       _consoleService.write(update.toString());
     }
+
+    WearableCommunicator.setData('/knowgo/vehicle/state', update.toJson());
 
     // Dispatch event to notification endpoint asynchronously
     if (_settingsService.notificationEndpoint != null) {
@@ -351,6 +354,7 @@ class VehicleSimulator extends ChangeNotifier {
     var needsRestart = running;
     stop();
     updateVehicleState(state, update);
+    WearableCommunicator.setData('/knowgo/vehicle/state', update.toJson());
     if (needsRestart) {
       await start();
     } else {
