@@ -450,9 +450,11 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
                     }
 
                     if (info.containsKey("Name")) {
-                        final String vehicleName = info.getString("Name", "My Car");
+                        final String defaultName = getString(R.string.vehicle_name_title);
+                        final String vehicleName = info.getString("Name", defaultName);
+                        final String model = vehicleName.substring(vehicleName.lastIndexOf(" ") + 1);
                         editor = sharedPreferences.edit();
-                        editor.putString("vehicle_name", vehicleName);
+                        editor.putString("vehicle_name", vehicleName.equals(defaultName) ? defaultName : model);
                         editor.apply();
                     }
                 } else if (item.getUri().getPath().compareTo("/knowgo/vehicle/journey") == 0) {
