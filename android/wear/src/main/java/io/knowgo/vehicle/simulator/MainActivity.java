@@ -168,6 +168,8 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
         fuelLevelBar = mControlsView.findViewById(R.id.fuelLevel);
         fuelLevelBar.setProgress(sharedPreferences.getInt("fuel_level", 100));
 
+        updateVehicleName();
+
         mIconView = mHomeView.findViewById(R.id.icon);
         mNoticeView = mHomeView.findViewById(R.id.notice);
         mStartStopButton = mHomeView.findViewById(R.id.journeyToggleButton);
@@ -431,6 +433,28 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
                     byte[] rawData = event.getDataItem().getData();
                     DataMap info = DataMap.fromByteArray(rawData);
                     Log.i(TAG, "Vehicle Info: " + info.toString());
+
+                    // Persist vehicle ID
+                    if (info.containsKey("AutoID")) {
+                        final int vehicleId = info.getInt("AutoID", 0);
+                        editor = sharedPreferences.edit();
+                        editor.putInt("vehicleId", vehicleId);
+                        editor.apply();
+                    }
+
+                    if (info.containsKey("DriverID")) {
+                        final int driverId = info.getInt("DriverID", 0);
+                        editor = sharedPreferences.edit();
+                        editor.putInt("driverId", driverId);
+                        editor.apply();
+                    }
+
+                    if (info.containsKey("Name")) {
+                        final String vehicleName = info.getString("Name", "My Car");
+                        editor = sharedPreferences.edit();
+                        editor.putString("vehicle_name", vehicleName);
+                        editor.apply();
+                    }
                 } else if (item.getUri().getPath().compareTo("/knowgo/vehicle/journey") == 0) {
                     byte[] rawData = event.getDataItem().getData();
                     DataMap state = DataMap.fromByteArray(rawData);
@@ -473,6 +497,9 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
                 break;
             case "mqtt_topic":
                 mqttPublisher.setTopic(sharedPreferences.getString("mqtt_topic", getString(R.string.default_mqtt_topic)));
+                break;
+            case "vehicle_name":
+                updateVehicleName();
                 break;
         }
     }
@@ -765,5 +792,12 @@ public class MainActivity extends FragmentActivity implements SensorEventListene
             mGPSToggleButton.setEnabled(false);
             mGPSToggleButton.setVisibility(View.INVISIBLE);
         }
+    }
+
+    private void updateVehicleName() {
+        final TextView mVehicleName = mControlsView.findViewById(R.id.vehicle_name);
+        final String vehicleName = sharedPreferences.getString("vehicle_name", getString(R.string.vehicle_name_title));
+
+        mVehicleName.setText(vehicleName);
     }
 }
