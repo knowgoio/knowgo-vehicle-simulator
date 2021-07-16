@@ -21,6 +21,7 @@ class VehicleSimulatorHome extends StatefulWidget {
 
 class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
   var settingsService = serviceLocator.get<SettingsService>();
+  var consoleService = serviceLocator.get<ConsoleService>();
   final _formKey = GlobalKey<FormState>();
   List<bool> _webhookTriggers =
       List.generate(EventTrigger.values.length - 1, (_) => false);
@@ -51,7 +52,6 @@ class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
 
   void _vehicleNotificationListener() {
     var model = Provider.of<VehicleNotificationModel>(context, listen: false);
-    var consoleService = serviceLocator.get<ConsoleService>();
 
     model.notifications.forEach((notification) {
       consoleService
@@ -100,6 +100,9 @@ class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
       }
       settingsService.webhookSubscription = subscription;
       webhooks.updateSubscription(subscription);
+      consoleService.write(
+          'Configured Webhook notifier @ $notificationUrl, triggers: ' +
+              (triggers.map((e) => describeEnum(e)).toList().join(", ")));
     }
   }
 
