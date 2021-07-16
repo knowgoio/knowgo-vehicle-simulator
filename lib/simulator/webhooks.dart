@@ -204,6 +204,7 @@ class WebhookModel extends ChangeNotifier {
       nested['vehicleId'] = info.autoID;
       nested['longitude'] = event.longitude;
       nested['latitude'] = event.latitude;
+      nested['bearing'] = event.bearing.toInt();
       nested['timestamp'] = event.timestamp.toIso8601String();
       payload['location_changed'] = nested;
       http.post(url,
@@ -232,7 +233,8 @@ class WebhookModel extends ChangeNotifier {
   void processWebhooks(
       knowgo.Auto info, knowgo.Event prevState, knowgo.Event newState) {
     if (prevState.longitude != newState.longitude ||
-        prevState.latitude != newState.latitude) {
+        prevState.latitude != newState.latitude ||
+        prevState.bearing != newState.bearing) {
       _processLocationChange(info, newState);
     }
 
