@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:knowgo/api.dart' as knowgo;
+import 'package:knowgo_vehicle_simulator/simulator.dart';
 import 'package:yaml/yaml.dart';
 
 class SettingsService {
@@ -11,6 +12,9 @@ class SettingsService {
 
   // Initial vehicle event setting
   knowgo.Event initEvent = knowgo.Event();
+
+  // Optional Webhook configuration
+  WebhookSubscription? webhookSubscription;
 
   // Optional Notification Endpoint
   String? _notificationEndpoint;

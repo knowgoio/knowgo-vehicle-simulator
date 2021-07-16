@@ -52,6 +52,14 @@ class WebhookSubscription {
   WebhookSubscription({required this.triggers, required this.notificationUrl})
       : subscriptionId = _uuidGenerator.v4();
 
+  WebhookSubscription.fromExisting(
+      {required this.subscriptionId,
+      required this.triggers,
+      required this.notificationUrl})
+      : assert(subscriptionId.isNotEmpty),
+        assert(triggers.length > 0),
+        assert(notificationUrl.isNotEmpty);
+
   WebhookSubscription.fromJson(Map<String, dynamic> json)
       : triggers = (json['webhooks'] as List)
             .cast<String>()
@@ -66,6 +74,11 @@ class WebhookSubscription {
     json['webhooks'] = triggers.map((t) => describeEnum(t)).toList();
     json['notificationUrl'] = notificationUrl;
     return json;
+  }
+
+  @override
+  String toString() {
+    return 'WebhookSubscription[subscriptionId=$subscriptionId, webhooks=$triggers, notificationUrl=$notificationUrl]';
   }
 }
 

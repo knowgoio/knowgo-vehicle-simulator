@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:csv/csv.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -20,6 +21,10 @@ class VehicleSimulatorHome extends StatefulWidget {
 
 class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
   var settingsService = serviceLocator.get<SettingsService>();
+  final _formKey = GlobalKey<FormState>();
+  List<bool> _webhookTriggers =
+      List.generate(EventTrigger.values.length - 1, (_) => false);
+  TextEditingController? _webhookNotificationController;
 
   @override
   void initState() {
@@ -33,6 +38,15 @@ class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
 
     var model = Provider.of<VehicleNotificationModel>(context, listen: false);
     model.addListener(_vehicleNotificationListener);
+
+    _webhookNotificationController =
+        TextEditingController(text: settingsService.notificationEndpoint ?? '');
+  }
+
+  @override
+  void dispose() {
+    _webhookNotificationController!.dispose();
+    super.dispose();
   }
 
   void _vehicleNotificationListener() {
@@ -61,6 +75,31 @@ class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
       return ListToCsvConverter().convert(eventData);
     } else {
       return null;
+    }
+  }
+
+  void _addWebhookSubscriptionFromUI(String notificationUrl) {
+    List<EventTrigger> triggers = [];
+    for (int index = 0; index < _webhookTriggers.length; index++) {
+      if (_webhookTriggers[index]) {
+        triggers.add(EventTrigger.values[index + 1]);
+      }
+    }
+
+    if (triggers.isNotEmpty) {
+      final webhooks = WebhookModel();
+      final WebhookSubscription subscription;
+      if (settingsService.webhookSubscription != null) {
+        subscription = WebhookSubscription.fromExisting(
+            subscriptionId: settingsService.webhookSubscription!.subscriptionId,
+            triggers: triggers,
+            notificationUrl: notificationUrl);
+      } else {
+        subscription = WebhookSubscription(
+            triggers: triggers, notificationUrl: notificationUrl);
+      }
+      settingsService.webhookSubscription = subscription;
+      webhooks.updateSubscription(subscription);
     }
   }
 
@@ -367,6 +406,94 @@ class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
                   },
                 ),
               ),
+            ),
+            ListTile(
+              title: const Text('Webhooks'),
+              onTap: () async {
+                await showDialog(
+                  context: context,
+                  barrierDismissible: false,
+                  builder: (BuildContext buildContext) {
+                    return StatefulBuilder(builder: (context, setState) {
+                      return AlertDialog(
+                        title: Text('Webhook Notifications',
+                            style: TextStyle(
+                                color: Theme.of(context).primaryColor)),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: Text('CANCEL'),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              if (_formKey.currentState == null) {
+                                Navigator.of(context).pop();
+                              }
+                              if (_formKey.currentState!.validate()) {
+                                _formKey.currentState!.save();
+                                _addWebhookSubscriptionFromUI(
+                                    _webhookNotificationController!.text);
+                                Navigator.of(context).pop();
+                              }
+                            },
+                            child: Text('DONE'),
+                          )
+                        ],
+                        content: Form(
+                          key: _formKey,
+                          child: Container(
+                            width: double.minPositive,
+                            height: 300,
+                            child: ListView(
+                              children: [
+                                Text('Event Triggers'),
+                                ListView.builder(
+                                  shrinkWrap: true,
+                                  physics: ScrollPhysics(),
+                                  // All but 'none'
+                                  itemCount: EventTrigger.values.length - 1,
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
+                                    String _key = describeEnum(
+                                        EventTrigger.values[index + 1]);
+                                    return CheckboxListTile(
+                                      value: _webhookTriggers[index],
+                                      title: AutoSizeText(_key, maxLines: 1),
+                                      onChanged: (value) {
+                                        setState(() {
+                                          _webhookTriggers[index] =
+                                              !_webhookTriggers[index];
+                                        });
+                                      },
+                                    );
+                                  },
+                                ),
+                                TextFormField(
+                                  decoration: const InputDecoration(
+                                    hintText: 'Webhook receiver URL',
+                                    labelText: 'URL *',
+                                  ),
+                                  controller: _webhookNotificationController,
+                                  validator: (String? value) {
+                                    if (value != null &&
+                                        Uri.tryParse(value)?.hasAbsolutePath ==
+                                            true) {
+                                      return null;
+                                    }
+                                    return 'Invalid URL';
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    });
+                  },
+                );
+              },
             ),
           ],
         ),

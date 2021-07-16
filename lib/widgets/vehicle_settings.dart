@@ -25,7 +25,6 @@ class _VehicleSettingsState extends State<VehicleSettings> {
     'High driving automation',
     'Full driving automation'
   ];
-
   List<bool> _selections = List.generate(3, (_) => false);
   final _consoleService = serviceLocator<ConsoleService>();
 

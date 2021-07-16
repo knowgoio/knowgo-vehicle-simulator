@@ -39,6 +39,7 @@ class VehicleSimulator extends ChangeNotifier {
 
   final simulatorReceivePort = ReceivePort();
   final notificationModel = VehicleNotificationModel();
+  final webhookModel = WebhookModel();
 
   VehicleSimulator([this.serverReceivePort]) {
     initVehicleInfo(info);
@@ -143,6 +144,15 @@ class VehicleSimulator extends ChangeNotifier {
 
     // Synchronize vehicle state
     info.odometer = num.parse((update.odometer).toStringAsFixed(2)).toDouble();
+
+    // Process any webhooks
+    if (journey.events.length > 0) {
+      webhookModel.processWebhooks(info, journey.events.last, update);
+    } else {
+      webhookModel.processWebhooks(info, state, update);
+    }
+
+    // Update vehicle state
     updateVehicleState(state, update);
 
     // Check if we need to reset the journey
