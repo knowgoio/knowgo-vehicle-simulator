@@ -75,7 +75,10 @@ class _VehicleSettingsState extends State<VehicleSettings> {
   }
 
   Widget simulatorButton(VehicleSimulator vehicleSimulator) {
-    if (simulatorRunning == false) {
+    // Check if the simulator is running, simulatorRunning refers to the
+    // internal UI state, while vehicleSimulator.running refers to the
+    // underlying simulation model, which may be triggered via the REST API.
+    if (simulatorRunning == false || vehicleSimulator.running == false) {
       return ElevatedButton.icon(
         style: ElevatedButton.styleFrom(
           primary: Theme.of(context).accentColor,
@@ -84,7 +87,6 @@ class _VehicleSettingsState extends State<VehicleSettings> {
           ),
         ),
         onPressed: () async {
-          _consoleService.write('Starting vehicle');
           await vehicleSimulator.start();
           setState(() {
             simulatorRunning = true;
@@ -101,7 +103,6 @@ class _VehicleSettingsState extends State<VehicleSettings> {
             ),
           ),
           onPressed: () {
-            _consoleService.write('Stopping vehicle');
             vehicleSimulator.stop();
             // Ensure the Journey is restarted
             vehicleSimulator.journey.journeyID = null;
@@ -121,6 +122,10 @@ class _VehicleSettingsState extends State<VehicleSettings> {
         vehicleSimulator.state.acceleratorPedalPosition ?? 0.0;
     var brakePosition = vehicleSimulator.state.brakePedalPosition ?? 0.0;
     var steeringWheelAngle = vehicleSimulator.state.steeringWheelAngle ?? 0.0;
+
+    // Sync UI state with simulation model - this handles the case in which
+    // the simulation model has been remotely enabled/disabled via the REST API
+    simulatorRunning = vehicleSimulator.running;
 
     return VehicleDataCard(
       title: 'Vehicle Controls',

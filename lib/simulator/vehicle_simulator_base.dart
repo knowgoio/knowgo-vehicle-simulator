@@ -281,6 +281,7 @@ class VehicleSimulator extends ChangeNotifier {
     } else {
       // Update the simulator state
       running = true;
+      _writeConsoleMessage('Starting vehicle');
     }
 
     // Init API client connection
@@ -348,6 +349,8 @@ class VehicleSimulator extends ChangeNotifier {
     } else {
       _stopIsolates();
     }
+
+    _writeConsoleMessage('Stopping vehicle');
   }
 
   Future<void> update(knowgo.Event update) async {
