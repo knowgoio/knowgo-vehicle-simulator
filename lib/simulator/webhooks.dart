@@ -167,6 +167,7 @@ class WebhookModel extends ChangeNotifier {
       Map<String, dynamic> payload = {};
       Map<String, dynamic> nested = {};
       nested['vehicleId'] = info.autoID;
+      nested['driverId'] = newState.driverID;
       nested['pedal_start_position'] =
           prevState.acceleratorPedalPosition.floor();
       nested['pedal_end_position'] = newState.acceleratorPedalPosition.floor();
@@ -187,6 +188,7 @@ class WebhookModel extends ChangeNotifier {
       Map<String, dynamic> payload = {};
       Map<String, dynamic> nested = {};
       nested['vehicleId'] = info.autoID;
+      nested['driverId'] = info.driverID;
       nested['pedal_start_position'] = prevState.brakePedalPosition.floor();
       nested['pedal_end_position'] = newState.brakePedalPosition.floor();
       nested['timestamp'] = newState.timestamp.toIso8601String();
@@ -206,6 +208,7 @@ class WebhookModel extends ChangeNotifier {
       Map<String, dynamic> payload = {};
       Map<String, dynamic> nested = {};
       nested['vehicleId'] = info.autoID;
+      nested['driverId'] = newState.driverID;
       nested['ignition_start_state'] = describeEnum(prevState.ignitionStatus);
       nested['ignition_end_state'] = describeEnum(newState.ignitionStatus);
       nested['timestamp'] = newState.timestamp.toIso8601String();
@@ -224,6 +227,7 @@ class WebhookModel extends ChangeNotifier {
       Map<String, dynamic> payload = {};
       Map<String, dynamic> nested = {};
       nested['vehicleId'] = info.autoID;
+      nested['driverId'] = event.driverID;
       nested['latitude'] = event.latitude;
       nested['longitude'] = event.longitude;
       nested['bearing'] = event.bearing.toInt();
@@ -243,6 +247,7 @@ class WebhookModel extends ChangeNotifier {
       Map<String, dynamic> payload = {};
       Map<String, dynamic> nested = {};
       nested['vehicleId'] = info.autoID;
+      nested['driverId'] = event.driverID;
       nested['latitude'] = event.latitude;
       nested['longitude'] = event.longitude;
       nested['bearing'] = event.bearing.toInt();

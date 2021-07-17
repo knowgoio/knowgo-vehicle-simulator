@@ -30,6 +30,7 @@ void vehicleEventLoop(SendPort sendPort) {
       event.fuelConsumedSinceRestart = calculator.fuelConsumed(state);
       event.fuelLevel = calculator.fuelLevel(info, state);
       event.autoID = info.autoID;
+      event.driverID = info.driverID;
       event.eventID = eventId++;
       event.odometer = calculator.odometer(state);
       event.timestamp = DateTime.now();
