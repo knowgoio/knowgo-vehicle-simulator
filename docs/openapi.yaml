@@ -1,24 +1,25 @@
 openapi: 3.0.0
 servers:
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/KnowGo/knowgo-vehicle-simulator-api/1.1.1
   - description: Local Simulation Environment
     url: http://localhost:8086
-  - description: SwaggerHub API Auto Mocking
-    url: https://virtserver.swaggerhub.com/Adaptant/knowgo-vehicle-simulator-api/1.1.0
 info:
   description: |
     This is a simple API for interacting with the KnowGo Vehicle Simulator. It
     provides mechanisms for starting/stopping the simulated vehicle, sending
     notifications to the vehicle, registering webhooks, and for obtaining
     detailed information and generated telemetry from the vehicle.
-    
+
     It further offers the ability to submit external events in order to allow
     the vehicle simulation state to be synchronized with external vehicle data,
     allowing the simulated vehicle to act as a digital twin upon which
     additional applications and services can be modelled.
-    
+
     Fine-grained access to vehicle data is provided through ISO 20078
     Extended Vehicle (ExVe)-compatible API endpoints.
-  version: 1.1.0
+  version: 1.1.1
   title: KnowGo Vehicle Simulator API
   contact:
     email: labs@adaptant.io
@@ -154,6 +155,40 @@ paths:
                   format: uri
                   example: https://myserver/endpoint
       callbacks:
+        automation_level_changed:
+          '{$request.body#/notificationUrl}':
+            post:
+              requestBody:
+                required: true
+                content:
+                  application/json:
+                    schema:
+                      type: object
+                      required:
+                        - automation_level_changed
+                      properties:
+                        automation_level_changed:
+                          $ref: '#/components/schemas/AutomationLevelChange'
+              responses:
+                '200':
+                  description: Notification accepted
+        driver_changed:
+          '{$request.body#/notificationUrl}':
+            post:
+              requestBody:
+                required: true
+                content:
+                  application/json:
+                    schema:
+                      type: object
+                      required:
+                        - driver_changed
+                      properties:
+                        driver_changed:
+                          $ref: '#/components/schemas/DriverChange'
+              responses:
+                '200':
+                  description: Notification accepted
         journey_begin:
           '{$request.body#/notificationUrl}':
             post:
@@ -459,6 +494,52 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AcceleratorPedalPositions'
+  '/exve/vehicles/{vehicleId}/automationLevels':
+    get:
+      tags:
+        - exve
+      summary: get the automation levels for a specific vehicle
+      parameters:
+        - in: path
+          name: vehicleId
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the vehicle to get
+      operationId: getAutomationLevelsById
+      description: |
+        Obtain a list of changes in SAE J3016 automation levels for a specific
+        vehicle.
+      responses:
+        '200':
+          description: automation levels
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AutomationLevels'
+  '/exve/vehicles/{vehicleId}/brakePedalPositions':
+    get:
+      tags:
+        - exve
+      summary: get the brake pedal positions for a specific vehicle
+      parameters:
+        - in: path
+          name: vehicleId
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the vehicle to get
+      operationId: getBrakePedalPositionsById
+      description: |
+        Obtain a list of changes in brake pedal positions for a specific
+        vehicle.
+      responses:
+        '200':
+          description: brake pedal positions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BrakePedalPositions'
   '/exve/vehicles/{vehicleId}/odometers':
     get:
       tags:
@@ -595,9 +676,17 @@ components:
         AutoID:
           type: integer
           format: int64
+        DriverID:
+          type: integer
+          format: int64
         EventCategoryID:
           type: integer
           format: int32
+        automation_level:
+          type: integer
+          minimum: 0
+          maximum: 5
+          description: SAE J3016 automation level.
         steering_wheel_angle:
           type: number
           format: float
@@ -799,6 +888,45 @@ components:
               timestamp:
                 type: string
                 format: date-time
+    AutomationLevels:
+      type: object
+      required:
+        - automationLevels
+      properties:
+        automationLevels:
+          type: array
+          uniqueItems: true
+          items:
+            type: object
+            properties:
+              level:
+                type: integer
+                minimum: 0
+                maximum: 5
+                description: SAE J3016 automation level.
+              timestamp:
+                type: string
+                format: date-time
+    BrakePedalPositions:
+      type: object
+      required:
+        - brakePedalPositions
+      properties:
+        brakePedalPositions:
+          type: array
+          uniqueItems: true
+          items:
+            type: object
+            properties:
+              value:
+                type: integer
+                example: 40
+              units:
+                type: string
+                example: 'percent'
+              timestamp:
+                type: string
+                format: date-time
     Odometers:
       type: object
       required:
@@ -825,6 +953,7 @@ components:
         - vehicleId
         - latitude
         - longitude
+        - bearing
         - timestamp
       properties:
         vehicleId:
@@ -836,6 +965,9 @@ components:
         longitude:
           type: number
           example: 11.58485
+        bearing:
+          type: integer
+          example: 45
         timestamp:
           type: string
           format: date-time
@@ -852,6 +984,7 @@ components:
             required:
               - latitude
               - longitude
+              - bearing
               - timestamp
             properties:
               latitude:
@@ -860,6 +993,10 @@ components:
               longitude:
                 type: number
                 example: 11.58485
+              bearing:
+                type: integer
+                example: 45
+                description: Bearing in degrees.
               timestamp:
                 type: string
                 format: date-time
@@ -868,13 +1005,15 @@ components:
       items:
         type: string
         enum:
+          - automation_level_changed
+          - driver_changed
           - journey_begin
           - journey_end
           - location_changed
           - ignition_changed
           - harsh_acceleration
           - harsh_braking
-      example: [journey_begin, journey_end, location_changed, ignition_changed, harsh_acceleration, harsh_braking]
+      example: [automation_level_changed, driver_changed, journey_begin, journey_end, location_changed, ignition_changed, harsh_acceleration, harsh_braking]
       uniqueItems: true
     WebhookSubscription:
       type: object
@@ -885,6 +1024,42 @@ components:
           type: string
           format: uuid
           example: '3701fac0-391b-4ad7-8392-8cba1ae5feca'
+    AutomationLevelChange:
+      type: object
+      properties:
+        vehicleId:
+          type: integer
+          example: 123
+        old_level:
+          type: integer
+          minimum: 0
+          maximum: 5
+          example: 2
+          description: SAE J3016 automation level
+        new_level:
+          type: integer
+          minimum: 0
+          maximum: 5
+          example: 3
+          description: SAE J3016 automation level
+        timestamp:
+          type: string
+          format: date-time
+    DriverChange:
+      type: object
+      properties:
+        vehicleId:
+          type: integer
+          example: 123
+        old_driverId:
+          type: integer
+          example: 456
+        new_driverId:
+          type: integer
+          example: 200
+        timestamp:
+          type: string
+          format: date-time
     JourneyChange:
       type: object
       properties:
@@ -893,13 +1068,17 @@ components:
           example: 123
         driverId:
           type: integer
-          example: 22
+          example: 456
         latitude:
           type: number
           example: 48.0202599980004
         longitude:
           type: number
           example: 11.58485
+        bearing:
+          type: integer
+          example: 45
+          description: Bearing in degrees.
         timestamp:
           type: string
           format: date-time
@@ -916,6 +1095,9 @@ components:
         vehicleId:
           type: integer
           example: 123
+        driverId:
+          type: integer
+          example: 456
         ignition_start_state:
           $ref: '#/components/schemas/IgnitionStatus'
         ignition_end_state:
@@ -929,6 +1111,9 @@ components:
         vehicleId:
           type: integer
           example: 123
+        driverId:
+          type: integer
+          example: 456
         pedal_start_position:
           type: integer
           description: Pedal position as a percentage
