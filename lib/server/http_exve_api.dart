@@ -143,6 +143,7 @@ class ExVeAPI {
             Map<String, dynamic> reading = {};
             reading['latitude'] = event.latitude;
             reading['longitude'] = event.longitude;
+            reading['bearing'] = event.bearing;
             reading['timestamp'] = event.timestamp.toIso8601String();
             data.add(reading);
           });
