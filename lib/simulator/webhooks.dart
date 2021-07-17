@@ -273,7 +273,8 @@ class WebhookModel extends ChangeNotifier {
     });
   }
 
-  void _processAutomationLevelChange(knowgo.Auto info, knowgo.Event event) {
+  void _processAutomationLevelChange(
+      knowgo.Auto info, knowgo.Event prevState, knowgo.Event newState) {
     var subscribers = _subscriptions.where((subscription) =>
         subscription.triggers.contains(EventTrigger.automation_level_changed));
     subscribers.forEach((subscriber) {
@@ -281,8 +282,9 @@ class WebhookModel extends ChangeNotifier {
       Map<String, dynamic> payload = {};
       Map<String, dynamic> nested = {};
       nested['vehicleId'] = info.autoID;
-      nested['level'] = event.automationLevel;
-      nested['timestamp'] = event.timestamp.toIso8601String();
+      nested['old_level'] = prevState.automationLevel;
+      nested['new_level'] = newState.automationLevel;
+      nested['timestamp'] = newState.timestamp.toIso8601String();
       payload['automation_level_changed'] = nested;
       http.post(url,
           headers: {'Content-Type': 'application/json'},
@@ -299,7 +301,7 @@ class WebhookModel extends ChangeNotifier {
     }
 
     if (prevState.automationLevel != newState.automationLevel) {
-      _processAutomationLevelChange(info, newState);
+      _processAutomationLevelChange(info, prevState, newState);
     }
 
     if (prevState.driverID != newState.driverID) {
