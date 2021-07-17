@@ -151,7 +151,7 @@ class WebhookModel extends ChangeNotifier {
       nested['old_driverId'] = prevState.driverID;
       nested['new_driverId'] = newState.driverID;
       nested['timestamp'] = newState.timestamp.toIso8601String();
-      payload['journey_end'] = nested;
+      payload['driver_changed'] = nested;
       http.post(url,
           headers: {'Content-Type': 'application/json'},
           body: json.encode(payload));
