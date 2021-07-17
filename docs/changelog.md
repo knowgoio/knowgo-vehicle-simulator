@@ -10,6 +10,7 @@
 - Allow Webhooks to be configured directly from the simulator UI.
 - Add `journey_begin`, `journey_end`, and `driver_changed` webhooks.
 - Include driver ID in event data model.
+- Add `brakePedalPositions` and `automationLevels` to ExVe API.
 
 [SAE J3016]: https://www.sae.org/standards/content/j3016_202104/
 
