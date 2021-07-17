@@ -10,6 +10,7 @@ import 'package:uuid/uuid.dart';
 enum EventTrigger {
   none,
   automation_level_changed,
+  driver_changed,
   journey_begin,
   journey_end,
   ignition_changed,
@@ -22,6 +23,8 @@ EventTrigger eventTriggerStringToEnum(String eventTrigger) {
   switch (eventTrigger) {
     case 'automation_level_changed':
       return EventTrigger.automation_level_changed;
+    case 'driver_changed':
+      return EventTrigger.driver_changed;
     case 'journey_begin':
       return EventTrigger.journey_begin;
     case 'journey_end':
@@ -134,6 +137,25 @@ class WebhookModel extends ChangeNotifier {
   void updateSubscription(WebhookSubscription subscription) {
     removeSubscription(subscription.subscriptionId);
     addSubscription(subscription);
+  }
+
+  void _processDriverChanged(
+      knowgo.Auto info, knowgo.Event prevState, knowgo.Event newState) {
+    var subscribers = _subscriptions.where((subscription) =>
+        subscription.triggers.contains(EventTrigger.driver_changed));
+    subscribers.forEach((subscriber) {
+      final url = Uri.parse(subscriber.notificationUrl);
+      Map<String, dynamic> payload = {};
+      Map<String, dynamic> nested = {};
+      nested['vehicleId'] = info.autoID;
+      nested['old_driverId'] = prevState.driverID;
+      nested['new_driverId'] = newState.driverID;
+      nested['timestamp'] = newState.timestamp.toIso8601String();
+      payload['journey_end'] = nested;
+      http.post(url,
+          headers: {'Content-Type': 'application/json'},
+          body: json.encode(payload));
+    });
   }
 
   void _processHarshAcceleration(
@@ -278,6 +300,10 @@ class WebhookModel extends ChangeNotifier {
 
     if (prevState.automationLevel != newState.automationLevel) {
       _processAutomationLevelChange(info, newState);
+    }
+
+    if (prevState.driverID != newState.driverID) {
+      _processDriverChanged(info, prevState, newState);
     }
 
     if (prevState.ignitionStatus != newState.ignitionStatus) {

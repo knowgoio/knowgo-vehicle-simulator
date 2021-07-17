@@ -16,6 +16,7 @@ when they are triggered are outlined in the table below:
 | <div style="width:180px">Trigger</div> | Description            |
 |----------------------------|------------------------------------|
 | `automation_level_changed` | Triggered when the [SAE J3016] level of driving automation changes. |
+| `driver_changed`           | Triggered when the active Driver is changed throughout the course of a Journey. The Driver may be either a natural person or an autonomous driving system. |
 | `journey_begin`            | Triggered when a new Journey is started. Each time the vehicle simulation model is started, a new Journey is begun. |
 | `journey_end`              | Triggered when a Journey is completed. This will be triggered each time the simulation model is stopped. |
 | `location_changed`         | Triggered each time the vehicle location (latitude/longitude) changes. This can be chained together with a reverse geocoding service in order to detect country changes. |

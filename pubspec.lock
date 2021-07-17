@@ -200,7 +200,7 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: d5dc32af40bb93e3fc246552b2a0df3621ced1fb
+      resolved-ref: "5f7ff8f3f798cf47c70623cdc2b8490297b40d4d"
       url: "https://github.com/knowgoio/knowgo-client-dart"
     source: git
     version: "1.0.3+1"
@@ -357,7 +357,7 @@ packages:
       name: random_string
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.1.0"
+    version: "2.3.1"
   shelf:
     dependency: transitive
     description:
@@ -453,7 +453,7 @@ packages:
       name: win32
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.2.0"
+    version: "2.2.5"
   xdg_directories:
     dependency: transitive
     description:
