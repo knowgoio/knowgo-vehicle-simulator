@@ -87,7 +87,8 @@ class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
     }
 
     if (triggers.isNotEmpty) {
-      final webhooks = WebhookModel();
+      var vehicleSimulator =
+          Provider.of<VehicleSimulator>(context, listen: false);
       final WebhookSubscription subscription;
       if (settingsService.webhookSubscription != null) {
         subscription = WebhookSubscription.fromExisting(
@@ -99,7 +100,7 @@ class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
             triggers: triggers, notificationUrl: notificationUrl);
       }
       settingsService.webhookSubscription = subscription;
-      webhooks.updateSubscription(subscription);
+      vehicleSimulator.webhookModel.updateSubscription(subscription);
       consoleService.write(
           'Configured Webhook notifier @ $notificationUrl, triggers: ' +
               (triggers.map((e) => describeEnum(e)).toList().join(", ")));

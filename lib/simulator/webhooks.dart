@@ -194,6 +194,44 @@ class WebhookModel extends ChangeNotifier {
     });
   }
 
+  void _processJourneyBegin(knowgo.Auto info, knowgo.Event event) {
+    var subscribers = _subscriptions.where((subscription) =>
+        subscription.triggers.contains(EventTrigger.journey_begin));
+    subscribers.forEach((subscriber) {
+      final url = Uri.parse(subscriber.notificationUrl);
+      Map<String, dynamic> payload = {};
+      Map<String, dynamic> nested = {};
+      nested['vehicleId'] = info.autoID;
+      nested['latitude'] = event.latitude;
+      nested['longitude'] = event.longitude;
+      nested['bearing'] = event.bearing.toInt();
+      nested['timestamp'] = event.timestamp.toIso8601String();
+      payload['journey_begin'] = nested;
+      http.post(url,
+          headers: {'Content-Type': 'application/json'},
+          body: json.encode(payload));
+    });
+  }
+
+  void _processJourneyEnd(knowgo.Auto info, knowgo.Event event) {
+    var subscribers = _subscriptions.where((subscription) =>
+        subscription.triggers.contains(EventTrigger.journey_end));
+    subscribers.forEach((subscriber) {
+      final url = Uri.parse(subscriber.notificationUrl);
+      Map<String, dynamic> payload = {};
+      Map<String, dynamic> nested = {};
+      nested['vehicleId'] = info.autoID;
+      nested['latitude'] = event.latitude;
+      nested['longitude'] = event.longitude;
+      nested['bearing'] = event.bearing.toInt();
+      nested['timestamp'] = event.timestamp.toIso8601String();
+      payload['journey_end'] = nested;
+      http.post(url,
+          headers: {'Content-Type': 'application/json'},
+          body: json.encode(payload));
+    });
+  }
+
   void _processLocationChange(knowgo.Auto info, knowgo.Event event) {
     var subscribers = _subscriptions.where((subscription) =>
         subscription.triggers.contains(EventTrigger.location_changed));
@@ -243,7 +281,15 @@ class WebhookModel extends ChangeNotifier {
     }
 
     if (prevState.ignitionStatus != newState.ignitionStatus) {
+      if (newState.ignitionStatus == knowgo.IgnitionStatus.run) {
+        _processJourneyBegin(info, newState);
+      }
+
       _processIgnitionStatusChange(info, prevState, newState);
+
+      if (newState.ignitionStatus == knowgo.IgnitionStatus.off) {
+        _processJourneyEnd(info, newState);
+      }
     }
 
     if ((newState.acceleratorPedalPosition -

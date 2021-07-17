@@ -304,7 +304,12 @@ class VehicleSimulator extends ChangeNotifier {
           StringSerializer(), StringSerializer(), kafkaConfig);
     }
 
+    // Update ignition status
+    knowgo.Event prevState = knowgo.Event.fromJson(state.toJson());
+    prevState.ignitionStatus = knowgo.IgnitionStatus.off;
     state.ignitionStatus = knowgo.IgnitionStatus.run;
+    state.timestamp = DateTime.now();
+    webhookModel.processWebhooks(info, prevState, state);
 
     if (kIsWeb) {
       return _startWebWorkers();
@@ -332,7 +337,11 @@ class VehicleSimulator extends ChangeNotifier {
       return;
     }
 
+    // Update ignition status
+    knowgo.Event prevState = knowgo.Event.fromJson(state.toJson());
     state.ignitionStatus = knowgo.IgnitionStatus.off;
+    state.timestamp = DateTime.now();
+    webhookModel.processWebhooks(info, prevState, state);
 
     if (kIsWeb) {
       _stopWorkers();
