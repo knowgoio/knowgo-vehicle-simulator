@@ -200,7 +200,7 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: "5f7ff8f3f798cf47c70623cdc2b8490297b40d4d"
+      resolved-ref: "9f45167e126dfb67d6bca10d0e66117ac9984485"
       url: "https://github.com/knowgoio/knowgo-client-dart"
     source: git
     version: "1.0.3+1"

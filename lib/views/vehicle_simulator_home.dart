@@ -67,10 +67,14 @@ class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
     var vehicleSimulator = context.watch<VehicleSimulator>();
     if (vehicleSimulator.journey.events.isNotEmpty) {
       List<List<dynamic>> eventData = [];
-      eventData
-          .add(vehicleSimulator.journey.events.first.toJson().keys.toList());
+      eventData.add(vehicleSimulator.journey.events.first
+          .toJson(omitNull: false)
+          .keys
+          .toList());
       vehicleSimulator.journey.events.forEach((element) {
-        eventData.add(element.toJson().values.toList());
+        var items = element.toJson(omitNull: false).values.toList();
+        // Encode null values as empty fields so they are excluded from output
+        eventData.add(items.map((e) => e == null ? '' : e).toList());
       });
       return ListToCsvConverter().convert(eventData);
     } else {
