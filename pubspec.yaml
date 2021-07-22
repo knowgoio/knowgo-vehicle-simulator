@@ -20,15 +20,15 @@ dependencies:
   random_string: ^2.1.0
   vector_math: ^2.0.8
   uuid: ^2.1.0
-  get_it: ^6.0.0
+  get_it: ^7.2.0
   js: ^0.6.3
-  font_awesome_flutter: ^8.8.1
-  yaml: ^2.2.1
+  font_awesome_flutter: ^9.1.0
+  yaml: ^3.1.0
   auto_size_text: ^2.1.0
   mqtt_client: ^8.1.0
   shelf_router: ^0.7.4
   http: ^0.12.2
-  path_provider: ^1.6.28
+  path_provider: ^2.0.2
   # Kafka is presently holding back null safety
   kafka:
     git:
@@ -42,7 +42,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  msix: ^0.1.15
+  msix: ^2.1.3
 
 flutter:
   uses-material-design: true
