@@ -272,7 +272,7 @@ class VehicleSimulator extends ChangeNotifier {
     });
   }
 
-  Future<void> start() async {
+  Future<void> start({bool notify = true}) async {
     var _settingsService = serviceLocator.get<SettingsService>();
 
     // Nothing to do if the simulator is already running
@@ -281,7 +281,9 @@ class VehicleSimulator extends ChangeNotifier {
     } else {
       // Update the simulator state
       running = true;
-      _writeConsoleMessage('Starting vehicle');
+      if (notify) {
+        _writeConsoleMessage('Starting vehicle');
+      }
     }
 
     // Init API client connection
@@ -333,7 +335,7 @@ class VehicleSimulator extends ChangeNotifier {
     notifyListeners();
   }
 
-  void stop() {
+  void stop({bool notify = true}) {
     if (running == false) {
       return;
     }
@@ -350,15 +352,18 @@ class VehicleSimulator extends ChangeNotifier {
       _stopIsolates();
     }
 
-    _writeConsoleMessage('Stopping vehicle');
+    if (notify) {
+      _writeConsoleMessage('Stopping vehicle');
+    }
   }
 
   Future<void> update(knowgo.Event update) async {
     var needsRestart = running;
-    stop();
+    var notify = needsRestart == false;
+    stop(notify: notify);
     updateVehicleState(state, update);
     if (needsRestart) {
-      await start();
+      await start(notify: notify);
     } else {
       notifyListeners();
     }
