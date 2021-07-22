@@ -23,7 +23,7 @@ dependencies:
   get_it: ^7.2.0
   js: ^0.6.3
   font_awesome_flutter: ^9.1.0
-  yaml: ^3.1.0
+  yaml: ^2.2.1
   auto_size_text: ^2.1.0
   mqtt_client: ^8.1.0
   shelf_router: ^0.7.4
@@ -42,7 +42,8 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  msix: ^2.1.3
+  msix: ^0.1.19
+  flutter_native_splash: ^0.3.2
 
 flutter:
   uses-material-design: true
@@ -73,3 +74,8 @@ msix_config:
   icons_background_color: transparent
   architecture: x64
   capabilities: 'internetClient,internetClientServer,privateNetworkClientServer'
+
+flutter_native_splash:
+  color: "#ffffff"
+  image: snap/gui/knowgo-vehicle-simulator.png
+  fullscreen: true
