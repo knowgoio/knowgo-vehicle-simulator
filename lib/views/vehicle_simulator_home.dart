@@ -616,9 +616,12 @@ class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
           ),
         ],
         title: Center(
-          child: Text(
-            'KnowGo Vehicle Simulator',
-            style: Theme.of(context).textTheme.headline6,
+          child: FittedBox(
+            fit: BoxFit.contain,
+            child: Text(
+              'KnowGo Vehicle Simulator',
+              style: Theme.of(context).textTheme.headline6,
+            ),
           ),
         ),
       ),
