@@ -1,5 +1,10 @@
 # ChangeLog
 
+## Latest
+
+- Ensure new webhooks are listed through the `/simulator/webhooks` REST
+  API endpoint.
+
 ## 1.1.1
 
 - Split event updates into sub-topics nested under the vehicle ID when

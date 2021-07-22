@@ -20,29 +20,9 @@ enum EventTrigger {
 }
 
 EventTrigger eventTriggerStringToEnum(String eventTrigger) {
-  switch (eventTrigger) {
-    case 'automation_level_changed':
-      return EventTrigger.automation_level_changed;
-    case 'driver_changed':
-      return EventTrigger.driver_changed;
-    case 'journey_begin':
-      return EventTrigger.journey_begin;
-    case 'journey_end':
-      return EventTrigger.journey_end;
-    case 'ignition_changed':
-      return EventTrigger.ignition_changed;
-    case 'location_changed':
-      return EventTrigger.location_changed;
-    case 'harsh_acceleration':
-      return EventTrigger.harsh_acceleration;
-    case 'harsh_braking':
-      return EventTrigger.harsh_braking;
-  }
-
-  // Unable to match value
-  assert(false);
-
-  return EventTrigger.none;
+  return EventTrigger.values.singleWhere(
+      (trigger) => eventTrigger == describeEnum(trigger),
+      orElse: () => EventTrigger.none);
 }
 
 final _uuidGenerator = Uuid();
@@ -95,15 +75,8 @@ class WebhookModel extends ChangeNotifier {
     return _singleton;
   }
 
-  WebhookModel._internal()
-      : _triggers = [
-          EventTrigger.journey_begin,
-          EventTrigger.journey_end,
-          EventTrigger.ignition_changed,
-          EventTrigger.location_changed,
-          EventTrigger.harsh_acceleration,
-          EventTrigger.harsh_braking,
-        ];
+  // Valid triggers are all EventTrigger values except 'none'
+  WebhookModel._internal() : _triggers = EventTrigger.values.sublist(1);
 
   UnmodifiableListView<EventTrigger> get triggers =>
       UnmodifiableListView(_triggers);
