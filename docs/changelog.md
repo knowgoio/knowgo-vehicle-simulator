@@ -4,6 +4,7 @@
 
 - Ensure new webhooks are listed through the `/simulator/webhooks` REST
   API endpoint.
+- Fix up responsive scaling for smaller displays.
 
 ## 1.1.1
 

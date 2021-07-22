@@ -58,6 +58,8 @@ Future<void> main() async {
 class VehicleSimulatorApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final bool useMobileLayout = getDeviceType() == DeviceType.phone;
+
     return MaterialApp(
       title: 'KnowGo Vehicle Simulator',
       theme: ThemeData(
@@ -76,7 +78,7 @@ class VehicleSimulatorApp extends StatelessWidget {
         future: serviceLocator.allReady(),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.hasData) {
-            return VehicleSimulatorHome();
+            return VehicleSimulatorHome(useMobileLayout: useMobileLayout);
           } else {
             return Center(child: CircularProgressIndicator());
           }

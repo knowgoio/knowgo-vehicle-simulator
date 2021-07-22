@@ -13,7 +13,10 @@ import 'package:knowgo_vehicle_simulator/widgets.dart';
 import 'package:provider/provider.dart';
 
 class VehicleSimulatorHome extends StatefulWidget {
-  VehicleSimulatorHome({Key? key}) : super(key: key);
+  final bool useMobileLayout;
+
+  VehicleSimulatorHome({this.useMobileLayout = false, Key? key})
+      : super(key: key);
 
   @override
   _VehicleSimulatorHomeState createState() => _VehicleSimulatorHomeState();
@@ -32,10 +35,18 @@ class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
     super.initState();
 
     WidgetsFlutterBinding.ensureInitialized();
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.landscapeRight,
-      DeviceOrientation.landscapeLeft,
-    ]);
+
+    if (widget.useMobileLayout == true) {
+      SystemChrome.setPreferredOrientations([
+        DeviceOrientation.portraitUp,
+        DeviceOrientation.portraitDown,
+      ]);
+    } else {
+      SystemChrome.setPreferredOrientations([
+        DeviceOrientation.landscapeRight,
+        DeviceOrientation.landscapeLeft,
+      ]);
+    }
 
     var model = Provider.of<VehicleNotificationModel>(context, listen: false);
     model.addListener(_vehicleNotificationListener);
@@ -143,6 +154,79 @@ class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
           content: Text(msg),
         );
       },
+    );
+  }
+
+  Widget landscapeView() {
+    return Container(
+      color: Colors.grey,
+      child: Column(
+        children: [
+          Expanded(
+            flex: 2,
+            child: Row(
+              children: [
+                Expanded(
+                  flex: 3,
+                  child: VehicleOuterView(),
+                ),
+                Expanded(
+                  flex: 1,
+                  child: VehicleSettings(),
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            flex: 1,
+            child: Row(
+              children: [
+                Expanded(
+                  flex: 3,
+                  child: ConsoleLog(),
+                ),
+                Expanded(
+                  flex: 1,
+                  child: VehicleStats(),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget portraitView() {
+    return Container(
+      color: Colors.grey,
+      child: Column(
+        children: [
+          Expanded(
+            flex: 1,
+            child: VehicleOuterView(),
+          ),
+          Expanded(
+            flex: 2,
+            child: Row(
+              children: [
+                Expanded(
+                  flex: 1,
+                  child: VehicleSettings(),
+                ),
+                Expanded(
+                  flex: 1,
+                  child: VehicleStats(),
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            flex: 1,
+            child: ConsoleLog(),
+          ),
+        ],
+      ),
     );
   }
 
@@ -538,43 +622,8 @@ class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
           ),
         ),
       ),
-      body: Container(
-        color: Colors.grey,
-        child: Column(
-          children: [
-            Expanded(
-              flex: 2,
-              child: Row(
-                children: [
-                  Expanded(
-                    flex: 3,
-                    child: VehicleOuterView(),
-                  ),
-                  Expanded(
-                    flex: 1,
-                    child: VehicleSettings(),
-                  ),
-                ],
-              ),
-            ),
-            Expanded(
-              flex: 1,
-              child: Row(
-                children: [
-                  Expanded(
-                    flex: 3,
-                    child: ConsoleLog(),
-                  ),
-                  Expanded(
-                    flex: 1,
-                    child: VehicleStats(),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
+      // Choose the most appropriate layout and orientation for the device
+      body: widget.useMobileLayout ? portraitView() : landscapeView(),
     );
   }
 }

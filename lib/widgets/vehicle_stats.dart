@@ -14,6 +14,7 @@ class VehicleStats extends StatefulWidget {
 
 class _VehicleStatsState extends State<VehicleStats> {
   var group = AutoSizeGroup();
+  var minFontSize = 10.0;
 
   Widget fuelLevelIndicator(VehicleSimulator vehicleSimulator) {
     if (vehicleSimulator.state.fuelLevel != null) {
@@ -48,51 +49,63 @@ class _VehicleStatsState extends State<VehicleStats> {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Expanded(
-            child: AutoSizeText(
-              'VIN: ${vehicleSimulator.info.VIN}',
-              group: group,
-            ),
+          AutoSizeText(
+            'VIN: ${vehicleSimulator.info.VIN}',
+            group: group,
+            maxLines: 1,
+            minFontSize: minFontSize,
+          ),
+          AutoSizeText(
+            'Odometer: ${vehicleSimulator.state.odometer.toStringAsFixed(2)} km',
+            group: group,
+            maxLines: 1,
+            minFontSize: minFontSize,
+          ),
+          AutoSizeText(
+            'Lat: ${vehicleSimulator.state.latitude.toStringAsPrecision(6)}, Lng: ${vehicleSimulator.state.longitude.toStringAsPrecision(6)}, Heading: ${vehicleSimulator.state.bearing.toInt()}°',
+            group: group,
+            minFontSize: minFontSize,
+          ),
+          AutoSizeText(
+            'Distance Traveled: ${distanceTraveled.toStringAsFixed(2)} km',
+            group: group,
+            maxLines: 1,
+            minFontSize: minFontSize,
+          ),
+          AutoSizeText(
+            'Vehicle Speed: ${vehicleSimulator.state.vehicleSpeed.toStringAsFixed(2)} km/h',
+            group: group,
+            maxLines: 1,
+            minFontSize: minFontSize,
+          ),
+          AutoSizeText(
+            'Engine Speed: ${vehicleSimulator.state.engineSpeed.toInt()} RPMs',
+            group: group,
+            maxLines: 1,
+            minFontSize: minFontSize,
           ),
           Expanded(
-            child: AutoSizeText(
-              'Odometer: ${vehicleSimulator.state.odometer.toStringAsFixed(2)} km',
-              group: group,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                AutoSizeText(
+                  'Fuel Consumed:',
+                  group: group,
+                  maxLines: 1,
+                  minFontSize: minFontSize,
+                ),
+                fuelConsumptionIndicator(vehicleSimulator),
+                AutoSizeText(
+                  'Fuel Level:',
+                  group: group,
+                  maxLines: 1,
+                  minFontSize: minFontSize,
+                ),
+                fuelLevelIndicator(vehicleSimulator),
+              ],
             ),
           ),
-          Expanded(
-            child: AutoSizeText(
-              'Lat: ${vehicleSimulator.state.latitude.toStringAsPrecision(6)}, Lng: ${vehicleSimulator.state.longitude.toStringAsPrecision(6)}, Heading: ${vehicleSimulator.state.bearing.toInt()}°',
-              group: group,
-            ),
-          ),
-          Expanded(
-            child: AutoSizeText(
-              'Distance Traveled: ${distanceTraveled.toStringAsFixed(2)} km',
-              group: group,
-            ),
-          ),
-          Expanded(
-            child: AutoSizeText(
-              'Vehicle Speed: ${vehicleSimulator.state.vehicleSpeed.toStringAsFixed(2)} km/h',
-              group: group,
-            ),
-          ),
-          Expanded(
-            child: AutoSizeText(
-              'Engine Speed: ${vehicleSimulator.state.engineSpeed.toInt()} RPMs',
-              group: group,
-            ),
-          ),
-          Expanded(
-            child: AutoSizeText(
-              'Fuel Consumed:',
-              group: group,
-            ),
-          ),
-          Expanded(child: fuelConsumptionIndicator(vehicleSimulator)),
-          Expanded(child: AutoSizeText('Fuel Level:', group: group)),
-          Expanded(child: fuelLevelIndicator(vehicleSimulator)),
         ],
       );
     }
