@@ -99,18 +99,12 @@ Flutter Web                       | Other Target Platforms
 
 ## Implementation Status
 
-The simulator was originally written for the desktop, and so should
-work fine there and on any reasonably-sized tablet.
-
 - [x] Linux desktop
 - [x] Windows desktop
 - [x] MacOS desktop
 - [x] Web
-- [x] Android (only tested on a tablet)
+- [x] Android
 - [ ] iOS (untested)
-
-The UI will need to be reworked to run on smaller displays, this is not
-a high priority at the moment, but will eventually be implemented.
 
 ## Event Publication
 
