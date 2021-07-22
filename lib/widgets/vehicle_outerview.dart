@@ -18,8 +18,14 @@ class _VehicleOuterViewState extends State<VehicleOuterView>
     with WidgetsBindingObserver {
   double? width, height;
   double? origWidth, origHeight;
-  var wiperChipTopPosition = 125.0;
+  var wiperChipBottomPosition = 300.0;
   var wiperChipLeftPosition = 300.0;
+  var doorChipBottomPosition = 225.0;
+  var doorChipLeftPosition = 400.0;
+  var gearChipBottomPosition = 175.0;
+  var gearChipLeftPosition = 300.0;
+  var headlampChipBottomPosition = 225.0;
+  var headlampChipLeftPosition = 150.0;
 
   @override
   void initState() {
@@ -61,14 +67,18 @@ class _VehicleOuterViewState extends State<VehicleOuterView>
       final widthDelta = box.size.width - origWidth!;
 
       wiperChipLeftPosition = (width! * 0.3125) + (widthDelta / 2);
-      wiperChipTopPosition = (height! * 0.2822) + heightDelta;
-/*
-      print('Adjusting chip left position to $wiperChipLeftPosition');
-      print('Adjusting chip top position to $wiperChipTopPosition');
+      wiperChipBottomPosition = (height! * 0.6822) - (heightDelta / 2);
 
-      print('Redraw Height: ${box.size.height}, Width: ${box.size.width}');
+      gearChipLeftPosition = wiperChipLeftPosition;
+      gearChipBottomPosition = wiperChipBottomPosition - (height! / 3);
 
- */
+      headlampChipLeftPosition = (gearChipLeftPosition / 2);
+      headlampChipBottomPosition = gearChipBottomPosition +
+          (wiperChipBottomPosition - gearChipBottomPosition) / 2;
+
+      doorChipLeftPosition = wiperChipLeftPosition +
+          (wiperChipLeftPosition - headlampChipLeftPosition);
+      doorChipBottomPosition = headlampChipBottomPosition;
     }
 
     return Stack(
@@ -86,7 +96,7 @@ class _VehicleOuterViewState extends State<VehicleOuterView>
           ),
         ),
         Positioned(
-          top: wiperChipTopPosition,
+          bottom: wiperChipBottomPosition,
           left: wiperChipLeftPosition,
           child: VehicleInfoChip(
             label: 'wipers',
@@ -94,24 +104,24 @@ class _VehicleOuterViewState extends State<VehicleOuterView>
           ),
         ),
         Positioned(
-          bottom: 225,
-          left: 400,
+          bottom: doorChipBottomPosition,
+          left: doorChipLeftPosition,
           child: VehicleInfoChip(
             label: 'doors',
             value: describeEnum(state.doorStatus),
           ),
         ),
         Positioned(
-          bottom: 225,
-          left: 150,
+          bottom: headlampChipBottomPosition,
+          left: headlampChipLeftPosition,
           child: VehicleInfoChip(
             label: 'headlamp',
             value: state.headlampStatus ? 'on' : 'off',
           ),
         ),
         Positioned(
-          bottom: 175,
-          left: 300,
+          bottom: gearChipBottomPosition,
+          left: gearChipLeftPosition,
           child: VehicleInfoChip(
             label: 'gear',
             value: state.transmissionGearPosition.gearNumber.toString(),
