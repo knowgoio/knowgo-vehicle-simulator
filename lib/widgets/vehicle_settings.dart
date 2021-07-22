@@ -25,13 +25,17 @@ class _VehicleSettingsState extends State<VehicleSettings> {
     'High driving automation',
     'Full driving automation'
   ];
+  final autoSizeGroup = AutoSizeGroup();
+  final sliderTextSizeGroup = AutoSizeGroup();
   List<bool> _selections = List.generate(3, (_) => false);
   final _consoleService = serviceLocator<ConsoleService>();
 
   Widget gearShiftButtons(VehicleSimulator vehicleSimulator) {
     return Wrap(
       crossAxisAlignment: WrapCrossAlignment.center,
-      alignment: WrapAlignment.spaceBetween,
+      alignment: WrapAlignment.center,
+      spacing: 10.0,
+      runSpacing: 10.0,
       children: [
         ElevatedButton.icon(
           onPressed: () async {
@@ -49,9 +53,9 @@ class _VehicleSettingsState extends State<VehicleSettings> {
             ),
           ),
           icon: Icon(Icons.arrow_upward, color: Colors.white),
-          label: Text('Shift up', style: TextStyle(color: Colors.white)),
+          label: AutoSizeText('Shift up',
+              style: TextStyle(color: Colors.white), group: autoSizeGroup),
         ),
-        SizedBox(width: 10),
         ElevatedButton.icon(
           style: ElevatedButton.styleFrom(
             primary: Colors.grey[300],
@@ -68,7 +72,7 @@ class _VehicleSettingsState extends State<VehicleSettings> {
             await vehicleSimulator.update(update);
           },
           icon: Icon(Icons.arrow_downward),
-          label: Text('Shift down'),
+          label: AutoSizeText('Shift down', group: autoSizeGroup, maxLines: 1),
         ),
       ],
     );
@@ -93,25 +97,30 @@ class _VehicleSettingsState extends State<VehicleSettings> {
           });
         },
         icon: Icon(Icons.play_arrow, color: Colors.white),
-        label: Text('Start Vehicle', style: TextStyle(color: Colors.white)),
+        label: AutoSizeText('Start Vehicle',
+            group: autoSizeGroup,
+            style: TextStyle(color: Colors.white),
+            minFontSize: 8,
+            maxLines: 1),
       );
     } else {
       return ElevatedButton.icon(
-          style: ElevatedButton.styleFrom(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(30),
-            ),
+        style: ElevatedButton.styleFrom(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(30),
           ),
-          onPressed: () {
-            vehicleSimulator.stop();
-            // Ensure the Journey is restarted
-            vehicleSimulator.journey.journeyID = null;
-            setState(() {
-              simulatorRunning = false;
-            });
-          },
-          icon: Icon(Icons.stop),
-          label: Text('Stop Vehicle'));
+        ),
+        onPressed: () {
+          vehicleSimulator.stop();
+          // Ensure the Journey is restarted
+          vehicleSimulator.journey.journeyID = null;
+          setState(() {
+            simulatorRunning = false;
+          });
+        },
+        icon: Icon(Icons.stop),
+        label: AutoSizeText('Stop Vehicle', group: autoSizeGroup, maxLines: 1),
+      );
     }
   }
 
@@ -129,170 +138,211 @@ class _VehicleSettingsState extends State<VehicleSettings> {
 
     return VehicleDataCard(
       title: 'Vehicle Controls',
-      child: ListView(
-        shrinkWrap: true,
-        padding: EdgeInsets.symmetric(horizontal: 10),
+      child: Column(
         children: [
-          VehicleDataSlider(
-            title: 'Accelerator',
-            min: 0,
-            max: 100,
-            divisions: 10,
-            value: acceleratorPosition,
-            label: acceleratorPosition.toString(),
-            onChanged: (value) {
-              setState(() {
-                vehicleSimulator.state.acceleratorPedalPosition = value;
-              });
-            },
-            onChangeEnd: (value) async {
-              var update = vehicleSimulator.state;
-              update.acceleratorPedalPosition = value;
-              await vehicleSimulator.update(update);
-              _consoleService.write(
-                  'Setting Accelerator Pedal to ${value.toInt().toString()}%');
-            },
-          ),
-          VehicleDataSlider(
-            title: 'Brake',
-            value: brakePosition,
-            label: brakePosition.toString(),
-            min: 0,
-            max: 100,
-            divisions: 10,
-            onChanged: (value) {
-              setState(() {
-                vehicleSimulator.state.brakePedalPosition = value;
-              });
-            },
-            onChangeEnd: (value) async {
-              var update = vehicleSimulator.state;
-              update.brakePedalPosition = value;
-              await vehicleSimulator.update(update);
-              _consoleService
-                  .write('Setting Brake Pedal to ${value.toInt().toString()}%');
-            },
-          ),
-          VehicleDataSlider(
-            title: 'Steering',
-            value: steeringWheelAngle,
-            label: steeringWheelAngle.toStringAsFixed(1),
-            min: -180,
-            max: 180,
-            divisions: 10,
-            onChanged: (value) {
-              setState(() {
-                vehicleSimulator.state.steeringWheelAngle =
-                    value.roundToDouble();
-              });
-            },
-            onChangeEnd: (value) async {
-              var update = vehicleSimulator.state;
-              update.steeringWheelAngle = value;
-              await vehicleSimulator.update(update);
-              _consoleService.write(
-                  'Setting Steering Wheel to ${value.round().toString()}°');
-            },
-          ),
-          Container(
-            padding: EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(30),
-              border: Border.all(color: Theme.of(context).primaryColor),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          Expanded(
+            child: ListView(
+              shrinkWrap: true,
+              padding: EdgeInsets.symmetric(horizontal: 10),
               children: [
-                Text('Gear Shift'),
-                SizedBox(height: 4),
-                gearShiftButtons(vehicleSimulator),
+                VehicleDataSlider(
+                  title: 'Accelerator',
+                  overflowTitle: 'Accel',
+                  min: 0,
+                  max: 100,
+                  divisions: 10,
+                  value: acceleratorPosition,
+                  label: acceleratorPosition.toString(),
+                  textGroup: sliderTextSizeGroup,
+                  onChanged: (value) {
+                    setState(() {
+                      vehicleSimulator.state.acceleratorPedalPosition = value;
+                    });
+                  },
+                  onChangeEnd: (value) async {
+                    var update = vehicleSimulator.state;
+                    update.acceleratorPedalPosition = value;
+                    await vehicleSimulator.update(update);
+                    _consoleService.write(
+                        'Setting Accelerator Pedal to ${value.toInt().toString()}%');
+                  },
+                ),
+                VehicleDataSlider(
+                  title: 'Brake',
+                  overflowTitle: 'Brake',
+                  value: brakePosition,
+                  label: brakePosition.toString(),
+                  textGroup: sliderTextSizeGroup,
+                  min: 0,
+                  max: 100,
+                  divisions: 10,
+                  onChanged: (value) {
+                    setState(() {
+                      vehicleSimulator.state.brakePedalPosition = value;
+                    });
+                  },
+                  onChangeEnd: (value) async {
+                    var update = vehicleSimulator.state;
+                    update.brakePedalPosition = value;
+                    await vehicleSimulator.update(update);
+                    _consoleService.write(
+                        'Setting Brake Pedal to ${value.toInt().toString()}%');
+                  },
+                ),
+                VehicleDataSlider(
+                  title: 'Steering',
+                  overflowTitle: 'Steer',
+                  value: steeringWheelAngle,
+                  label: steeringWheelAngle.toStringAsFixed(1),
+                  textGroup: sliderTextSizeGroup,
+                  min: -180,
+                  max: 180,
+                  divisions: 10,
+                  onChanged: (value) {
+                    setState(() {
+                      vehicleSimulator.state.steeringWheelAngle =
+                          value.roundToDouble();
+                    });
+                  },
+                  onChangeEnd: (value) async {
+                    var update = vehicleSimulator.state;
+                    update.steeringWheelAngle = value;
+                    await vehicleSimulator.update(update);
+                    _consoleService.write(
+                        'Setting Steering Wheel to ${value.round().toString()}°');
+                  },
+                ),
+                SizedBox(
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Wrap(
+                      alignment: WrapAlignment.center,
+                      children: [
+                        Container(
+                          padding: EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(30),
+                            border: Border.all(
+                                color: Theme.of(context).primaryColor),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              AutoSizeText('Gear Shift',
+                                  group: autoSizeGroup, maxLines: 1),
+                              SizedBox(height: 4),
+                              gearShiftButtons(vehicleSimulator),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                SizedBox(height: 10),
+                SizedBox(
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Wrap(
+                      alignment: WrapAlignment.center,
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      spacing: 16.0,
+                      runSpacing: 4.0,
+                      children: [
+                        AutoSizeText('Switches', group: autoSizeGroup),
+                        ToggleButtons(
+                          children: [
+                            _selections[0] == false
+                                ? Icon(Icons.lock_open)
+                                : Icon(Icons.lock_outline),
+                            FaIcon(FontAwesomeIcons.umbrella),
+                            _selections[2] == false
+                                ? Icon(Icons.brightness_low)
+                                : Icon(Icons.brightness_high),
+                          ],
+                          isSelected: _selections,
+                          borderRadius: BorderRadius.circular(30),
+                          color: Colors.black45,
+                          borderColor: Theme.of(context).primaryColor,
+                          disabledBorderColor: Theme.of(context).primaryColor,
+                          onPressed: (int index) async {
+                            final setting = !_selections[index];
+                            var update = vehicleSimulator.state;
+
+                            switch (index) {
+                              case 0:
+                                _consoleService.write(
+                                    (setting ? 'Locking' : 'Unlocking') +
+                                        ' doors');
+                                update.doorStatus = setting
+                                    ? knowgo.DoorStatus.all_locked
+                                    : knowgo.DoorStatus.all_unlocked;
+                                break;
+                              case 1:
+                                _consoleService.write(
+                                    'Turning windshield wipers ' +
+                                        (setting ? 'on' : 'off'));
+                                update.windshieldWiperStatus = setting;
+                                break;
+                              case 2:
+                                _consoleService.write('Turning headlamp ' +
+                                    (setting ? 'on' : 'off'));
+                                update.headlampStatus = setting;
+                                break;
+                            }
+                            await vehicleSimulator.update(update);
+                            setState(() {
+                              _selections[index] = setting;
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                SizedBox(height: 10),
+                SizedBox(
+                  width: double.infinity,
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: DropdownButton(
+                      value: automationLevelsDesc[
+                              vehicleSimulator.state.automationLevel]
+                          .toString(),
+                      underline: Container(
+                          height: 2, color: Theme.of(context).primaryColor),
+                      icon: Icon(Icons.arrow_drop_down,
+                          color: Theme.of(context).accentColor),
+                      items: automationLevelsDesc.map((level) {
+                        return DropdownMenuItem<String>(
+                          value: level,
+                          child: AutoSizeText(level.toString(),
+                              group: autoSizeGroup, maxLines: 1),
+                        );
+                      }).toList(),
+                      onChanged: (String? value) async {
+                        if (value != null) {
+                          var update = vehicleSimulator.state;
+                          update.automationLevel =
+                              automationLevelsDesc.indexOf(value);
+                          await vehicleSimulator.update(update);
+                          _consoleService.write(
+                              'Setting automation level to ${update.automationLevel}');
+                        }
+                      },
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
           SizedBox(height: 10),
-          Wrap(
-            alignment: WrapAlignment.spaceEvenly,
-            crossAxisAlignment: WrapCrossAlignment.center,
-            spacing: 16.0,
-            runSpacing: 4.0,
-            children: [
-              Text('Switches'),
-              ToggleButtons(
-                children: [
-                  _selections[0] == false
-                      ? Icon(Icons.lock_open)
-                      : Icon(Icons.lock_outline),
-                  FaIcon(FontAwesomeIcons.umbrella),
-                  _selections[2] == false
-                      ? Icon(Icons.brightness_low)
-                      : Icon(Icons.brightness_high),
-                ],
-                isSelected: _selections,
-                borderRadius: BorderRadius.circular(30),
-                color: Colors.black45,
-                borderColor: Theme.of(context).primaryColor,
-                disabledBorderColor: Theme.of(context).primaryColor,
-                onPressed: (int index) async {
-                  final setting = !_selections[index];
-                  var update = vehicleSimulator.state;
-
-                  switch (index) {
-                    case 0:
-                      _consoleService.write(
-                          (setting ? 'Locking' : 'Unlocking') + ' doors');
-                      update.doorStatus = setting
-                          ? knowgo.DoorStatus.all_locked
-                          : knowgo.DoorStatus.all_unlocked;
-                      break;
-                    case 1:
-                      _consoleService.write('Turning windshield wipers ' +
-                          (setting ? 'on' : 'off'));
-                      update.windshieldWiperStatus = setting;
-                      break;
-                    case 2:
-                      _consoleService.write(
-                          'Turning headlamp ' + (setting ? 'on' : 'off'));
-                      update.headlampStatus = setting;
-                      break;
-                  }
-                  await vehicleSimulator.update(update);
-                  setState(() {
-                    _selections[index] = setting;
-                  });
-                },
-              ),
-            ],
-          ),
-          SizedBox(height: 10),
           SizedBox(
             width: double.infinity,
-            child: DropdownButton(
-              value:
-                  automationLevelsDesc[vehicleSimulator.state.automationLevel]
-                      .toString(),
-              icon: Icon(Icons.arrow_drop_down),
-              items: automationLevelsDesc.map((level) {
-                return DropdownMenuItem<String>(
-                  value: level,
-                  child: AutoSizeText(level.toString()),
-                );
-              }).toList(),
-              onChanged: (String? value) async {
-                if (value != null) {
-                  var update = vehicleSimulator.state;
-                  update.automationLevel = automationLevelsDesc.indexOf(value);
-                  await vehicleSimulator.update(update);
-                  _consoleService.write(
-                      'Setting automation level to ${update.automationLevel}');
-                }
-              },
-            ),
-          ),
-          SizedBox(height: 10),
-          SizedBox(
-            width: double.infinity,
-            child: simulatorButton(vehicleSimulator),
+            child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: simulatorButton(vehicleSimulator)),
           ),
         ],
       ),

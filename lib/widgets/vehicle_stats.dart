@@ -37,7 +37,7 @@ class _VehicleStatsState extends State<VehicleStats> {
 
   Widget generateStatWidgets(VehicleSimulator vehicleSimulator) {
     if (vehicleSimulator.journey.odometerBegin == null) {
-      return Text('Waiting for simulator to start..');
+      return AutoSizeText('Waiting for simulator to start..', group: group);
     } else {
       var distanceTraveled = vehicleSimulator.state.odometer -
           vehicleSimulator.journey.odometerBegin;

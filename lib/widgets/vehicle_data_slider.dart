@@ -8,8 +8,10 @@ class VehicleDataSlider extends StatelessWidget {
   final int? divisions;
   final String label;
   final String title;
+  final String? overflowTitle;
   final ValueChanged<double>? onChanged;
   final ValueChanged<double>? onChangeEnd;
+  final AutoSizeGroup? textGroup;
 
   VehicleDataSlider({
     required this.value,
@@ -17,20 +19,33 @@ class VehicleDataSlider extends StatelessWidget {
     required this.max,
     required this.label,
     required this.title,
+    this.overflowTitle,
     this.onChanged,
     this.onChangeEnd,
     this.divisions,
+    this.textGroup,
   });
 
   @override
   Widget build(BuildContext context) {
     return Wrap(
-      alignment: WrapAlignment.spaceAround,
+      alignment: WrapAlignment.center,
       crossAxisAlignment: WrapCrossAlignment.center,
       children: [
         FractionallySizedBox(
           widthFactor: 0.25,
-          child: AutoSizeText(title, textAlign: TextAlign.center, maxLines: 1),
+          child: AutoSizeText(
+            title,
+            textAlign: TextAlign.center,
+            maxLines: 1,
+            group: this.textGroup,
+            minFontSize: 8,
+            overflowReplacement: AutoSizeText(this.overflowTitle,
+                textAlign: TextAlign.center,
+                maxLines: 1,
+                group: this.textGroup,
+                minFontSize: 8),
+          ),
         ),
         FractionallySizedBox(
           widthFactor: 0.75,
