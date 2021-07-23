@@ -16,7 +16,6 @@ class VehicleSettings extends StatefulWidget {
 
 class _VehicleSettingsState extends State<VehicleSettings> {
   final calculator = VehicleDataCalculator();
-  var simulatorRunning = false;
   static const automationLevelsDesc = [
     'No driving automation',
     'Driver assistance',
@@ -82,7 +81,7 @@ class _VehicleSettingsState extends State<VehicleSettings> {
     // Check if the simulator is running, simulatorRunning refers to the
     // internal UI state, while vehicleSimulator.running refers to the
     // underlying simulation model, which may be triggered via the REST API.
-    if (simulatorRunning == false || vehicleSimulator.running == false) {
+    if (vehicleSimulator.running == false) {
       return ElevatedButton.icon(
         style: ElevatedButton.styleFrom(
           primary: Theme.of(context).accentColor,
@@ -93,7 +92,7 @@ class _VehicleSettingsState extends State<VehicleSettings> {
         onPressed: () async {
           await vehicleSimulator.start();
           setState(() {
-            simulatorRunning = true;
+            vehicleSimulator.running = true;
           });
         },
         icon: Icon(Icons.play_arrow, color: Colors.white),
@@ -115,7 +114,7 @@ class _VehicleSettingsState extends State<VehicleSettings> {
           // Ensure the Journey is restarted
           vehicleSimulator.journey.journeyID = null;
           setState(() {
-            simulatorRunning = false;
+            vehicleSimulator.running = false;
           });
         },
         icon: Icon(Icons.stop),
@@ -131,10 +130,6 @@ class _VehicleSettingsState extends State<VehicleSettings> {
         vehicleSimulator.state.acceleratorPedalPosition ?? 0.0;
     var brakePosition = vehicleSimulator.state.brakePedalPosition ?? 0.0;
     var steeringWheelAngle = vehicleSimulator.state.steeringWheelAngle ?? 0.0;
-
-    // Sync UI state with simulation model - this handles the case in which
-    // the simulation model has been remotely enabled/disabled via the REST API
-    simulatorRunning = vehicleSimulator.running;
 
     return VehicleDataCard(
       title: 'Vehicle Controls',
