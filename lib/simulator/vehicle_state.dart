@@ -96,6 +96,12 @@ void initVehicleState(knowgo.Event state) {
 }
 
 void updateVehicleState(knowgo.Event state, knowgo.Event update) {
+  if (update.autoID != null) {
+    state.autoID = update.autoID;
+  }
+  if (update.driverID != null) {
+    state.driverID = update.driverID;
+  }
   if (update.journeyID != null) {
     state.journeyID = update.journeyID;
   }
