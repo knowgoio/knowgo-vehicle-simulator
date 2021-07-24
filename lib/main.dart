@@ -4,7 +4,6 @@ import 'package:flutter/services.dart';
 import 'package:knowgo_vehicle_simulator/server.dart';
 import 'package:knowgo_vehicle_simulator/services.dart';
 import 'package:knowgo_vehicle_simulator/simulator.dart';
-import 'package:knowgo_vehicle_simulator/simulator/event_injector.dart';
 import 'package:knowgo_vehicle_simulator/utils.dart';
 import 'package:knowgo_vehicle_simulator/views.dart';
 import 'package:provider/provider.dart';

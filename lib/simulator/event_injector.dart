@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:knowgo_vehicle_simulator/simulator.dart';
-import 'package:knowgo_vehicle_simulator/simulator/webhooks.dart';
 import 'package:uuid/uuid.dart';
 
 final _uuidGenerator = Uuid();

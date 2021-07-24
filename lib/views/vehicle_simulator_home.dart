@@ -9,7 +9,7 @@ import 'package:knowgo_vehicle_simulator/compat/file_downloader.dart';
 import 'package:knowgo_vehicle_simulator/icons.dart';
 import 'package:knowgo_vehicle_simulator/services.dart';
 import 'package:knowgo_vehicle_simulator/simulator.dart';
-import 'package:knowgo_vehicle_simulator/views/event_injection_home.dart';
+import 'package:knowgo_vehicle_simulator/views.dart';
 import 'package:knowgo_vehicle_simulator/widgets.dart';
 import 'package:provider/provider.dart';
 
