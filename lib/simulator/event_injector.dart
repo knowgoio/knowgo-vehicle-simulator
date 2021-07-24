@@ -7,6 +7,8 @@ import 'package:uuid/uuid.dart';
 
 final _uuidGenerator = Uuid();
 
+typedef TimedEventCallback = void Function(TimedEvent);
+
 /// An event that is injected into the simulation model at a pre-defined time.
 ///
 /// Each event wraps into a one-shot timer that is scheduled by the
@@ -16,7 +18,7 @@ final _uuidGenerator = Uuid();
 class TimedEvent {
   /// Time to inject the event relative to the journey start time.
   final Duration injectionTime;
-  final VoidCallback callback;
+  final TimedEventCallback callback;
   final EventTrigger trigger;
   final Map<String, dynamic> data;
   final String _id;
@@ -44,7 +46,7 @@ class TimedEvent {
     }
 
     if (_enabled) {
-      _timer = Timer(this.injectionTime, this.callback);
+      _timer = Timer(this.injectionTime, () => this.callback(this));
     }
   }
 

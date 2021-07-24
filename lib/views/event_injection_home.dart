@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_picker/flutter_picker.dart';
 import 'package:knowgo_vehicle_simulator/icons.dart';
+import 'package:knowgo_vehicle_simulator/services.dart';
 import 'package:knowgo_vehicle_simulator/simulator.dart';
 import 'package:knowgo_vehicle_simulator/utils.dart';
 import 'package:knowgo_vehicle_simulator/widgets.dart';
@@ -196,12 +197,16 @@ class _EventInjectionHomeState extends State<EventInjectionHome> {
   }
 
   void addTimedEvent(EventInjectorModel injector) {
+    final _consoleService = serviceLocator<ConsoleService>();
+
     injector.addTimedEvent(
       TimedEvent(
         injectionTime: _newEventDuration,
         trigger: _newEvent,
         data: eventTriggerDataToMap(_newEvent),
-        callback: () {
+        callback: (event) {
+          _consoleService.write(
+              'Injecting ${describeEnum(event.trigger).snakeCaseToSentenceCaseUpper()} event');
           print('Event injection callback fired');
         },
       ),
