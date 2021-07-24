@@ -458,8 +458,7 @@ class _EventInjectionHomeState extends State<EventInjectionHome> {
                 ),
                 VerticalDivider(),
                 Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
+                  child: ListView(
                     children: [
                       Text('Timeline',
                           style: Theme.of(context)
