@@ -54,3 +54,17 @@ extension DurationExtensions on Duration {
     return tokens.join(':');
   }
 }
+
+extension StringExtension on String {
+  String snakeCaseToSentenceCaseUpper() {
+    List<String> newString = [];
+    this.split('_').forEach((element) {
+      newString.add(element[0].toUpperCase() + element.substring(1));
+    });
+    return newString.join(' ');
+  }
+
+  String toSnakeCase() {
+    return this.toLowerCase().replaceAll(' ', '_');
+  }
+}

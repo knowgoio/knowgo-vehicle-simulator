@@ -18,25 +18,45 @@ class _EventInjectionHomeState extends State<EventInjectionHome> {
   var _newEventDuration = Duration();
   int _newEventStep = 0;
   int _currentEventTimelineStep = 0;
+  RangeValues _pedalValues = const RangeValues(0, 100);
   EventTrigger _newEvent = EventTrigger.none;
   UniqueKey _eventTimelineKey = UniqueKey();
   List<StepState> _newEventStepState =
       List.generate(3, (_) => StepState.indexed);
 
-  void _newEventStepError(int index) {
-    if (_newEventStepState[index] != StepState.error) {
+  void _setNewEventStepState(int index, StepState stepState) {
+    if (_newEventStepState[index] != stepState) {
       setState(() {
-        _newEventStepState[index] = StepState.error;
+        _newEventStepState[index] = stepState;
       });
     }
   }
 
+  void _newEventStepError(int index) {
+    _setNewEventStepState(index, StepState.error);
+  }
+
   void _newEventStepComplete(int index) {
-    if (_newEventStepState[index] != StepState.indexed) {
-      setState(() {
-        _newEventStepState[index] = StepState.indexed;
-      });
+    _setNewEventStepState(index, StepState.indexed);
+  }
+
+  String describeTimedEvent(TimedEvent event) {
+    String eventDesc = event.injectionTime.toHoursMinutesSecondsAnnotated();
+
+    switch (event.trigger) {
+      case EventTrigger.harsh_acceleration: // fall through
+      case EventTrigger.harsh_braking:
+        eventDesc += ', Pedal Variance: ' +
+            (event.data['pedal_end_position'] -
+                    event.data['pedal_start_position'])
+                .toString() +
+            '%';
+        break;
+      default:
+        break;
     }
+
+    return eventDesc;
   }
 
   List<Step> generateScheduledEventSteps() {
@@ -45,8 +65,8 @@ class _EventInjectionHomeState extends State<EventInjectionHome> {
 
     injector.events.forEach((event) {
       final step = Step(
-        title: Text(describeEnum(event.trigger)),
-        subtitle: Text(event.injectionTime.toHoursMinutesSecondsAnnotated()),
+        title: Text(describeEnum(event.trigger).snakeCaseToSentenceCaseUpper()),
+        subtitle: Text(describeTimedEvent(event)),
         isActive: event.enabled,
         content: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -106,11 +126,81 @@ class _EventInjectionHomeState extends State<EventInjectionHome> {
     return steps;
   }
 
+  // Construct the per-event payload based on the user-provided data
+  Map<String, dynamic> eventTriggerDataToMap(EventTrigger trigger) {
+    Map<String, dynamic> eventMap = {};
+    switch (trigger) {
+      case EventTrigger.harsh_acceleration: // fall through
+      case EventTrigger.harsh_braking:
+        eventMap['pedal_start_position'] = _pedalValues.start.round();
+        eventMap['pedal_end_position'] = _pedalValues.end.round();
+        break;
+      default:
+        break;
+    }
+    return eventMap;
+  }
+
+  // Generate the requisite widgets for obtaining necessary per-event data,
+  // the results of which are encoded by [eventTriggerDataToMap] and passed
+  // off to the event injector.
+  Widget generateEventTriggerContent(EventTrigger trigger) {
+    switch (trigger) {
+      case EventTrigger.harsh_acceleration: // fall through
+      case EventTrigger.harsh_braking:
+        return Column(
+          mainAxisSize: MainAxisSize.max,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              trigger == EventTrigger.harsh_acceleration
+                  ? 'Accelerator Pedal Positions'
+                  : 'Brake Pedal Positions',
+              style: Theme.of(context)
+                  .textTheme
+                  .headline6!
+                  .copyWith(color: Colors.black45, fontSize: 14),
+            ),
+            RangeSlider(
+              min: 0,
+              max: 100,
+              divisions: 100,
+              labels: RangeLabels(
+                _pedalValues.start.round().toString(),
+                _pedalValues.end.round().toString(),
+              ),
+              values: _pedalValues,
+              onChanged: (RangeValues values) {
+                int start = values.start.round();
+                int end = values.end.round();
+
+                // Restrict possible ranges such that there's a sufficient
+                // difference in relative pedal positioning to trigger the
+                // event detector.
+                if ((end - start) >= 65) {
+                  setState(() {
+                    _pedalValues = values;
+                  });
+                }
+              },
+            ),
+            Text(
+                '${(_pedalValues.end.round() - _pedalValues.start.round()).toString()}%'),
+          ],
+        );
+      default:
+        break;
+    }
+
+    return Text('No event type selected');
+  }
+
   void addTimedEvent(EventInjectorModel injector) {
     injector.addTimedEvent(
       TimedEvent(
         injectionTime: _newEventDuration,
         trigger: _newEvent,
+        data: eventTriggerDataToMap(_newEvent),
         callback: () {
           print('Event injection callback fired');
         },
@@ -134,6 +224,7 @@ class _EventInjectionHomeState extends State<EventInjectionHome> {
         ),
         iconTheme: IconThemeData(color: Colors.white),
         actions: [
+          // TODO: Split out about widget for sharing across views
           IconButton(
             icon: Icon(KnowGoIcons.knowgo, color: Colors.white),
             tooltip: 'About KnowGo Vehicle Simulator',
@@ -174,7 +265,8 @@ class _EventInjectionHomeState extends State<EventInjectionHome> {
                           Step(
                             title: Text('Select Event'),
                             subtitle: _newEvent != EventTrigger.none
-                                ? Text(describeEnum(_newEvent))
+                                ? Text(describeEnum(_newEvent)
+                                    .snakeCaseToSentenceCaseUpper())
                                 : Container(),
                             content: DropdownButtonFormField(
                               decoration: InputDecoration(
@@ -186,7 +278,8 @@ class _EventInjectionHomeState extends State<EventInjectionHome> {
                                 }
 
                                 EventTrigger selected =
-                                    eventTriggerStringToEnum(value);
+                                    eventTriggerStringToEnum(
+                                        value.toSnakeCase());
                                 if (selected == EventTrigger.none) {
                                   return 'No event selected';
                                 }
@@ -199,7 +292,8 @@ class _EventInjectionHomeState extends State<EventInjectionHome> {
                                 String eventDesc = describeEnum(event);
                                 return DropdownMenuItem<String>(
                                   value: eventDesc,
-                                  child: Text(eventDesc),
+                                  child: Text(
+                                      eventDesc.snakeCaseToSentenceCaseUpper()),
                                 );
                               }).toList(),
                               onChanged: (String? value) {
@@ -301,10 +395,9 @@ class _EventInjectionHomeState extends State<EventInjectionHome> {
                             isActive: _newEventDuration.inSeconds > 0,
                             state: _newEventStepState[1],
                           ),
-                          // TODO: Add trigger-specific data configuration
                           Step(
                             title: Text('Provide Additional Data'),
-                            content: Container(),
+                            content: generateEventTriggerContent(_newEvent),
                             isActive: _newEventStep >= 2,
                             state: _newEventStepState[2],
                           ),

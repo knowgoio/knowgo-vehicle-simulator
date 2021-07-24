@@ -18,6 +18,7 @@ class TimedEvent {
   final Duration injectionTime;
   final VoidCallback callback;
   final EventTrigger trigger;
+  final Map<String, dynamic> data;
   final String _id;
   bool _enabled;
   Timer? _timer;
@@ -25,6 +26,7 @@ class TimedEvent {
   TimedEvent(
       {required this.injectionTime,
       required this.callback,
+      required this.data,
       required this.trigger})
       : _id = _uuidGenerator.v4(),
         _enabled = true,
