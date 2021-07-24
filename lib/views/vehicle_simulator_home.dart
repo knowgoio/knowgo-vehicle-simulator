@@ -9,6 +9,7 @@ import 'package:knowgo_vehicle_simulator/compat/file_downloader.dart';
 import 'package:knowgo_vehicle_simulator/icons.dart';
 import 'package:knowgo_vehicle_simulator/services.dart';
 import 'package:knowgo_vehicle_simulator/simulator.dart';
+import 'package:knowgo_vehicle_simulator/views/event_injection_home.dart';
 import 'package:knowgo_vehicle_simulator/widgets.dart';
 import 'package:provider/provider.dart';
 
@@ -25,7 +26,8 @@ class VehicleSimulatorHome extends StatefulWidget {
 class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
   var settingsService = serviceLocator.get<SettingsService>();
   var consoleService = serviceLocator.get<ConsoleService>();
-  final _formKey = GlobalKey<FormState>();
+  final _webhookFormKey = GlobalKey<FormState>();
+  final _eventInjectionFormKey = GlobalKey<FormState>();
   List<bool> _webhookTriggers =
       List.generate(EventTrigger.values.length - 1, (_) => false);
   TextEditingController? _webhookNotificationController;
@@ -501,6 +503,7 @@ class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
             ),
             ListTile(
               title: const Text('Webhooks'),
+              trailing: Icon(Icons.edit),
               onTap: () async {
                 await showDialog(
                   context: context,
@@ -520,11 +523,11 @@ class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
                           ),
                           TextButton(
                             onPressed: () {
-                              if (_formKey.currentState == null) {
+                              if (_webhookFormKey.currentState == null) {
                                 Navigator.of(context).pop();
                               }
-                              if (_formKey.currentState!.validate()) {
-                                _formKey.currentState!.save();
+                              if (_webhookFormKey.currentState!.validate()) {
+                                _webhookFormKey.currentState!.save();
                                 _addWebhookSubscriptionFromUI(
                                     _webhookNotificationController!.text);
                                 Navigator.of(context).pop();
@@ -534,7 +537,7 @@ class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
                           )
                         ],
                         content: Form(
-                          key: _formKey,
+                          key: _webhookFormKey,
                           child: Container(
                             width: double.minPositive,
                             height: 300,
@@ -585,6 +588,16 @@ class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
                     });
                   },
                 );
+              },
+            ),
+            ListTile(
+              title: const Text('Event Injection'),
+              trailing: Icon(Icons.arrow_forward),
+              onTap: () async {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => EventInjectionHome()));
               },
             ),
           ],

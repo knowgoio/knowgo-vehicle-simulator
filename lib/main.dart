@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:knowgo_vehicle_simulator/server.dart';
 import 'package:knowgo_vehicle_simulator/services.dart';
 import 'package:knowgo_vehicle_simulator/simulator.dart';
+import 'package:knowgo_vehicle_simulator/simulator/event_injector.dart';
 import 'package:knowgo_vehicle_simulator/utils.dart';
 import 'package:knowgo_vehicle_simulator/views.dart';
 import 'package:provider/provider.dart';
@@ -49,6 +50,9 @@ Future<void> main() async {
             create: (_) => serviceLocator.get<ConsoleService>()),
         ChangeNotifierProvider.value(value: vehicleSimulator),
         ChangeNotifierProvider.value(value: vehicleSimulator.notificationModel),
+        ChangeNotifierProvider(
+          create: (_) => EventInjectorModel(),
+        ),
       ],
       child: VehicleSimulatorApp(),
     ),
@@ -70,6 +74,10 @@ class VehicleSimulatorApp extends StatelessWidget {
         indicatorColor: Colors.white,
         textTheme: TextTheme(
           headline6: TextStyle(color: Colors.white),
+        ),
+        colorScheme: ColorScheme.light(
+          primary: const Color(0xff6ab44c),
+          onPrimary: Colors.white,
         ),
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
