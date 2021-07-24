@@ -40,6 +40,7 @@ class VehicleSimulator extends ChangeNotifier {
   final simulatorReceivePort = ReceivePort();
   final notificationModel = VehicleNotificationModel();
   final webhookModel = WebhookModel();
+  final eventInjector = EventInjectorModel();
 
   VehicleSimulator([this.serverReceivePort]) {
     initVehicleInfo(info);
@@ -316,6 +317,11 @@ class VehicleSimulator extends ChangeNotifier {
       webhookModel.processWebhooks(info, prevState, state);
     }
 
+    // Kick-off the event injection timers
+    if (eventInjector.events.isNotEmpty) {
+      eventInjector.scheduleAll();
+    }
+
     if (kIsWeb) {
       return _startWebWorkers();
     }
@@ -340,6 +346,11 @@ class VehicleSimulator extends ChangeNotifier {
   void stop({bool notify = true}) {
     if (running == false) {
       return;
+    }
+
+    // Cancel any outstanding event injection timers
+    if (eventInjector.events.isNotEmpty) {
+      eventInjector.descheduleAll();
     }
 
     if (notify) {
