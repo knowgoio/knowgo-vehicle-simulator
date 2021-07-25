@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_picker/flutter_picker.dart';
 import 'package:knowgo/api.dart' as knowgo;
 import 'package:knowgo_vehicle_simulator/icons.dart';
@@ -25,6 +26,19 @@ class _EventInjectionHomeState extends State<EventInjectionHome> {
   UniqueKey _eventTimelineKey = UniqueKey();
   List<StepState> _newEventStepState =
       List.generate(3, (_) => StepState.indexed);
+
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsFlutterBinding.ensureInitialized();
+
+    // TODO: Implement portrait mode view for mobile displays
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeRight,
+      DeviceOrientation.landscapeLeft,
+    ]);
+  }
 
   void _setNewEventStepState(int index, StepState stepState) {
     if (_newEventStepState[index] != stepState) {
@@ -297,13 +311,16 @@ class _EventInjectionHomeState extends State<EventInjectionHome> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Expanded(
-                  child: Column(
+                  child: ListView(
                     children: [
-                      Text('Schedule an Event',
-                          style: Theme.of(context)
-                              .textTheme
-                              .headline6!
-                              .copyWith(color: Colors.black45)),
+                      Text(
+                        'Schedule an Event',
+                        style: Theme.of(context)
+                            .textTheme
+                            .headline6!
+                            .copyWith(color: Colors.black45),
+                        textAlign: TextAlign.center,
+                      ),
                       Stepper(
                         steps: [
                           Step(
@@ -504,11 +521,14 @@ class _EventInjectionHomeState extends State<EventInjectionHome> {
                 Expanded(
                   child: ListView(
                     children: [
-                      Text('Timeline',
-                          style: Theme.of(context)
-                              .textTheme
-                              .headline6!
-                              .copyWith(color: Colors.black45)),
+                      Text(
+                        'Timeline',
+                        style: Theme.of(context)
+                            .textTheme
+                            .headline6!
+                            .copyWith(color: Colors.black45),
+                        textAlign: TextAlign.center,
+                      ),
                       injector.events.length > 0
                           ? Stepper(
                               key: _eventTimelineKey,
@@ -539,15 +559,8 @@ class _EventInjectionHomeState extends State<EventInjectionHome> {
                                 }
                               },
                             )
-                          : Text('No events scheduled'),
-                    ],
-                  ),
-                ),
-                VerticalDivider(),
-                Expanded(
-                  child: Column(
-                    children: [
-                      Container(),
+                          : Text('No events scheduled',
+                              textAlign: TextAlign.center),
                     ],
                   ),
                 ),
