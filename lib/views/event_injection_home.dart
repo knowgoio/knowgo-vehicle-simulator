@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_picker/flutter_picker.dart';
+import 'package:knowgo/api.dart' as knowgo;
 import 'package:knowgo_vehicle_simulator/icons.dart';
 import 'package:knowgo_vehicle_simulator/services.dart';
 import 'package:knowgo_vehicle_simulator/simulator.dart';
@@ -133,8 +134,8 @@ class _EventInjectionHomeState extends State<EventInjectionHome> {
     switch (trigger) {
       case EventTrigger.harsh_acceleration: // fall through
       case EventTrigger.harsh_braking:
-        eventMap['pedal_start_position'] = _pedalValues.start.round();
-        eventMap['pedal_end_position'] = _pedalValues.end.round();
+        eventMap['pedal_start_position'] = _pedalValues.start;
+        eventMap['pedal_end_position'] = _pedalValues.end;
         break;
       default:
         break;
@@ -198,16 +199,54 @@ class _EventInjectionHomeState extends State<EventInjectionHome> {
 
   void addTimedEvent(EventInjectorModel injector) {
     final _consoleService = serviceLocator<ConsoleService>();
+    final vehicleSimulator =
+        Provider.of<VehicleSimulator>(context, listen: false);
 
     injector.addTimedEvent(
       TimedEvent(
         injectionTime: _newEventDuration,
         trigger: _newEvent,
         data: eventTriggerDataToMap(_newEvent),
-        callback: (event) {
+        callback: (timedEvent) {
+          List<knowgo.Event> events = [];
+
+          switch (timedEvent.trigger) {
+            case EventTrigger.harsh_acceleration:
+              var prevState = knowgo.Event();
+              var newState = knowgo.Event();
+
+              prevState.acceleratorPedalPosition =
+                  timedEvent.data['pedal_start_position'];
+              newState.acceleratorPedalPosition =
+                  timedEvent.data['pedal_end_position'];
+
+              events.add(prevState);
+              events.add(newState);
+
+              break;
+            case EventTrigger.harsh_braking:
+              var prevState = knowgo.Event();
+              var newState = knowgo.Event();
+
+              prevState.brakePedalPosition =
+                  timedEvent.data['pedal_start_position'];
+              newState.brakePedalPosition =
+                  timedEvent.data['pedal_end_position'];
+
+              events.add(prevState);
+              events.add(newState);
+
+              break;
+            default:
+              break;
+          }
+
+          if (events.isNotEmpty) {
+            vehicleSimulator.enqueueUpdates(events);
+          }
+
           _consoleService.write(
-              'Injecting ${describeEnum(event.trigger).snakeCaseToSentenceCaseUpper()} event');
-          print('Event injection callback fired');
+              'Injecting ${describeEnum(timedEvent.trigger).snakeCaseToSentenceCaseUpper()} event');
         },
       ),
     );

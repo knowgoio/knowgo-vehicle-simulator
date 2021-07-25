@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:collection';
 import 'dart:convert';
 // ignore: avoid_web_libraries_in_flutter
 import 'dart:html' if (dart.library.io) '../compat/worker_stub.dart';
@@ -71,6 +72,9 @@ class VehicleSimulator extends ChangeNotifier {
   // The current state of the Vehicle
   knowgo.Event state = knowgo.Event();
 
+  // Queued events to insert into simulation model
+  Queue eventQueue = Queue();
+
   // Free-running event counter for generating event IDs
   static int _eventCounter = 0;
 
@@ -142,6 +146,12 @@ class VehicleSimulator extends ChangeNotifier {
 
     // Sync the event counter
     _eventCounter++;
+
+    // Dequeue a pending event and combine it with the incoming update
+    if (eventQueue.isNotEmpty) {
+      var queuedEvent = eventQueue.removeFirst();
+      updateVehicleState(update, queuedEvent);
+    }
 
     // Synchronize vehicle state
     info.odometer = num.parse((update.odometer).toStringAsFixed(2)).toDouble();
@@ -370,6 +380,13 @@ class VehicleSimulator extends ChangeNotifier {
     if (notify) {
       _writeConsoleMessage('Stopping vehicle');
     }
+  }
+
+  // Enqueue event updates to apply into the running simulation model. These
+  // will be dequeued periodically (at the regular event generation frequency)
+  // and combined with incoming updates from the vehicle dynamics model.
+  void enqueueUpdates(List<knowgo.Event> events) {
+    eventQueue.addAll(events);
   }
 
   Future<void> update(knowgo.Event update) async {
