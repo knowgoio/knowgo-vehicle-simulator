@@ -58,6 +58,7 @@ class _VehicleSettingsState extends State<VehicleSettings> {
         ElevatedButton.icon(
           style: ElevatedButton.styleFrom(
             primary: Colors.grey[300],
+            onPrimary: Colors.black,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(30),
             ),
