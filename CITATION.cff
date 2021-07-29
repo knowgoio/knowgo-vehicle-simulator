@@ -1,0 +1,15 @@
+# This file is a citation metadata file in the Citation File Format
+# (http://citation-file-format.github.io/).
+# 
+# It provides citation metadata for this version of knowgo-vehicle-simulator.
+
+cff-version: 1.0.3
+message: "If you use knowgo-vehicle-simulator in your work, please cite it using the following metadata"
+title: knowgo-vehicle-simulator
+authors:
+  - family-names: Mundt
+    given-names: Paul
+    orcid: https://orcid.org/0000-0003-0315-290X
+version: 1.1.1
+doi: 10.5281/zenodo.5111925
+date-released: 2021-07-18

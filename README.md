@@ -7,6 +7,8 @@
 ![GitHub](https://img.shields.io/github/license/knowgoio/knowgo-vehicle-simulator)
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/knowgoio/knowgo-vehicle-simulator)
 [![knowgo-vehicle-simulator](https://snapcraft.io/knowgo-vehicle-simulator/badge.svg)](https://snapcraft.io/knowgo-vehicle-simulator)
+[![DOI](https://zenodo.org/badge/274369996.svg)](https://zenodo.org/badge/latestdoi/274369996)
+
 
 An interactive multi-platform Connected Car simulator for generating
 and streaming realistic vehicle telemetry.
