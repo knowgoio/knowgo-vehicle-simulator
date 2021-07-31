@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:collection';
 import 'dart:convert';
 // ignore: avoid_web_libraries_in_flutter
 import 'dart:html' if (dart.library.io) '../compat/worker_stub.dart';
@@ -40,6 +41,7 @@ class VehicleSimulator extends ChangeNotifier {
   final simulatorReceivePort = ReceivePort();
   final notificationModel = VehicleNotificationModel();
   final webhookModel = WebhookModel();
+  final eventInjector = EventInjectorModel();
 
   VehicleSimulator([this.serverReceivePort]) {
     initVehicleInfo(info);
@@ -69,6 +71,9 @@ class VehicleSimulator extends ChangeNotifier {
 
   // The current state of the Vehicle
   knowgo.Event state = knowgo.Event();
+
+  // Queued events to insert into simulation model
+  Queue eventQueue = Queue();
 
   // Free-running event counter for generating event IDs
   static int _eventCounter = 0;
@@ -141,6 +146,12 @@ class VehicleSimulator extends ChangeNotifier {
 
     // Sync the event counter
     _eventCounter++;
+
+    // Dequeue a pending event and combine it with the incoming update
+    if (eventQueue.isNotEmpty) {
+      var queuedEvent = eventQueue.removeFirst();
+      updateVehicleState(update, queuedEvent);
+    }
 
     // Synchronize vehicle state
     info.odometer = num.parse((update.odometer).toStringAsFixed(2)).toDouble();
@@ -316,6 +327,11 @@ class VehicleSimulator extends ChangeNotifier {
       webhookModel.processWebhooks(info, prevState, state);
     }
 
+    // Kick-off the event injection timers
+    if (eventInjector.events.isNotEmpty) {
+      eventInjector.scheduleAll();
+    }
+
     if (kIsWeb) {
       return _startWebWorkers();
     }
@@ -342,6 +358,11 @@ class VehicleSimulator extends ChangeNotifier {
       return;
     }
 
+    // Cancel any outstanding event injection timers
+    if (eventInjector.events.isNotEmpty) {
+      eventInjector.descheduleAll();
+    }
+
     if (notify) {
       // Update ignition status
       knowgo.Event prevState = knowgo.Event.fromJson(state.toJson());
@@ -359,6 +380,13 @@ class VehicleSimulator extends ChangeNotifier {
     if (notify) {
       _writeConsoleMessage('Stopping vehicle');
     }
+  }
+
+  // Enqueue event updates to apply into the running simulation model. These
+  // will be dequeued periodically (at the regular event generation frequency)
+  // and combined with incoming updates from the vehicle dynamics model.
+  void enqueueUpdates(List<knowgo.Event> events) {
+    eventQueue.addAll(events);
   }
 
   Future<void> update(knowgo.Event update) async {

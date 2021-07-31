@@ -2,7 +2,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:knowgo_vehicle_simulator/simulator.dart';
-import 'package:knowgo_vehicle_simulator/widgets/vehicle_data_card.dart';
+import 'package:knowgo_vehicle_simulator/widgets.dart';
 import 'package:provider/provider.dart';
 
 class VehicleStats extends StatefulWidget {

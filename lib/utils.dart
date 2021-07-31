@@ -31,3 +31,40 @@ DeviceType getDeviceType() {
   final data = MediaQueryData.fromWindow(WidgetsBinding.instance!.window);
   return data.size.shortestSide < 600 ? DeviceType.phone : DeviceType.tablet;
 }
+
+extension DurationExtensions on Duration {
+  String toHoursMinutesSecondsAnnotated() {
+    var seconds = this.inSeconds;
+    final hours = seconds ~/ Duration.secondsPerHour;
+    seconds -= hours * Duration.secondsPerHour;
+    final minutes = seconds ~/ Duration.secondsPerMinute;
+    seconds -= minutes * Duration.secondsPerMinute;
+
+    final tokens = [];
+    if (hours != 0) {
+      tokens.add('${hours}h');
+    }
+    if (minutes != 0) {
+      tokens.add('${minutes}m');
+    }
+    if (seconds != 0) {
+      tokens.add('${seconds}s');
+    }
+
+    return tokens.join(':');
+  }
+}
+
+extension StringExtension on String {
+  String snakeCaseToSentenceCaseUpper() {
+    List<String> newString = [];
+    this.split('_').forEach((element) {
+      newString.add(element[0].toUpperCase() + element.substring(1));
+    });
+    return newString.join(' ');
+  }
+
+  String toSnakeCase() {
+    return this.toLowerCase().replaceAll(' ', '_');
+  }
+}

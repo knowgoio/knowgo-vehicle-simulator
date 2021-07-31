@@ -58,6 +58,7 @@ class _VehicleSettingsState extends State<VehicleSettings> {
         ElevatedButton.icon(
           style: ElevatedButton.styleFrom(
             primary: Colors.grey[300],
+            onPrimary: Colors.black,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(30),
             ),
@@ -78,9 +79,6 @@ class _VehicleSettingsState extends State<VehicleSettings> {
   }
 
   Widget simulatorButton(VehicleSimulator vehicleSimulator) {
-    // Check if the simulator is running, simulatorRunning refers to the
-    // internal UI state, while vehicleSimulator.running refers to the
-    // underlying simulation model, which may be triggered via the REST API.
     if (vehicleSimulator.running == false) {
       return ElevatedButton.icon(
         style: ElevatedButton.styleFrom(

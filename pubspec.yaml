@@ -38,6 +38,7 @@ dependencies:
     git:
       url: https://github.com/knowgoio/knowgo-client-dart
   csv: ^5.0.0
+  flutter_picker: ^1.1.5
 
 dev_dependencies:
   flutter_test:

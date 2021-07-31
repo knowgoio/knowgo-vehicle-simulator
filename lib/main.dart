@@ -49,6 +49,9 @@ Future<void> main() async {
             create: (_) => serviceLocator.get<ConsoleService>()),
         ChangeNotifierProvider.value(value: vehicleSimulator),
         ChangeNotifierProvider.value(value: vehicleSimulator.notificationModel),
+        ChangeNotifierProvider(
+          create: (_) => EventInjectorModel(),
+        ),
       ],
       child: VehicleSimulatorApp(),
     ),
@@ -70,6 +73,10 @@ class VehicleSimulatorApp extends StatelessWidget {
         indicatorColor: Colors.white,
         textTheme: TextTheme(
           headline6: TextStyle(color: Colors.white),
+        ),
+        colorScheme: ColorScheme.light(
+          primary: const Color(0xff6ab44c),
+          onPrimary: Colors.white,
         ),
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),

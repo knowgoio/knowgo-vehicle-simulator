@@ -1,3 +1,4 @@
+export 'simulator/event_injector.dart';
 export 'simulator/vehicle_data_calculators.dart';
 export 'simulator/vehicle_data_generator.dart';
 export 'simulator/vehicle_event_loop.dart';
