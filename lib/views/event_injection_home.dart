@@ -148,8 +148,8 @@ class _EventInjectionHomeState extends State<EventInjectionHome> {
     switch (trigger) {
       case EventTrigger.harsh_acceleration: // fall through
       case EventTrigger.harsh_braking:
-        eventMap['pedal_start_position'] = _pedalValues.start;
-        eventMap['pedal_end_position'] = _pedalValues.end;
+        eventMap['pedal_start_position'] = _pedalValues.start.floorToDouble();
+        eventMap['pedal_end_position'] = _pedalValues.end.floorToDouble();
         break;
       default:
         break;
