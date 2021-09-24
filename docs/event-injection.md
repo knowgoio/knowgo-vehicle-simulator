@@ -12,7 +12,7 @@ provided in the following tutorial video:
 <iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/h5v99crqHZg" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 At present, event injection events are modelled after a subset of
-[webhook](webooks.md) event triggers. These are briefly outlined in
+[webhook](/webhooks/) event triggers. These are briefly outlined in
 the table below:
 
 | <div style="width:180px">Event</div> | Description            |
@@ -55,5 +55,5 @@ the running simulation:
 Each of the injected events will be combined together with the event
 update received from the vehicle dynamics model, and will automatically
 update the simulation UI when the events are injected. If configured,
-[webhook notifications](webhooks.md) will also be triggered for each of
+[webhook notifications](/webhooks/) will also be triggered for each of
 the injected events.
