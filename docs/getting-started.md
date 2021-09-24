@@ -21,6 +21,38 @@ Releases can also be obtained directly from [GitHub][releases].
 
 [releases]: https://github.com/knowgoio/knowgo-vehicle-simulator/releases
 
+## Deployment
+
+For deployment of a self-contained web-based instance of the simulator,
+a number of deployment options have been provided:
+
+### Docker
+
+Multi-arch images are provided under [adaptant/knowgo-vehicle-simulator].
+The image can be run directly as:
+
+```
+$ docker run -p 8086:8086 adaptant/knowgo-vehicle-simulator
+```
+
+[adaptant/knowgo-vehicle-simulator]: https://hub.docker.com/repository/docker/adaptant/knowgo-vehicle-simulator
+
+### Kubernetes
+
+To create a Kubernetes `Deployment` including a single instance of the
+simulator:
+
+```
+$ kubectl apply -f https://raw.githubusercontent.com/knowgoio/knowgo-vehicle-simulator/simulator-deployment.yaml
+```
+
+An optional `Service` exposing the simulator port on the cluster can
+also be applied:
+
+```
+$ kubectl apply -f https://raw.githubusercontent.com/knowgoio/knowgo-vehicle-simulator/simulator-service.yaml
+```
+
 ## Usage
 
 ![Usage Example](images/usage-example.gif)
