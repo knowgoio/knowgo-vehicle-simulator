@@ -13,7 +13,6 @@
 An interactive multi-platform Connected Car simulator for generating
 and streaming realistic vehicle telemetry.
 
-
 ## Overview
 
 ``knowgo-vehicle-simulator`` has been developed to aid in the
@@ -34,9 +33,9 @@ vehicle being manually joined to a specified fleet.
 
 ### Live Demo
 
-A live demonstration of the Simulator is available [here].
+A live demonstration of the Simulator is available [here][live-demo].
 
-[here]: https://knowgoio.github.io/knowgo-vehicle-simulator
+[live-demo]: https://knowgoio.github.io/knowgo-vehicle-simulator
 
 ### Installation
 
@@ -52,6 +51,38 @@ Releases can also be obtained directly from [GitHub][releases].
 
 [releases]: https://github.com/knowgoio/knowgo-vehicle-simulator/releases
 
+### Deployment
+
+For deployment of a self-contained web-based instance of the simulator,
+a number of deployment options have been provided:
+
+#### Docker
+
+Multi-arch images are provided under [adaptant/knowgo-vehicle-simulator].
+The image can be run directly as:
+
+```
+$ docker run -p 8086:8086 adaptant/knowgo-vehicle-simulator
+```
+
+[adaptant/knowgo-vehicle-simulator]: https://hub.docker.com/repository/docker/adaptant/knowgo-vehicle-simulator
+
+#### Kubernetes
+
+To create a Kubernetes `Deployment` including a single instance of the
+simulator:
+
+```
+$ kubectl apply -f https://raw.githubusercontent.com/knowgoio/knowgo-vehicle-simulator/simulator-deployment.yaml
+```
+
+An optional `Service` exposing the simulator port on the cluster can
+also be applied:
+
+```
+$ kubectl apply -f https://raw.githubusercontent.com/knowgoio/knowgo-vehicle-simulator/simulator-service.yaml
+```
+
 ### Simulator UI
 
 ![KnowGo Vehicle Simulator Screenshot](docs/images/simulator.png)
@@ -63,9 +94,12 @@ For additional documentation and tutorials, please refer to the [documentation].
 [documentation]: https://knowgoio.github.io/knowgo-vehicle-simulator/docs
 
 ### Postman Collection for Simulator REST API
-A Postman Collection and pre-configured environment for interacting with the Simulator [REST API] in a local simulation environment is available [here].
 
-[here]: https://github.com/knowgoio/knowgo-postman-collections
+A Postman Collection and pre-configured environment for interacting
+with the Simulator [REST API] in a local simulation environment is
+available [here][postman-collections].
+
+[postman-collections]: https://github.com/knowgoio/knowgo-postman-collections
 
 ## Architecture 
 The Simulator itself consists of several different components:
