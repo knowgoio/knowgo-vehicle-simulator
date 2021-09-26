@@ -1,6 +1,7 @@
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
+import 'package:prometheus_client/prometheus_client.dart';
 
 class VehicleNotification {
   final String text;
@@ -16,6 +17,10 @@ class VehicleNotification {
 
 class VehicleNotificationModel extends ChangeNotifier {
   final List<VehicleNotification> _notifications = [];
+  final _numNotificationsSent = Counter('simulator_notifications_sent_total',
+      'Total number of notifications sent to the simulator.')
+    ..register();
+
   static final _singleton = VehicleNotificationModel._internal();
 
   factory VehicleNotificationModel() {
@@ -29,11 +34,13 @@ class VehicleNotificationModel extends ChangeNotifier {
 
   void pushAll(List<VehicleNotification> notifications) {
     _notifications.addAll(notifications);
+    _numNotificationsSent.inc(notifications.length.toDouble());
     notifyListeners();
   }
 
   void push(VehicleNotification notification) {
     _notifications.add(notification);
+    _numNotificationsSent.inc();
     notifyListeners();
   }
 

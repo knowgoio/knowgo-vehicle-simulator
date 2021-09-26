@@ -40,6 +40,7 @@ nav:
     - mqtt.md
   - webhooks.md
   - event-injection.md
+  - metrics.md
   - API Overview:
     - rest-api.md
     - rest-api-use.md

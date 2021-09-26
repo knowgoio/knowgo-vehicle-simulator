@@ -1,12 +1,19 @@
 import 'dart:isolate';
 
 import 'package:knowgo_vehicle_simulator/server/cors_middleware.dart';
+import 'package:knowgo_vehicle_simulator/server/http_metrics_middleware.dart';
 import 'package:knowgo_vehicle_simulator/server/http_simulator_api.dart';
 import 'package:knowgo_vehicle_simulator/simulator.dart';
+import 'package:prometheus_client/runtime_metrics.dart' as runtime_metrics;
+import 'package:prometheus_client_shelf/shelf_metrics.dart' as shelf_metrics;
 import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart' as shelf_io;
 
 Future<void> runHttpServer(SendPort sendPort) async {
+  // Register run-time metrics. These are scraped from within the isolate and
+  // must therefore be registered in isolate-local memory.
+  runtime_metrics.register();
+
   // Open up a ReceivePort and send a reference to its sendPort back to the
   // main isolate. This is used as a basis for establishing bi-directional
   // message passing between the main and event isolates.
@@ -54,6 +61,8 @@ Future<void> runHttpServer(SendPort sendPort) async {
 
     final handler = const Pipeline()
         .addMiddleware(addCORSHeaders())
+        .addMiddleware(shelf_metrics.register())
+        .addMiddleware(registerHttpMetrics())
         .addHandler(vehicleSimulatorApi.router);
 
     vehicleSimulator.httpServer =

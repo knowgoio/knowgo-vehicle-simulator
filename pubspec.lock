@@ -372,6 +372,20 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "4.2.1"
+  prometheus_client:
+    dependency: transitive
+    description:
+      name: prometheus_client
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.4.1"
+  prometheus_client_shelf:
+    dependency: "direct main"
+    description:
+      name: prometheus_client_shelf
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.4.1"
   provider:
     dependency: "direct main"
     description:

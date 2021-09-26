@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:knowgo/api.dart' as knowgo;
 import 'package:knowgo_vehicle_simulator/server.dart';
 import 'package:knowgo_vehicle_simulator/simulator.dart';
+import 'package:prometheus_client_shelf/shelf_handler.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf_router/shelf_router.dart';
 
@@ -23,6 +24,9 @@ class VehicleSimulatorApi {
 
   Router get router {
     final router = Router();
+
+    // Expose prometheus metrics
+    router.get('/metrics', prometheusHandler());
 
     router.get('/simulator/info', (Request request) {
       return Response.ok(json.encode(vehicleSimulator.info),
@@ -122,6 +126,11 @@ class VehicleSimulatorApi {
           ExVeAPI(vehicleSimulator: vehicleSimulator, exveModel: exveModel!);
       router.mount(('/exve/'), exveApi.router);
     }
+
+    // All other endpoints will return a 404
+    router.all('/<ignored|.*>', (Request request) {
+      return Response.notFound('Not Found');
+    });
 
     return router;
   }

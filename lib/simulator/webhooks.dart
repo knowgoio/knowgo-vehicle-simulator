@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 import 'package:knowgo/api.dart' as knowgo;
+import 'package:prometheus_client/prometheus_client.dart';
 import 'package:uuid/uuid.dart';
 
 enum EventTrigger {
@@ -69,6 +70,13 @@ class WebhookModel extends ChangeNotifier {
   final List<EventTrigger> _triggers;
   final List<WebhookSubscription> _subscriptions = [];
 
+  final _numSubscriptions = Gauge('simulator_webhook_subscriptions_total',
+      'Total number of active webhook subscriptions.')
+    ..register();
+  final _numWebhooksFired = Counter('simulator_webhooks_fired_total',
+      'Total number of webhooks that have been fired.')
+    ..register();
+
   static final _singleton = WebhookModel._internal();
 
   factory WebhookModel() {
@@ -100,11 +108,13 @@ class WebhookModel extends ChangeNotifier {
 
   void addSubscription(WebhookSubscription subscription) {
     _subscriptions.add(subscription);
+    _numSubscriptions.inc();
   }
 
   void removeSubscription(String subscriptionId) {
     _subscriptions.removeWhere(
         (subscription) => subscription.subscriptionId == subscriptionId);
+    _numSubscriptions.dec();
   }
 
   void updateSubscription(WebhookSubscription subscription) {
@@ -128,6 +138,7 @@ class WebhookModel extends ChangeNotifier {
       http.post(url,
           headers: {'Content-Type': 'application/json'},
           body: json.encode(payload));
+      _numWebhooksFired.inc();
     });
   }
 
@@ -149,6 +160,7 @@ class WebhookModel extends ChangeNotifier {
       http.post(url,
           headers: {'Content-Type': 'application/json'},
           body: json.encode(payload));
+      _numWebhooksFired.inc();
     });
   }
 
@@ -169,6 +181,7 @@ class WebhookModel extends ChangeNotifier {
       http.post(url,
           headers: {'Content-Type': 'application/json'},
           body: json.encode(payload));
+      _numWebhooksFired.inc();
     });
   }
 
@@ -189,6 +202,7 @@ class WebhookModel extends ChangeNotifier {
       http.post(url,
           headers: {'Content-Type': 'application/json'},
           body: json.encode(payload));
+      _numWebhooksFired.inc();
     });
   }
 
@@ -209,6 +223,7 @@ class WebhookModel extends ChangeNotifier {
       http.post(url,
           headers: {'Content-Type': 'application/json'},
           body: json.encode(payload));
+      _numWebhooksFired.inc();
     });
   }
 
@@ -229,6 +244,7 @@ class WebhookModel extends ChangeNotifier {
       http.post(url,
           headers: {'Content-Type': 'application/json'},
           body: json.encode(payload));
+      _numWebhooksFired.inc();
     });
   }
 
@@ -248,6 +264,7 @@ class WebhookModel extends ChangeNotifier {
       http.post(url,
           headers: {'Content-Type': 'application/json'},
           body: json.encode(payload));
+      _numWebhooksFired.inc();
     });
   }
 
@@ -267,6 +284,7 @@ class WebhookModel extends ChangeNotifier {
       http.post(url,
           headers: {'Content-Type': 'application/json'},
           body: json.encode(payload));
+      _numWebhooksFired.inc();
     });
   }
 

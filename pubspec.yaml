@@ -39,6 +39,7 @@ dependencies:
       url: https://github.com/knowgoio/knowgo-client-dart
   csv: ^5.0.0
   flutter_picker: ^2.0.0
+  prometheus_client_shelf: ^0.4.1
 
 dev_dependencies:
   flutter_test:
