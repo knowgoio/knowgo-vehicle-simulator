@@ -27,9 +27,9 @@ Future<void> main() async {
     // Kick off the HTTP Server Isolate
     final simulatorHttpServer = SimulatorHttpServer(port);
 
-    // Instantiate the Vehicle Simulator, and hand it a ReceivePort to
-    // communicate with the HTTP Server.
-    vehicleSimulator = VehicleSimulator(simulatorHttpServer.receivePort);
+    // Instantiate the Vehicle Simulator, with linkage to the HTTP Server
+    vehicleSimulator =
+        VehicleSimulator(simulatorHttpServer: simulatorHttpServer);
 
     // Start up the HTTP server, and hand it a ReceivePort to communicate with
     // the Vehicle Simulator.

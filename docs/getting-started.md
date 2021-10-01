@@ -67,6 +67,9 @@ the UI. The format of the file is:
 sessionLogging: true
 eventLogging: true
 
+# Allow unauthenticated requests to REST API
+allowUnauthenticated: true
+
 # Optional endpoint to post generated events to
 notificationUrl: http://myserver.com/endpoint
 
@@ -93,3 +96,4 @@ Environment Variable | Description | Default value
 *KNOWGO_VEHICLE_SIMULATOR_CONFIG* | Path to config file | `<appDocDir>/knowgo_vehicle_simulator/config.yaml`
 *KNOWGO_VEHICLE_SIMULATOR_LOGS* | Path to log directory | `<appDocDir>/knowgo_vehicle_simulator/logs`
 *KNOWGO_VEHICLE_SIMULATOR_PORT* | HTTP port to bind for REST API | 8086
+*KNOWGO_SIGNING_KEY* | Signing and validation secret for API keys | secret-key

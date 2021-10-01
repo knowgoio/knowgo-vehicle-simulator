@@ -11,6 +11,7 @@ import 'package:http/http.dart' as http;
 import 'package:kafka/kafka.dart'
     if (dart.library.js) '../compat/kafka_stub.dart';
 import 'package:knowgo/api.dart' as knowgo;
+import 'package:knowgo_vehicle_simulator/server.dart';
 import 'package:knowgo_vehicle_simulator/services.dart';
 import 'package:knowgo_vehicle_simulator/simulator.dart';
 import 'package:mqtt_client/mqtt_client.dart';
@@ -34,16 +35,16 @@ class VehicleSimulator extends ChangeNotifier {
   // Vehicle Events Isolate
   Isolate? _eventIsolate;
 
-  // HTTP Server ReceivePort
-  final ReceivePort? serverReceivePort;
+  // HTTP Server SendPort
   SendPort? _serverSendPort;
 
   final simulatorReceivePort = ReceivePort();
   final notificationModel = VehicleNotificationModel();
   final webhookModel = WebhookModel();
   final eventInjector = EventInjectorModel();
+  final SimulatorHttpServer? simulatorHttpServer;
 
-  VehicleSimulator([this.serverReceivePort]) {
+  VehicleSimulator({this.simulatorHttpServer}) {
     initVehicleInfo(info);
     initVehicleState(state);
     journey.autoID = info.autoID;

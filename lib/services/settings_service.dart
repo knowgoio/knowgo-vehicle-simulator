@@ -121,6 +121,15 @@ class SettingsService {
     saveConfig();
   }
 
+  // Allow unauthenticated requests to REST API
+  bool _allowUnauthenticated = true;
+  bool get allowUnauthenticated => _allowUnauthenticated;
+
+  set allowUnauthenticated(bool value) {
+    _allowUnauthenticated = value;
+    saveConfig();
+  }
+
   SettingsService([File? yamlConfig]) {
     if (yamlConfig != null) {
       _configFile = yamlConfig;
@@ -143,6 +152,10 @@ class SettingsService {
 
     if (doc['eventLogging'] != null) {
       _eventLoggingEnabled = doc['eventLogging'];
+    }
+
+    if (doc['allowUnauthenticated'] != null) {
+      _allowUnauthenticated = doc['allowUnauthenticated'];
     }
 
     if (doc['notificationUrl'] != null) {
@@ -182,6 +195,7 @@ class SettingsService {
     final data = Map<String, dynamic>();
     data['sessionLogging'] = _loggingEnabled;
     data['eventLogging'] = _eventLoggingEnabled;
+    data['allowUnauthenticated'] = _allowUnauthenticated;
 
     if (_notificationEndpoint != null) {
       data['notificationUrl'] = _notificationEndpoint;

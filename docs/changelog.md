@@ -8,7 +8,8 @@
 - Fix up duplicate webhook triggering on manual event update.
 - Add support for scheduled event injection at run-time.
 - Add support for self-contained Docker image and Kubernetes deployment.
-- Add support for prometheus metrics
+- Add support for prometheus metrics.
+- Add support for API Key generation.
 
 ## 1.1.1
 

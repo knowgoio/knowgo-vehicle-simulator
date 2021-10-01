@@ -40,6 +40,8 @@ dependencies:
   csv: ^5.0.0
   flutter_picker: ^2.0.0
   prometheus_client_shelf: ^0.4.1
+  jaguar_jwt: ^2.1.6
+  path_to_regexp: ^0.4.0
 
 dev_dependencies:
   flutter_test:

@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:knowgo_vehicle_simulator/compat/file_downloader.dart';
 import 'package:knowgo_vehicle_simulator/icons.dart';
+import 'package:knowgo_vehicle_simulator/server/auth.dart';
 import 'package:knowgo_vehicle_simulator/services.dart';
 import 'package:knowgo_vehicle_simulator/simulator.dart';
 import 'package:knowgo_vehicle_simulator/views.dart';
@@ -27,10 +28,14 @@ class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
   var settingsService = serviceLocator.get<SettingsService>();
   var consoleService = serviceLocator.get<ConsoleService>();
   final _webhookFormKey = GlobalKey<FormState>();
-  final _eventInjectionFormKey = GlobalKey<FormState>();
   List<bool> _webhookTriggers =
       List.generate(EventTrigger.values.length - 1, (_) => false);
+  List<bool> _apiKeyScopes =
+      List.generate(AuthService.scopes.length, (_) => false);
   TextEditingController? _webhookNotificationController;
+  final apiKeyTextController = TextEditingController()
+    ..text = 'No key generated';
+  bool keyGenerated = false;
 
   @override
   void initState() {
@@ -234,6 +239,7 @@ class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
 
   @override
   Widget build(BuildContext context) {
+    var vehicleSimulator = context.watch<VehicleSimulator>();
     return Scaffold(
       drawer: Drawer(
         child: ListView(
@@ -274,6 +280,28 @@ class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
                   setState(() {
                     settingsService.loggingEnabled = value;
                   });
+                }
+              },
+            ),
+            CheckboxListTile(
+              title: const Text('Unauthenticated REST API Access'),
+              value: settingsService.allowUnauthenticated,
+              onChanged: (bool? value) async {
+                if (value != null) {
+                  setState(() {
+                    settingsService.allowUnauthenticated = value;
+                  });
+
+                  // As the settings service lies in a different isolate from
+                  // the HTTP server, the change cannot be dynamically applied
+                  // to the existing server instance - force it to restart to
+                  // propagate the updated configuration settings from the main
+                  // isolate. This should at some point be reworked to use an
+                  // additional ReceivePort for propagating changes from the
+                  // main isolate.
+                  //
+                  // TODO: Additional ReceivePort for propagating config changes
+                  await vehicleSimulator.simulatorHttpServer?.restart();
                 }
               },
             ),
@@ -590,6 +618,148 @@ class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
                 );
               },
             ),
+            ListTile(
+                title: const Text('API Keys'),
+                trailing: Icon(Icons.edit),
+                onTap: () async {
+                  await showDialog(
+                    context: context,
+                    barrierDismissible: false,
+                    builder: (BuildContext buildContext) {
+                      return StatefulBuilder(
+                          builder: (BuildContext ctx, StateSetter setState) {
+                        return Scrollbar(
+                          isAlwaysShown: true,
+                          child: Scaffold(
+                            backgroundColor: Colors.transparent,
+                            body: AlertDialog(
+                              title: Text('API Key Builder',
+                                  style: TextStyle(
+                                      color: Theme.of(context).primaryColor)),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: Text('CLOSE'),
+                                ),
+                              ],
+                              content: Container(
+                                width: MediaQuery.of(context).size.width / 2,
+                                height: MediaQuery.of(context).size.height / 2,
+                                child: ListView(
+                                  children: [
+                                    DataTable(
+                                      columns: const <DataColumn>[
+                                        DataColumn(label: const Text('Scope')),
+                                        DataColumn(
+                                            label: const Text('Description')),
+                                      ],
+                                      rows: List<DataRow>.generate(
+                                        _apiKeyScopes.length,
+                                        (int index) => DataRow(
+                                            cells: <DataCell>[
+                                              DataCell(Text(AuthService
+                                                  .scopes[index]!.scope)),
+                                              DataCell(Text(AuthService
+                                                  .scopes[index]!.description)),
+                                            ],
+                                            selected: _apiKeyScopes[index],
+                                            onSelectChanged: (bool? value) {
+                                              setState(() {
+                                                _apiKeyScopes[index] =
+                                                    !_apiKeyScopes[index];
+                                              });
+                                            }),
+                                      ),
+                                    ),
+                                    SizedBox(height: 10),
+                                    ElevatedButton(
+                                      onPressed: !_apiKeyScopes.contains(true)
+                                          ? null
+                                          : () {
+                                              final List<String> enabledScopes =
+                                                  [];
+                                              setState(() {
+                                                if (keyGenerated == false) {
+                                                  keyGenerated = true;
+                                                }
+
+                                                for (var i = 0;
+                                                    i < _apiKeyScopes.length;
+                                                    i++) {
+                                                  if (_apiKeyScopes[i] == false)
+                                                    continue;
+
+                                                  enabledScopes.add(AuthService
+                                                      .scopes[i]!.scope);
+                                                }
+
+                                                apiKeyTextController.text =
+                                                    AuthService.generateApiKey(
+                                                        enabledScopes);
+                                              });
+                                            },
+                                      child: const Text('Generate'),
+                                    ),
+                                    SizedBox(height: 30),
+                                    TextField(
+                                      enabled: keyGenerated,
+                                      controller: apiKeyTextController,
+                                      maxLines: null,
+                                      decoration: InputDecoration(
+                                        label: Text('API Key',
+                                            style: TextStyle(
+                                                color: Theme.of(context)
+                                                    .primaryColor)),
+                                        suffixIcon: IconButton(
+                                          icon: Icon(Icons.copy,
+                                              color: Theme.of(context)
+                                                  .primaryColor),
+                                          onPressed: () {
+                                            Clipboard.setData(ClipboardData(
+                                                text: apiKeyTextController
+                                                    .value.text));
+                                            ScaffoldMessenger.of(ctx)
+                                                .showSnackBar(
+                                              SnackBar(
+                                                content: const Text(
+                                                  'API Key copied to clipboard',
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                        enabledBorder: OutlineInputBorder(
+                                          borderSide: BorderSide(
+                                            color:
+                                                Theme.of(context).primaryColor,
+                                          ),
+                                        ),
+                                        disabledBorder: OutlineInputBorder(
+                                          borderSide: BorderSide(
+                                            color:
+                                                Theme.of(context).primaryColor,
+                                          ),
+                                        ),
+                                        focusedBorder: OutlineInputBorder(
+                                          borderSide: BorderSide(
+                                            color:
+                                                Theme.of(context).primaryColor,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        );
+                      });
+                    },
+                  );
+                }),
             ListTile(
               title: const Text('Event Injection'),
               trailing: Icon(Icons.arrow_forward),

@@ -1,8 +1,10 @@
 import 'dart:isolate';
 
+import 'package:knowgo_vehicle_simulator/server/auth_middleware.dart';
 import 'package:knowgo_vehicle_simulator/server/cors_middleware.dart';
 import 'package:knowgo_vehicle_simulator/server/http_metrics_middleware.dart';
 import 'package:knowgo_vehicle_simulator/server/http_simulator_api.dart';
+import 'package:knowgo_vehicle_simulator/services.dart';
 import 'package:knowgo_vehicle_simulator/simulator.dart';
 import 'package:prometheus_client/runtime_metrics.dart' as runtime_metrics;
 import 'package:prometheus_client_shelf/shelf_metrics.dart' as shelf_metrics;
@@ -27,7 +29,8 @@ Future<void> runHttpServer(SendPort sendPort) async {
 
   commPort.listen((data) async {
     var port = data[0];
-    var simulatorSendPort = data[1];
+    var allowUnauthenticated = data[1];
+    var simulatorSendPort = data[2];
 
     simulatorSendPort.send(simulatorCommPort.sendPort);
 
@@ -63,6 +66,8 @@ Future<void> runHttpServer(SendPort sendPort) async {
         .addMiddleware(addCORSHeaders())
         .addMiddleware(shelf_metrics.register())
         .addMiddleware(registerHttpMetrics())
+        .addMiddleware(
+            registerAuthMiddleware(allowUnauthenticated: allowUnauthenticated))
         .addHandler(vehicleSimulatorApi.router);
 
     vehicleSimulator.httpServer =
@@ -75,22 +80,29 @@ Future<void> runHttpServer(SendPort sendPort) async {
 
 class SimulatorHttpServer {
   Isolate? _serverIsolate;
-  final receivePort = ReceivePort();
+  ReceivePort? _simulatorPort;
   final notificationModel = VehicleNotificationModel();
+  final _settingsService = serviceLocator.get<SettingsService>();
   final int port;
 
   SimulatorHttpServer(this.port);
 
   Future<void> start(ReceivePort _simulatorReceivePort) async {
+    final receivePort = ReceivePort();
     SendPort _sendPort;
 
+    _simulatorPort = _simulatorReceivePort;
     _serverIsolate = await Isolate.spawn(runHttpServer, receivePort.sendPort);
 
     // Wait for the simulator to open up its ReceivePort
     receivePort.listen((data) {
       if (data is SendPort) {
         _sendPort = data;
-        _sendPort.send([port, _simulatorReceivePort.sendPort]);
+        _sendPort.send([
+          port,
+          _settingsService.allowUnauthenticated,
+          _simulatorReceivePort.sendPort
+        ]);
       } else {
         notificationModel.pushAll(data);
       }
@@ -99,5 +111,10 @@ class SimulatorHttpServer {
 
   void stop() {
     _serverIsolate?.kill(priority: Isolate.immediate);
+  }
+
+  Future<void> restart() async {
+    stop();
+    await start(_simulatorPort!);
   }
 }

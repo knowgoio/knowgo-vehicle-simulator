@@ -44,6 +44,7 @@ nav:
   - API Overview:
     - rest-api.md
     - rest-api-use.md
+    - auth.md
   - About:
     - changelog.md
     - license.md
