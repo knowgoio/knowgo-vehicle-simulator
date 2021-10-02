@@ -10,6 +10,7 @@
 - Add support for self-contained Docker image and Kubernetes deployment.
 - Add support for prometheus metrics.
 - Add support for API Key generation.
+- Extend ExVe model with Fleet APIs.
 
 ## 1.1.1
 

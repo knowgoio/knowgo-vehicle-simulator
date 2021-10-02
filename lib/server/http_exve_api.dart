@@ -39,8 +39,61 @@ class ExVeAPI {
   Router get router {
     final router = Router();
 
+    router.get('/fleets', (Request request) {
+      final fleetIds =
+          exveModel.fleets.map((f) => f!.fleetId.fleetIdToJson()).toList();
+      return Response.ok(json.encode(fleetIds),
+          headers: {'Content-Type': 'application/json'});
+    });
+
+    router.get('/fleets/<fleetId>', (Request request) {
+      final fleetId = int.parse(params(request, 'fleetId'));
+      final Fleet? fleet = exveModel.fleets
+          .singleWhere((f) => f!.fleetId == fleetId, orElse: () => null);
+      if (fleet == null) {
+        return Response.notFound('Fleet not found');
+      }
+
+      return Response.ok(json.encode(fleet),
+          headers: {'Content-Type': 'application/json'});
+    });
+
+    router.get('/fleets/<fleetId>/vehicles', (Request request) {
+      final fleetId = int.parse(params(request, 'fleetId'));
+      final Fleet? fleet = exveModel.fleets
+          .singleWhere((f) => f!.fleetId == fleetId, orElse: () => null);
+      if (fleet == null) {
+        return Response.notFound('Fleet not found');
+      }
+
+      final vehicles = fleet.vehicles.map((v) => v!.vehicleIdToJson()).toList();
+      return Response.ok(json.encode(vehicles),
+          headers: {'Content-Type': 'application/json'});
+    });
+
+    router.get('/fleets/<fleetId>/vehicles/<vehicleId>', (Request request) {
+      final fleetId = int.parse(params(request, 'fleetId'));
+      final vehicleId = int.parse(params(request, 'vehicleId'));
+      final Fleet? fleet = exveModel.fleets
+          .singleWhere((f) => f!.fleetId == fleetId, orElse: () => null);
+      if (fleet == null) {
+        return Response.notFound('Fleet not found');
+      }
+
+      final VehicleID? fleetVehicleId =
+          fleet.vehicles.singleWhere((v) => v == vehicleId, orElse: () => null);
+      if (fleetVehicleId == null ||
+          vehicleSimulator.info.autoID != fleetVehicleId) {
+        return Response.notFound('Vehicle not found in fleet');
+      }
+
+      return Response.ok(json.encode(vehicleSimulator.info),
+          headers: {'Content-Type': 'application/json'});
+    });
+
     router.get('/vehicles', (Request request) {
-      var vehicles = exveModel.vehicles.map((v) => v.toJson()).toList();
+      var vehicles =
+          exveModel.vehicles.map((v) => v.vehicleIdToJson()).toList();
       return Response.ok(json.encode(vehicles),
           headers: {'Content-Type': 'application/json'});
     });
