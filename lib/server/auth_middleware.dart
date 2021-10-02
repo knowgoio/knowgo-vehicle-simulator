@@ -17,7 +17,6 @@ Middleware registerAuthMiddleware({bool allowUnauthenticated = false}) {
         }
 
         if (allowUnauthenticated) {
-          print('Allowing unauthenticated access');
           return response;
         } else {
           return Response.forbidden('Access denied');
