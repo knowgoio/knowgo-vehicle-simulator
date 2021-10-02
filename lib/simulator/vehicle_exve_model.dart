@@ -77,5 +77,5 @@ class VehicleExVeModel {
     }
   }
 
-  void removeFleet(Fleet fleet) => _fleets.removeWhere((f) => f == fleet);
+  void removeFleet(FleetID id) => _fleets.removeWhere((f) => f.fleetId == id);
 }

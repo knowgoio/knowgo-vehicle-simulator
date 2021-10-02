@@ -46,6 +46,24 @@ class ExVeAPI {
           headers: {'Content-Type': 'application/json'});
     });
 
+    router.post('/fleets', (Request request) async {
+      var content = await request.readAsString();
+      var data = jsonDecode(content);
+      final List<VehicleID> vehicleIds =
+          List<VehicleID>.from(data.map((e) => int.parse(e['vehicleId'])));
+
+      for (var vehicleId in vehicleIds) {
+        if (vehicleSimulator.info.autoID != vehicleId) {
+          return Response.notFound('Vehicle not found');
+        }
+      }
+
+      final fleet = Fleet.generate(vehicles: vehicleIds);
+      exveModel.addFleet(fleet);
+      return Response.ok(json.encode(fleet.fleetId.fleetIdToJson()),
+          headers: {'Content-Type': 'application/json'});
+    });
+
     router.get('/fleets/<fleetId>', (Request request) {
       final fleetId = int.parse(params(request, 'fleetId'));
       final Fleet? fleet = exveModel.fleets
@@ -56,6 +74,46 @@ class ExVeAPI {
 
       return Response.ok(json.encode(fleet),
           headers: {'Content-Type': 'application/json'});
+    });
+
+    router.post('/fleets/<fleetId>', (Request request) async {
+      final fleetId = int.parse(params(request, 'fleetId'));
+      var content = await request.readAsString();
+      var data = jsonDecode(content);
+      final List<dynamic> vehicles = data['vehicles'];
+      final List<VehicleID> vehicleIds =
+          List<VehicleID>.from(vehicles.map((e) => int.parse(e['vehicleId'])));
+      final Fleet? fleet = exveModel.fleets
+          .singleWhere((f) => f!.fleetId == fleetId, orElse: () => null);
+      if (fleet == null) {
+        return Response.notFound('Fleet not found');
+      }
+
+      for (var vehicleId in vehicleIds) {
+        if (vehicleSimulator.info.autoID != vehicleId) {
+          return Response.notFound('Vehicle not found');
+        }
+
+        if (fleet.vehicles.contains(vehicleId)) {
+          return Response.notModified();
+        }
+
+        fleet.addVehicle(vehicleId);
+      }
+
+      return Response.ok('Vehicles successfully added to fleet');
+    });
+
+    router.delete('/fleets/<fleetId>', (Request request) {
+      final fleetId = int.parse(params(request, 'fleetId'));
+      final Fleet? fleet = exveModel.fleets
+          .singleWhere((f) => f!.fleetId == fleetId, orElse: () => null);
+      if (fleet == null) {
+        return Response.notFound('Fleet not found');
+      }
+
+      exveModel.removeFleet(fleetId);
+      return Response.ok('Fleet successfully deleted');
     });
 
     router.get('/fleets/<fleetId>/vehicles', (Request request) {
@@ -89,6 +147,23 @@ class ExVeAPI {
 
       return Response.ok(json.encode(vehicleSimulator.info),
           headers: {'Content-Type': 'application/json'});
+    });
+
+    router.delete('/fleets/<fleetId>/vehicles/<vehicleId>', (Request request) {
+      final fleetId = int.parse(params(request, 'fleetId'));
+      final vehicleId = int.parse(params(request, 'vehicleId'));
+      final Fleet? fleet = exveModel.fleets
+          .singleWhere((f) => f!.fleetId == fleetId, orElse: () => null);
+      if (fleet == null) {
+        return Response.notFound('Fleet not found');
+      }
+
+      if (fleet.vehicles.contains(vehicleId)) {
+        fleet.removeVehicle(vehicleId);
+        return Response.ok('Vehicle successfully removed from fleet');
+      }
+
+      return Response.notFound('Vehicle not found in fleet');
     });
 
     router.get('/vehicles', (Request request) {
