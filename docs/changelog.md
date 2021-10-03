@@ -11,6 +11,8 @@
 - Add support for prometheus metrics.
 - Add support for API Key generation.
 - Extend ExVe model with Fleet APIs.
+- Add `ignitionStatuses`, `fuelLevels`, and `doorStatuses` endpoints to ExVe
+  API.
 
 ## 1.1.1
 

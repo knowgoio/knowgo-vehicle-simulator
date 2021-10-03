@@ -226,6 +226,10 @@ class ExVeAPI {
                 vehicleId: vehicleId),
             ExVeResource(
                 server: vehicleSimulator.httpServer!,
+                name: 'doorStatuses',
+                vehicleId: vehicleId),
+            ExVeResource(
+                server: vehicleSimulator.httpServer!,
                 name: 'fuelLevels',
                 vehicleId: vehicleId),
             ExVeResource(
@@ -290,6 +294,23 @@ class ExVeAPI {
                 lastReading = brakePedalPosition;
                 reading['value'] = brakePedalPosition;
                 reading['units'] = "percent";
+                reading['timestamp'] = event.timestamp.toIso8601String();
+                data.add(reading);
+              }
+            });
+          }
+          break;
+        case 'doorStatuses':
+          if (vehicleSimulator.journey.events.isNotEmpty) {
+            // Cache the previous reading to avoid issuing unchanged readings
+            String? lastReading;
+
+            vehicleSimulator.journey.events.forEach((event) {
+              Map<String, dynamic> reading = {};
+              var doorStatus = describeEnum(event.doorStatus);
+              if (doorStatus != lastReading) {
+                lastReading = doorStatus;
+                reading['value'] = doorStatus;
                 reading['timestamp'] = event.timestamp.toIso8601String();
                 data.add(reading);
               }
