@@ -234,6 +234,14 @@ class ExVeAPI {
                 vehicleId: vehicleId),
             ExVeResource(
                 server: vehicleSimulator.httpServer!,
+                name: 'headlampStatuses',
+                vehicleId: vehicleId),
+            ExVeResource(
+                server: vehicleSimulator.httpServer!,
+                name: 'highBeamStatuses',
+                vehicleId: vehicleId),
+            ExVeResource(
+                server: vehicleSimulator.httpServer!,
                 name: 'ignitionStatuses',
                 vehicleId: vehicleId),
             ExVeResource(
@@ -243,6 +251,14 @@ class ExVeAPI {
             ExVeResource(
                 server: vehicleSimulator.httpServer!,
                 name: 'odometers',
+                vehicleId: vehicleId),
+            ExVeResource(
+                server: vehicleSimulator.httpServer!,
+                name: 'parkingBrakeStatuses',
+                vehicleId: vehicleId),
+            ExVeResource(
+                server: vehicleSimulator.httpServer!,
+                name: 'windshieldWiperStatuses',
                 vehicleId: vehicleId),
           ];
           break;
@@ -335,6 +351,40 @@ class ExVeAPI {
             });
           }
           break;
+        case 'headlampStatuses':
+          if (vehicleSimulator.journey.events.isNotEmpty) {
+            // Cache the previous reading to avoid issuing unchanged readings
+            bool? lastReading;
+
+            vehicleSimulator.journey.events.forEach((event) {
+              Map<String, dynamic> reading = {};
+              var headlampStatus = event.headlampStatus;
+              if (headlampStatus != lastReading) {
+                lastReading = headlampStatus;
+                reading['value'] = headlampStatus;
+                reading['timestamp'] = event.timestamp.toIso8601String();
+                data.add(reading);
+              }
+            });
+          }
+          break;
+        case 'highBeamStatuses':
+          if (vehicleSimulator.journey.events.isNotEmpty) {
+            // Cache the previous reading to avoid issuing unchanged readings
+            bool? lastReading;
+
+            vehicleSimulator.journey.events.forEach((event) {
+              Map<String, dynamic> reading = {};
+              var highBeamStatus = event.highBeamStatus;
+              if (highBeamStatus != lastReading) {
+                lastReading = highBeamStatus;
+                reading['value'] = highBeamStatus;
+                reading['timestamp'] = event.timestamp.toIso8601String();
+                data.add(reading);
+              }
+            });
+          }
+          break;
         case 'ignitionStatuses':
           if (vehicleSimulator.journey.events.isNotEmpty) {
             // Cache the previous reading to avoid issuing unchanged readings
@@ -386,6 +436,40 @@ class ExVeAPI {
             reading['units'] = "km";
             reading['timestamp'] = DateTime.now().toIso8601String();
             data.add(reading);
+          }
+          break;
+        case 'parkingBrakeStatuses':
+          if (vehicleSimulator.journey.events.isNotEmpty) {
+            // Cache the previous reading to avoid issuing unchanged readings
+            bool? lastReading;
+
+            vehicleSimulator.journey.events.forEach((event) {
+              Map<String, dynamic> reading = {};
+              var parkingBrakeStatus = event.parkingBrakeStatus;
+              if (parkingBrakeStatus != lastReading) {
+                lastReading = parkingBrakeStatus;
+                reading['value'] = parkingBrakeStatus;
+                reading['timestamp'] = event.timestamp.toIso8601String();
+                data.add(reading);
+              }
+            });
+          }
+          break;
+        case 'windshieldWiperStatuses':
+          if (vehicleSimulator.journey.events.isNotEmpty) {
+            // Cache the previous reading to avoid issuing unchanged readings
+            bool? lastReading;
+
+            vehicleSimulator.journey.events.forEach((event) {
+              Map<String, dynamic> reading = {};
+              var windshieldWiperStatus = event.windshieldWiperStatus;
+              if (windshieldWiperStatus != lastReading) {
+                lastReading = windshieldWiperStatus;
+                reading['value'] = windshieldWiperStatus;
+                reading['timestamp'] = event.timestamp.toIso8601String();
+                data.add(reading);
+              }
+            });
           }
           break;
         default:
