@@ -21,6 +21,7 @@ apply not only to the endpoints, but also the method of access:
 | `webhooks`           | Manage webhook subscriptions            |
 | `exve.vehicles:read` | Read vehicle information from ExVe APIs |
 | `exve.fleets:read`   | Read fleet information from ExVe APIs   |
+| `exve.fleets:write`  | Manage fleets through ExVe APIs         |
 
 !!! note
     The `simulator` and `raw_events` scopes are specific to the

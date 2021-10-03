@@ -70,6 +70,11 @@ final List<AuthScope> _authScopes = [
       description: 'Read fleet information from ExVe APIs',
       paths: ['/exve/fleets', '/exve/fleets/:fleetId'],
       methods: ['GET']),
+  AuthScope(
+      scope: 'exve.fleets:write',
+      description: 'Manage fleets through ExVe APIs',
+      paths: ['/exve/fleets', '/exve/fleets/:fleetId'],
+      methods: ['GET', 'POST', 'DELETE']),
 ];
 
 typedef AuthToken = String;
