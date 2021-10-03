@@ -5,7 +5,9 @@ Middleware registerAuthMiddleware({bool allowUnauthenticated = false}) {
   return (innerHandler) {
     return (request) {
       return Future.sync(() => innerHandler(request)).then((response) {
-        final String? apiKey = request.headers['X-API-Key'];
+        final String? token = request.headers['Authorization'];
+        // Authorization: Bearer <JWT token>
+        final String? apiKey = token?.split(' ')[1];
         if (apiKey != null) {
           if (AuthService.validateApiKey(apiKey) == false) {
             return Response.forbidden('Invalid API Key supplied');
