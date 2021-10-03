@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:knowgo_vehicle_simulator/simulator.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf_router/shelf_router.dart';
@@ -225,6 +226,10 @@ class ExVeAPI {
                 vehicleId: vehicleId),
             ExVeResource(
                 server: vehicleSimulator.httpServer!,
+                name: 'ignitionStatuses',
+                vehicleId: vehicleId),
+            ExVeResource(
+                server: vehicleSimulator.httpServer!,
                 name: 'locations',
                 vehicleId: vehicleId),
             ExVeResource(
@@ -281,6 +286,23 @@ class ExVeAPI {
                 lastReading = brakePedalPosition;
                 reading['value'] = brakePedalPosition;
                 reading['units'] = "percent";
+                reading['timestamp'] = event.timestamp.toIso8601String();
+                data.add(reading);
+              }
+            });
+          }
+          break;
+        case 'ignitionStatuses':
+          if (vehicleSimulator.journey.events.isNotEmpty) {
+            // Cache the previous reading to avoid issuing unchanged readings
+            String? lastReading;
+
+            vehicleSimulator.journey.events.forEach((event) {
+              Map<String, dynamic> reading = {};
+              var ignitionStatus = describeEnum(event.ignitionStatus);
+              if (ignitionStatus != lastReading) {
+                lastReading = ignitionStatus;
+                reading['value'] = ignitionStatus;
                 reading['timestamp'] = event.timestamp.toIso8601String();
                 data.add(reading);
               }
