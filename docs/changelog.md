@@ -14,6 +14,7 @@
 - Add `ignitionStatuses`, `fuelLevels`, `doorStatuses`, `highBeamStatuses`,
   `headlampStatuses`, `parkingBrakeStatuses`, and `windshieldWiperStatuses`
   endpoints to ExVe API.
+- Update to version 1.2.0 of the REST API.
 
 ## 1.1.1
 
