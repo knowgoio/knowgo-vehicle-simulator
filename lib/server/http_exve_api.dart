@@ -51,7 +51,7 @@ class ExVeAPI {
       var content = await request.readAsString();
       var data = jsonDecode(content);
       final List<VehicleID> vehicleIds =
-          List<VehicleID>.from(data.map((e) => int.parse(e['vehicleId'])));
+          List<VehicleID>.from(data.map((e) => e['vehicleId']));
 
       for (var vehicleId in vehicleIds) {
         if (vehicleSimulator.info.autoID != vehicleId) {
