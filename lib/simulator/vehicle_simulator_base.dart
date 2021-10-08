@@ -323,6 +323,9 @@ class VehicleSimulator extends ChangeNotifier {
       // Update ignition status
       knowgo.Event prevState = knowgo.Event.fromJson(state.toJson());
       prevState.ignitionStatus = knowgo.IgnitionStatus.off;
+      if (info.transmission == 'automatic') {
+        state.transmissionGearPosition = knowgo.TransmissionGearPosition.first;
+      }
       state.ignitionStatus = knowgo.IgnitionStatus.run;
       state.timestamp = DateTime.now();
       webhookModel.processWebhooks(info, prevState, state);

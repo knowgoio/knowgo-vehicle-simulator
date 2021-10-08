@@ -62,6 +62,11 @@ class VehicleDataCalculator {
   }
 
   double engineSpeed(knowgo.Event state) {
+    if (state.transmissionGearPosition ==
+        knowgo.TransmissionGearPosition.neutral) {
+      return 0.0;
+    }
+
     return 16382 *
         state.vehicleSpeed /
         (100.0 * state.transmissionGearPosition.gearNumber);
@@ -78,7 +83,15 @@ class VehicleDataCalculator {
     var engineForce = 0.0;
     var gear = state.transmissionGearPosition.gearNumber;
 
-    if (state.ignitionStatus == knowgo.IgnitionStatus.run) {
+    if (auto.transmission == 'manual' &&
+        state.transmissionGearPosition ==
+            knowgo.TransmissionGearPosition.neutral) {
+      return 0.0;
+    }
+
+    if (state.ignitionStatus == knowgo.IgnitionStatus.run &&
+        state.transmissionGearPosition !=
+            knowgo.TransmissionGearPosition.neutral) {
       engineForce =
           (engineV0Force * state.acceleratorPedalPosition / (50 * gear));
     }

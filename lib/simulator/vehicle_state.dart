@@ -70,7 +70,7 @@ void initVehicleState(knowgo.Event state) {
     }
   }
 
-  state.transmissionGearPosition = knowgo.TransmissionGearPosition.first;
+  state.transmissionGearPosition = knowgo.TransmissionGearPosition.neutral;
   state.ignitionStatus = knowgo.IgnitionStatus.off;
   state.windshieldWiperStatus = false;
   state.headlampStatus = false;
