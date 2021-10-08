@@ -770,6 +770,21 @@ class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
                         builder: (context) => EventInjectionHome()));
               },
             ),
+            ExpansionTile(
+              title: const Text('Vehicle Settings'),
+              children: [
+                CheckboxListTile(
+                  title: const Text('Manual Transmission'),
+                  value: vehicleSimulator.info.transmission == 'manual',
+                  onChanged: (value) {
+                    setState(() {
+                      vehicleSimulator.info.transmission =
+                          value! ? 'manual' : 'automatic';
+                    });
+                  },
+                ),
+              ],
+            ),
           ],
         ),
       ),

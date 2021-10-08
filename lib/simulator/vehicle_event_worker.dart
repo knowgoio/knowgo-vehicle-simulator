@@ -84,13 +84,15 @@ void main() {
       var event = state;
 
       event.engineSpeed = calculator.engineSpeed(state);
-      event.vehicleSpeed = calculator.vehicleSpeed(state);
+      event.vehicleSpeed = calculator.vehicleSpeed(info, state);
       event.latitude = calculator.latitude(state);
       event.longitude = calculator.longitude(state);
       event.bearing = calculator.heading(state);
       event.torqueAtTransmission = calculator.torque(state);
       event.fuelConsumedSinceRestart = calculator.fuelConsumed(state);
       event.fuelLevel = calculator.fuelLevel(info, state);
+      event.transmissionGearPosition =
+          calculator.gearPosition(info, state, event.vehicleSpeed);
       event.autoID = info.autoID;
       event.eventID = eventId++;
       event.odometer = calculator.odometer(state);

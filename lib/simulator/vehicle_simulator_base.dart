@@ -65,7 +65,7 @@ class VehicleSimulator extends ChangeNotifier {
   Producer? kafkaProducer;
 
   // Information about the generated Vehicle
-  knowgo.Auto info = knowgo.Auto();
+  knowgo.Auto info = knowgo.Auto()..transmission = 'manual';
 
   // The current Journey the Vehicle is on
   knowgo.Journey journey = knowgo.Journey();

@@ -205,31 +205,34 @@ class _VehicleSettingsState extends State<VehicleSettings> {
                         'Setting Steering Wheel to ${value.round().toString()}°');
                   },
                 ),
-                SizedBox(
-                  child: FittedBox(
-                    fit: BoxFit.scaleDown,
-                    child: Wrap(
-                      alignment: WrapAlignment.center,
-                      children: [
-                        Container(
-                          padding: EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(30),
-                            border: Border.all(
-                                color: Theme.of(context).primaryColor),
+                Visibility(
+                  visible: vehicleSimulator.info.transmission == 'manual',
+                  child: SizedBox(
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Wrap(
+                        alignment: WrapAlignment.center,
+                        children: [
+                          Container(
+                            padding: EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(30),
+                              border: Border.all(
+                                  color: Theme.of(context).primaryColor),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                AutoSizeText('Gear Shift',
+                                    group: autoSizeGroup, maxLines: 1),
+                                SizedBox(height: 4),
+                                gearShiftButtons(vehicleSimulator),
+                              ],
+                            ),
                           ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              AutoSizeText('Gear Shift',
-                                  group: autoSizeGroup, maxLines: 1),
-                              SizedBox(height: 4),
-                              gearShiftButtons(vehicleSimulator),
-                            ],
-                          ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),

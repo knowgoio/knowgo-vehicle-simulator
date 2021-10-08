@@ -3,6 +3,53 @@ import 'dart:math';
 import 'package:knowgo/api.dart' as knowgo;
 import 'package:vector_math/vector_math.dart';
 
+final List<GearSpeedRange> _gearSpeedRanges = [
+  GearSpeedRange(knowgo.TransmissionGearPosition.neutral, 0, 0),
+  GearSpeedRange(knowgo.TransmissionGearPosition.first, 0, 25),
+  GearSpeedRange(knowgo.TransmissionGearPosition.second, 20, 50),
+  GearSpeedRange(knowgo.TransmissionGearPosition.third, 45, 75),
+  GearSpeedRange(knowgo.TransmissionGearPosition.fourth, 70, 100),
+  GearSpeedRange(knowgo.TransmissionGearPosition.fifth, 95, 125),
+  GearSpeedRange(knowgo.TransmissionGearPosition.sixth, 120, 200)
+];
+
+class GearSpeedRange {
+  final knowgo.TransmissionGearPosition gear;
+  final int minSpeed;
+  final int maxSpeed;
+
+  GearSpeedRange(this.gear, this.minSpeed, this.maxSpeed);
+
+  // Find the best-fit gear for a given vehicle speed. [upshifting] determines
+  // whether the vehicle is shifting up or down, and impacts the direction in
+  // which the list is scanned. This allows for a more natural margin of overlap
+  // in gearing, e.g. to reflect a marginal dip in speed when the clutch is
+  // disengaged.
+  static knowgo.TransmissionGearPosition matchGear(
+      double vehicleSpeed, bool upshifting) {
+    final int speed = vehicleSpeed.toInt();
+    if (upshifting) {
+      return _gearSpeedRanges
+          .lastWhere((g) => g.minSpeed <= speed && g.maxSpeed >= speed)
+          .gear;
+    } else {
+      return _gearSpeedRanges
+          .firstWhere((g) => g.minSpeed <= speed && g.maxSpeed >= speed)
+          .gear;
+    }
+  }
+}
+
+extension GearSpeedLimits on knowgo.TransmissionGearPosition {
+  int get minSpeed {
+    return _gearSpeedRanges.singleWhere((g) => g.gear == this).minSpeed;
+  }
+
+  int get maxSpeed {
+    return _gearSpeedRanges.singleWhere((g) => g.gear == this).maxSpeed;
+  }
+}
+
 class VehicleDataCalculator {
   int _tankCapacity(knowgo.Auto auto) {
     if (auto.fuelCapacity == null) {
@@ -20,7 +67,7 @@ class VehicleDataCalculator {
         (100.0 * state.transmissionGearPosition.gearNumber);
   }
 
-  double vehicleSpeed(knowgo.Event state) {
+  double vehicleSpeed(knowgo.Auto auto, knowgo.Event state) {
     const airDragCoeff = 0.000008;
     const engineDragCoeff = 0.0004;
     const brakeConstant = 0.1;
@@ -48,22 +95,26 @@ class VehicleDataCalculator {
     var speed = state.vehicleSpeed + acceleration;
 
     // Cap speed per gear for manual transmission type
-    if (gear == 1 && speed > 20) {
-      return 20;
-    } else if (gear == 2 && speed > 40) {
-      return 40;
-    } else if (gear == 3 && speed > 55) {
-      return 55;
-    } else if (gear == 4 && speed > 70) {
-      return 70;
+    if (auto.transmission == 'manual') {
+      // TODO: Implement a smooth deceleration curve
+      if (speed > state.transmissionGearPosition.maxSpeed) {
+        return min(speed, state.transmissionGearPosition.maxSpeed.toDouble());
+      }
     }
 
     // Cap overall speed at 200kph
-    if (speed > 200) {
-      return 200;
-    }
+    return min(speed, 200.0);
+  }
 
-    return speed;
+  knowgo.TransmissionGearPosition gearPosition(
+      knowgo.Auto auto, knowgo.Event event, double newSpeed) {
+    if (auto.transmission == 'manual') {
+      // Stay in the current gear on manual transmissions
+      return event.transmissionGearPosition;
+    } else {
+      final bool upshifting = event.vehicleSpeed < newSpeed;
+      return GearSpeedRange.matchGear(newSpeed, upshifting);
+    }
   }
 
   double odometer(knowgo.Event state) {

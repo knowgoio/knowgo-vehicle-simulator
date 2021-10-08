@@ -15,6 +15,7 @@
   `headlampStatuses`, `parkingBrakeStatuses`, and `windshieldWiperStatuses`
   endpoints to ExVe API.
 - Update to version 1.2.0 of the REST API.
+- Add support for automatic transmission types.
 
 ## 1.1.1
 
