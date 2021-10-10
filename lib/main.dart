@@ -66,7 +66,6 @@ class VehicleSimulatorApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: createMaterialColor(Color(0xff7ace56)),
         primaryColor: const Color(0xff7ace56),
-        accentColor: const Color(0xff599942),
         brightness: Brightness.light,
         indicatorColor: Colors.white,
         textTheme: TextTheme(

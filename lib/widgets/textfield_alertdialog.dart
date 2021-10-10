@@ -29,7 +29,7 @@ class _TextFieldAlertDialogState extends State<TextFieldAlertDialog> {
     return AlertDialog(
       title: Text(
         widget.title,
-        style: TextStyle(color: Theme.of(context).accentColor),
+        style: TextStyle(color: Theme.of(context).colorScheme.secondary),
       ),
       content: TextField(
         controller: controller,
@@ -45,7 +45,7 @@ class _TextFieldAlertDialogState extends State<TextFieldAlertDialog> {
           },
           child: Text(
             'CANCEL',
-            style: TextStyle(color: Theme.of(context).accentColor),
+            style: TextStyle(color: Theme.of(context).colorScheme.secondary),
           ),
         ),
         TextButton(
@@ -56,7 +56,7 @@ class _TextFieldAlertDialogState extends State<TextFieldAlertDialog> {
           child: Text(
             'UPDATE',
             style: TextStyle(
-              color: Theme.of(context).accentColor,
+              color: Theme.of(context).colorScheme.secondary,
               fontWeight: FontWeight.bold,
             ),
           ),

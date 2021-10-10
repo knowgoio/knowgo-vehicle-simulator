@@ -88,7 +88,7 @@ class _EventInjectionHomeState extends State<EventInjectionHome> {
                     label:
                         Text('ENABLE', style: TextStyle(color: Colors.white)),
                     style: ElevatedButton.styleFrom(
-                      primary: Theme.of(context).accentColor,
+                      primary: Theme.of(context).colorScheme.secondary,
                       onPrimary: Colors.white,
                     ),
                     onPressed: () {
@@ -101,7 +101,7 @@ class _EventInjectionHomeState extends State<EventInjectionHome> {
               icon: Icon(Icons.delete, color: Colors.white),
               label: Text('DELETE', style: TextStyle(color: Colors.white)),
               style: ElevatedButton.styleFrom(
-                primary: Theme.of(context).accentColor,
+                primary: Theme.of(context).colorScheme.secondary,
                 onPrimary: Colors.white,
               ),
               onPressed: () {
@@ -367,7 +367,8 @@ class _EventInjectionHomeState extends State<EventInjectionHome> {
                               label: Text('Select Time',
                                   style: TextStyle(color: Colors.white)),
                               style: ElevatedButton.styleFrom(
-                                primary: Theme.of(context).accentColor,
+                                primary:
+                                    Theme.of(context).colorScheme.secondary,
                                 onPrimary: Colors.white,
                               ),
                               icon: Icon(Icons.timer, color: Colors.white),

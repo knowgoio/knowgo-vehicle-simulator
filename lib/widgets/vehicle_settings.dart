@@ -46,7 +46,7 @@ class _VehicleSettingsState extends State<VehicleSettings> {
             await vehicleSimulator.update(update);
           },
           style: ElevatedButton.styleFrom(
-            primary: Theme.of(context).accentColor,
+            primary: Theme.of(context).colorScheme.secondary,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(30),
             ),
@@ -82,7 +82,7 @@ class _VehicleSettingsState extends State<VehicleSettings> {
     if (vehicleSimulator.running == false) {
       return ElevatedButton.icon(
         style: ElevatedButton.styleFrom(
-          primary: Theme.of(context).accentColor,
+          primary: Theme.of(context).colorScheme.secondary,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(30),
           ),
@@ -309,7 +309,7 @@ class _VehicleSettingsState extends State<VehicleSettings> {
                       underline: Container(
                           height: 2, color: Theme.of(context).primaryColor),
                       icon: Icon(Icons.arrow_drop_down,
-                          color: Theme.of(context).accentColor),
+                          color: Theme.of(context).colorScheme.secondary),
                       items: automationLevelsDesc.map((level) {
                         return DropdownMenuItem<String>(
                           value: level,
