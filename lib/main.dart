@@ -75,6 +75,8 @@ class VehicleSimulatorApp extends StatelessWidget {
         colorScheme: ColorScheme.light(
           primary: const Color(0xff6ab44c),
           onPrimary: Colors.white,
+          secondary: const Color(0xff599942),
+          onSecondary: Colors.white,
         ),
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),

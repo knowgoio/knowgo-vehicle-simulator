@@ -17,23 +17,32 @@ class _VehicleStatsState extends State<VehicleStats> {
   var minFontSize = 10.0;
 
   Widget fuelLevelIndicator(VehicleSimulator vehicleSimulator) {
+    var fuelLevel = 100.0;
+
     if (vehicleSimulator.state.fuelLevel != null) {
-      return LinearProgressIndicator(
-          value: vehicleSimulator.state.fuelLevel / 100.0);
-    } else {
-      return LinearProgressIndicator();
+      fuelLevel = vehicleSimulator.state.fuelLevel / 100.0;
     }
+
+    return LinearProgressIndicator(
+      value: fuelLevel,
+      backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.24),
+    );
   }
 
   Widget fuelConsumptionIndicator(VehicleSimulator vehicleSimulator) {
+    var fuelConsumed = 0.0;
+
     if (vehicleSimulator.state.fuelConsumedSinceRestart != null &&
         vehicleSimulator.state.fuelLevel != null) {
-      var fuelConsumed = vehicleSimulator.state.fuelConsumedSinceRestart /
-          vehicleSimulator.state.fuelLevel;
-      return LinearProgressIndicator(value: fuelConsumed);
-    } else {
-      return LinearProgressIndicator();
+      fuelConsumed = 100 *
+          (vehicleSimulator.state.fuelConsumedSinceRestart /
+              vehicleSimulator.state.fuelLevel);
     }
+
+    return LinearProgressIndicator(
+      value: fuelConsumed,
+      backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.24),
+    );
   }
 
   Widget generateStatWidgets(VehicleSimulator vehicleSimulator) {
