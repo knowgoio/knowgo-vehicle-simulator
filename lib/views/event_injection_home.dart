@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_picker/flutter_picker.dart';
 import 'package:knowgo/api.dart' as knowgo;
 import 'package:knowgo_vehicle_simulator/icons.dart';
@@ -26,19 +25,6 @@ class _EventInjectionHomeState extends State<EventInjectionHome> {
   UniqueKey _eventTimelineKey = UniqueKey();
   List<StepState> _newEventStepState =
       List.generate(3, (_) => StepState.indexed);
-
-  @override
-  void initState() {
-    super.initState();
-
-    WidgetsFlutterBinding.ensureInitialized();
-
-    // TODO: Implement portrait mode view for mobile displays
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.landscapeRight,
-      DeviceOrientation.landscapeLeft,
-    ]);
-  }
 
   void _setNewEventStepState(int index, StepState stepState) {
     if (_newEventStepState[index] != stepState) {
@@ -269,6 +255,8 @@ class _EventInjectionHomeState extends State<EventInjectionHome> {
   @override
   Widget build(BuildContext context) {
     final injector = Provider.of<EventInjectorModel>(context);
+    final portraitMode =
+        MediaQuery.of(context).orientation == Orientation.portrait;
     return Scaffold(
       appBar: AppBar(
         title: Center(
@@ -306,7 +294,8 @@ class _EventInjectionHomeState extends State<EventInjectionHome> {
         child: VehicleDataCard(
           title: 'Scheduled Events',
           child: Center(
-            child: Row(
+            child: Flex(
+              direction: portraitMode ? Axis.vertical : Axis.horizontal,
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [

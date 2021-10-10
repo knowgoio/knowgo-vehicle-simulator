@@ -15,10 +15,7 @@ import 'package:knowgo_vehicle_simulator/widgets.dart';
 import 'package:provider/provider.dart';
 
 class VehicleSimulatorHome extends StatefulWidget {
-  final bool useMobileLayout;
-
-  VehicleSimulatorHome({this.useMobileLayout = false, Key? key})
-      : super(key: key);
+  VehicleSimulatorHome({Key? key}) : super(key: key);
 
   @override
   _VehicleSimulatorHomeState createState() => _VehicleSimulatorHomeState();
@@ -40,20 +37,6 @@ class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
   @override
   void initState() {
     super.initState();
-
-    WidgetsFlutterBinding.ensureInitialized();
-
-    if (widget.useMobileLayout == true) {
-      SystemChrome.setPreferredOrientations([
-        DeviceOrientation.portraitUp,
-        DeviceOrientation.portraitDown,
-      ]);
-    } else {
-      SystemChrome.setPreferredOrientations([
-        DeviceOrientation.landscapeRight,
-        DeviceOrientation.landscapeLeft,
-      ]);
-    }
 
     var model = Provider.of<VehicleNotificationModel>(context, listen: false);
     model.addListener(_vehicleNotificationListener);
@@ -240,6 +223,8 @@ class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
   @override
   Widget build(BuildContext context) {
     var vehicleSimulator = context.watch<VehicleSimulator>();
+    final portraitMode =
+        MediaQuery.of(context).orientation == Orientation.portrait;
     return Scaffold(
       drawer: Drawer(
         child: ListView(
@@ -823,8 +808,7 @@ class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
           ),
         ),
       ),
-      // Choose the most appropriate layout and orientation for the device
-      body: widget.useMobileLayout ? portraitView() : landscapeView(),
+      body: portraitMode ? portraitView() : landscapeView(),
     );
   }
 }

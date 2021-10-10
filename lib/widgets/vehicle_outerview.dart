@@ -52,7 +52,9 @@ class _VehicleOuterViewState extends State<VehicleOuterView>
 
   @override
   void didChangeMetrics() {
-    recalculateSize();
+    if (mounted) {
+      recalculateSize();
+    }
     super.didChangeMetrics();
   }
 
