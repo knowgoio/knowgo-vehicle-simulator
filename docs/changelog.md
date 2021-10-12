@@ -16,6 +16,8 @@
   endpoints to ExVe API.
 - Update to version 1.2.0 of the REST API.
 - Add support for automatic transmission types.
+- Correct a bug in fuel tank capacity parsing and the resulting consumption
+  rate skew.
 
 ## 1.1.1
 

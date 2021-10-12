@@ -56,9 +56,7 @@ class VehicleDataCalculator {
       return 0;
     }
 
-    final numRegex = RegExp(r'[0-9]');
-    final capacity = numRegex.matchAsPrefix(auto.fuelCapacity)?.group(0);
-    return int.parse(capacity!);
+    return int.parse(auto.fuelCapacity.replaceAll(RegExp('[^0-9]'), ''));
   }
 
   double engineSpeed(knowgo.Event state) {
