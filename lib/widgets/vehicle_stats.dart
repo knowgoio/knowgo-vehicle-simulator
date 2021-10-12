@@ -30,17 +30,8 @@ class _VehicleStatsState extends State<VehicleStats> {
   }
 
   Widget fuelConsumptionIndicator(VehicleSimulator vehicleSimulator) {
-    var fuelConsumed = 0.0;
-
-    if (vehicleSimulator.state.fuelConsumedSinceRestart != null &&
-        vehicleSimulator.state.fuelLevel != null) {
-      fuelConsumed = 100 *
-          (vehicleSimulator.state.fuelConsumedSinceRestart /
-              vehicleSimulator.state.fuelLevel);
-    }
-
     return LinearProgressIndicator(
-      value: fuelConsumed,
+      value: (1 - (vehicleSimulator.state.fuelLevel / 100)),
       backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.24),
     );
   }
