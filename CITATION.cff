@@ -10,6 +10,6 @@ authors:
   - family-names: Mundt
     given-names: Paul
     orcid: https://orcid.org/0000-0003-0315-290X
-version: 1.1.1
+version: 1.2.0
 doi: 10.5281/zenodo.5111925
 date-released: 2021-07-18

@@ -1,6 +1,6 @@
 name: knowgo-vehicle-simulator
 title: KnowGo Vehicle Simulator
-version: 1.1.1
+version: 1.2.0
 summary: Connected Car simulator for generating and streaming realistic telemetry
 description: |
   KnowGo Vehicle Simulator is an interactive multi-platform Connected Car simulator capable of

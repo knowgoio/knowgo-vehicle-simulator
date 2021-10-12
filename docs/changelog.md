@@ -1,6 +1,6 @@
 # ChangeLog
 
-## Latest
+## 1.2.0
 
 - Ensure new webhooks are listed through the `/simulator/webhooks` REST
   API endpoint.
