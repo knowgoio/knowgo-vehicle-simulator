@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:csv/csv.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -552,36 +551,56 @@ class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
                         content: Form(
                           key: _webhookFormKey,
                           child: Container(
-                            width: double.minPositive,
-                            height: 300,
+                            width: MediaQuery.of(context).size.width / 2,
+                            height: MediaQuery.of(context).size.height / 2,
                             child: ListView(
                               children: [
-                                Text('Event Triggers'),
-                                ListView.builder(
-                                  shrinkWrap: true,
-                                  physics: ScrollPhysics(),
-                                  // All but 'none'
-                                  itemCount: EventTrigger.values.length - 1,
-                                  itemBuilder:
-                                      (BuildContext context, int index) {
-                                    String _key = describeEnum(
-                                        EventTrigger.values[index + 1]);
-                                    return CheckboxListTile(
-                                      value: _webhookTriggers[index],
-                                      title: AutoSizeText(_key, maxLines: 1),
-                                      onChanged: (value) {
-                                        setState(() {
-                                          _webhookTriggers[index] =
-                                              !_webhookTriggers[index];
-                                        });
-                                      },
-                                    );
-                                  },
+                                DataTable(
+                                  columns: const <DataColumn>[
+                                    DataColumn(
+                                        label: const Text('Event Trigger')),
+                                  ],
+                                  rows: List<DataRow>.generate(
+                                    EventTrigger.values.length - 1,
+                                    (int index) => DataRow(
+                                        cells: <DataCell>[
+                                          DataCell(Text(describeEnum(
+                                              EventTrigger.values[index + 1]))),
+                                        ],
+                                        selected: _webhookTriggers[index],
+                                        onSelectChanged: (bool? value) {
+                                          setState(() {
+                                            _webhookTriggers[index] =
+                                                !_webhookTriggers[index];
+                                          });
+                                        }),
+                                  ),
                                 ),
+                                SizedBox(height: 10),
                                 TextFormField(
-                                  decoration: const InputDecoration(
+                                  decoration: InputDecoration(
                                     hintText: 'Webhook receiver URL',
                                     labelText: 'URL *',
+                                    enabledBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                        color: Theme.of(context).primaryColor,
+                                      ),
+                                    ),
+                                    disabledBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                        color: Theme.of(context).primaryColor,
+                                      ),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                        color: Theme.of(context).primaryColor,
+                                      ),
+                                    ),
+                                    errorBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                        color: Colors.red,
+                                      ),
+                                    ),
                                   ),
                                   controller: _webhookNotificationController,
                                   validator: (String? value) {
