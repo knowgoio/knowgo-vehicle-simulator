@@ -1,4 +1,5 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:knowgo/api.dart' as knowgo;
@@ -39,11 +40,14 @@ class _VehicleSettingsState extends State<VehicleSettings> {
         ElevatedButton.icon(
           onPressed: () async {
             var update = vehicleSimulator.state;
-            update.transmissionGearPosition =
-                vehicleSimulator.state.transmissionGearPosition.nextGear;
-            _consoleService
-                .write('Shifting up to ${update.transmissionGearPosition}');
-            await vehicleSimulator.update(update);
+            var prevGear = update.transmissionGearPosition;
+            update.transmissionGearPosition = calculator
+                .nextGear(vehicleSimulator.state.transmissionGearPosition);
+            if (prevGear != update.transmissionGearPosition) {
+              _consoleService.write(
+                  'Shifting up to ${describeEnum(update.transmissionGearPosition)}');
+              await vehicleSimulator.update(update);
+            }
           },
           style: ElevatedButton.styleFrom(
             primary: Theme.of(context).colorScheme.secondary,
@@ -65,11 +69,14 @@ class _VehicleSettingsState extends State<VehicleSettings> {
           ),
           onPressed: () async {
             var update = vehicleSimulator.state;
+            var prevGear = update.transmissionGearPosition;
             update.transmissionGearPosition =
                 vehicleSimulator.state.transmissionGearPosition.prevGear;
-            _consoleService
-                .write('Shifting down to ${update.transmissionGearPosition}');
-            await vehicleSimulator.update(update);
+            if (prevGear != update.transmissionGearPosition) {
+              _consoleService.write(
+                  'Shifting down to ${describeEnum(update.transmissionGearPosition)}');
+              await vehicleSimulator.update(update);
+            }
           },
           icon: Icon(Icons.arrow_downward),
           label: AutoSizeText('Shift down', group: autoSizeGroup, maxLines: 1),

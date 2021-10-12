@@ -117,6 +117,21 @@ class VehicleDataCalculator {
     return min(speed, 200.0);
   }
 
+  knowgo.TransmissionGearPosition nextGear(
+      knowgo.TransmissionGearPosition gearPosition) {
+    for (var i = 0; i < _gearSpeedRanges.length; i++) {
+      if (_gearSpeedRanges[i].gear != gearPosition) {
+        continue;
+      }
+
+      if (_gearSpeedRanges.length > (i + 1)) {
+        return _gearSpeedRanges[i + 1].gear;
+      }
+    }
+
+    return gearPosition;
+  }
+
   knowgo.TransmissionGearPosition gearPosition(
       knowgo.Auto auto, knowgo.Event event, double newSpeed) {
     if (auto.transmission == 'manual') {
