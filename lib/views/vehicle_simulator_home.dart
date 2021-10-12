@@ -24,6 +24,7 @@ class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
   var settingsService = serviceLocator.get<SettingsService>();
   var consoleService = serviceLocator.get<ConsoleService>();
   final _webhookFormKey = GlobalKey<FormState>();
+  bool _webhookSubscriptionChanged = false;
   List<bool> _webhookTriggers =
       List.generate(EventTrigger.values.length - 1, (_) => false);
   List<bool> _apiKeyScopes =
@@ -522,6 +523,17 @@ class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
                   barrierDismissible: false,
                   builder: (BuildContext buildContext) {
                     return StatefulBuilder(builder: (context, setState) {
+                      final subscription = settingsService.webhookSubscription;
+                      if (subscription != null &&
+                          _webhookSubscriptionChanged == false) {
+                        subscription.triggers.forEach((trigger) {
+                          int index = EventTrigger.values.indexOf(trigger);
+                          _webhookTriggers[index - 1] = true;
+                        });
+
+                        _webhookNotificationController!.text =
+                            subscription.notificationUrl;
+                      }
                       return AlertDialog(
                         title: Text('Webhook Notifications',
                             style: TextStyle(
@@ -572,6 +584,7 @@ class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
                                           setState(() {
                                             _webhookTriggers[index] =
                                                 !_webhookTriggers[index];
+                                            _webhookSubscriptionChanged = true;
                                           });
                                         }),
                                   ),
