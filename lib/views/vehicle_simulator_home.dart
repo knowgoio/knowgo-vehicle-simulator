@@ -534,98 +534,104 @@ class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
                         _webhookNotificationController!.text =
                             subscription.notificationUrl;
                       }
-                      return AlertDialog(
-                        title: Text('Webhook Notifications',
-                            style: TextStyle(
-                                color: Theme.of(context).primaryColor)),
-                        actions: [
-                          TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                            child: Text('CANCEL'),
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              if (_webhookFormKey.currentState == null) {
+                      return Scrollbar(
+                        isAlwaysShown: true,
+                        child: AlertDialog(
+                          title: Text('Webhook Notifications',
+                              style: TextStyle(
+                                  color: Theme.of(context).primaryColor)),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
                                 Navigator.of(context).pop();
-                              }
-                              if (_webhookFormKey.currentState!.validate()) {
-                                _webhookFormKey.currentState!.save();
-                                _addWebhookSubscriptionFromUI(
-                                    _webhookNotificationController!.text);
-                                Navigator.of(context).pop();
-                              }
-                            },
-                            child: Text('DONE'),
-                          )
-                        ],
-                        content: Form(
-                          key: _webhookFormKey,
-                          child: Container(
-                            width: MediaQuery.of(context).size.width / 2,
-                            height: MediaQuery.of(context).size.height / 2,
-                            child: ListView(
-                              children: [
-                                DataTable(
-                                  columns: const <DataColumn>[
-                                    DataColumn(
-                                        label: const Text('Event Trigger')),
-                                  ],
-                                  rows: List<DataRow>.generate(
-                                    EventTrigger.values.length - 1,
-                                    (int index) => DataRow(
-                                        cells: <DataCell>[
-                                          DataCell(Text(describeEnum(
-                                              EventTrigger.values[index + 1]))),
-                                        ],
-                                        selected: _webhookTriggers[index],
-                                        onSelectChanged: (bool? value) {
-                                          setState(() {
-                                            _webhookTriggers[index] =
-                                                !_webhookTriggers[index];
-                                            _webhookSubscriptionChanged = true;
-                                          });
-                                        }),
-                                  ),
-                                ),
-                                SizedBox(height: 10),
-                                TextFormField(
-                                  decoration: InputDecoration(
-                                    hintText: 'Webhook receiver URL',
-                                    labelText: 'URL *',
-                                    enabledBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color: Theme.of(context).primaryColor,
-                                      ),
-                                    ),
-                                    disabledBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color: Theme.of(context).primaryColor,
-                                      ),
-                                    ),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color: Theme.of(context).primaryColor,
-                                      ),
-                                    ),
-                                    errorBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color: Colors.red,
-                                      ),
+                              },
+                              child: Text('CANCEL'),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                if (_webhookFormKey.currentState == null) {
+                                  Navigator.of(context).pop();
+                                }
+                                if (_webhookFormKey.currentState!.validate()) {
+                                  _webhookFormKey.currentState!.save();
+                                  _addWebhookSubscriptionFromUI(
+                                      _webhookNotificationController!.text);
+                                  Navigator.of(context).pop();
+                                }
+                              },
+                              child: Text('DONE'),
+                            )
+                          ],
+                          content: Form(
+                            key: _webhookFormKey,
+                            child: Container(
+                              width: MediaQuery.of(context).size.width / 2,
+                              height: MediaQuery.of(context).size.height / 2,
+                              child: ListView(
+                                children: [
+                                  DataTable(
+                                    columns: const <DataColumn>[
+                                      DataColumn(
+                                          label: const Text('Event Trigger')),
+                                    ],
+                                    rows: List<DataRow>.generate(
+                                      EventTrigger.values.length - 1,
+                                      (int index) => DataRow(
+                                          cells: <DataCell>[
+                                            DataCell(Text(describeEnum(
+                                                EventTrigger
+                                                    .values[index + 1]))),
+                                          ],
+                                          selected: _webhookTriggers[index],
+                                          onSelectChanged: (bool? value) {
+                                            setState(() {
+                                              _webhookTriggers[index] =
+                                                  !_webhookTriggers[index];
+                                              _webhookSubscriptionChanged =
+                                                  true;
+                                            });
+                                          }),
                                     ),
                                   ),
-                                  controller: _webhookNotificationController,
-                                  validator: (String? value) {
-                                    if (value != null &&
-                                        Uri.tryParse(value)?.hasAbsolutePath ==
-                                            true) {
-                                      return null;
-                                    }
-                                    return 'Invalid URL';
-                                  },
-                                ),
-                              ],
+                                  SizedBox(height: 10),
+                                  TextFormField(
+                                    decoration: InputDecoration(
+                                      hintText: 'Webhook receiver URL',
+                                      labelText: 'URL *',
+                                      enabledBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: Theme.of(context).primaryColor,
+                                        ),
+                                      ),
+                                      disabledBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: Theme.of(context).primaryColor,
+                                        ),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: Theme.of(context).primaryColor,
+                                        ),
+                                      ),
+                                      errorBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: Colors.red,
+                                        ),
+                                      ),
+                                    ),
+                                    controller: _webhookNotificationController,
+                                    validator: (String? value) {
+                                      if (value != null &&
+                                          Uri.tryParse(value)
+                                                  ?.hasAbsolutePath ==
+                                              true) {
+                                        return null;
+                                      }
+                                      return 'Invalid URL';
+                                    },
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),
