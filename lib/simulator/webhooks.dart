@@ -20,10 +20,32 @@ enum EventTrigger {
   harsh_braking
 }
 
+final Map<EventTrigger, String> _eventTriggerDescriptionMap = {
+  EventTrigger.automation_level_changed:
+      'Triggered when the SAE J3016 level of driving automation changes',
+  EventTrigger.driver_changed: 'Triggered when the active Driver is changed',
+  EventTrigger.journey_begin: 'Triggered when a new Journey is started',
+  EventTrigger.journey_end: 'Triggered when a Journey is completed',
+  EventTrigger.location_changed:
+      'Triggered each time the vehicle location changes',
+  EventTrigger.ignition_changed:
+      'Triggered any time the ignition status changes',
+  EventTrigger.harsh_acceleration:
+      'Triggered any time a harsh acceleration event is detected',
+  EventTrigger.harsh_braking:
+      'Triggered any time a harsh braking event is detected',
+};
+
 EventTrigger eventTriggerStringToEnum(String eventTrigger) {
   return EventTrigger.values.singleWhere(
       (trigger) => eventTrigger == describeEnum(trigger),
       orElse: () => EventTrigger.none);
+}
+
+extension EventTriggerDescription on EventTrigger {
+  String? get description {
+    return _eventTriggerDescriptionMap[this];
+  }
 }
 
 final _uuidGenerator = Uuid();

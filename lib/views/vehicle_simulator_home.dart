@@ -572,7 +572,11 @@ class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
                                   DataTable(
                                     columns: const <DataColumn>[
                                       DataColumn(
-                                          label: const Text('Event Trigger')),
+                                        label: const Text('Event Trigger'),
+                                      ),
+                                      DataColumn(
+                                        label: const Text('Description'),
+                                      ),
                                     ],
                                     rows: List<DataRow>.generate(
                                       EventTrigger.values.length - 1,
@@ -581,6 +585,9 @@ class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
                                             DataCell(Text(describeEnum(
                                                 EventTrigger
                                                     .values[index + 1]))),
+                                            DataCell(Text(EventTrigger
+                                                .values[index + 1]
+                                                .description!)),
                                           ],
                                           selected: _webhookTriggers[index],
                                           onSelectChanged: (bool? value) {
