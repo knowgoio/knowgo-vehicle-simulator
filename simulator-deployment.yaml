@@ -19,6 +19,6 @@ spec:
     spec:
       containers:
         - name: knowgo-vehicle-simulator
-          image: adaptant/knowgo-vehicle-simulator
+          image: knowgo/knowgo-vehicle-simulator
           ports:
             - containerPort: 8086

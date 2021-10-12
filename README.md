@@ -58,14 +58,14 @@ a number of deployment options have been provided:
 
 #### Docker
 
-Multi-arch images are provided under [adaptant/knowgo-vehicle-simulator].
+Multi-arch images are provided under [knowgo/knowgo-vehicle-simulator].
 The image can be run directly as:
 
 ```
-$ docker run -p 8086:8086 adaptant/knowgo-vehicle-simulator
+$ docker run -p 8086:8086 knowgo/knowgo-vehicle-simulator
 ```
 
-[adaptant/knowgo-vehicle-simulator]: https://hub.docker.com/repository/docker/adaptant/knowgo-vehicle-simulator
+[knowgo/knowgo-vehicle-simulator]: https://hub.docker.com/repository/docker/knowgo/knowgo-vehicle-simulator
 
 #### Kubernetes
 
