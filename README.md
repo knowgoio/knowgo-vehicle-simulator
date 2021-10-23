@@ -137,10 +137,10 @@ Flutter Web                       | Other Target Platforms
 
 - [x] Linux desktop
 - [x] Windows desktop
-- [x] MacOS desktop
+- [x] macOS desktop
 - [x] Web
 - [x] Android
-- [ ] iOS (untested)
+- [x] iOS
 
 ## Event Publication
 
