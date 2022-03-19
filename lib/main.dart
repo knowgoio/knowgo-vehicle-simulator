@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:args/args.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -8,7 +11,7 @@ import 'package:knowgo_vehicle_simulator/utils.dart';
 import 'package:knowgo_vehicle_simulator/views.dart';
 import 'package:provider/provider.dart';
 
-Future<void> main() async {
+Future<void> main(List<String> arguments) async {
   VehicleSimulator vehicleSimulator;
 
   // Kick off any supporting services
@@ -22,7 +25,50 @@ Future<void> main() async {
     const String portString = String.fromEnvironment(
         'KNOWGO_VEHICLE_SIMULATOR_PORT',
         defaultValue: '8086');
-    final port = int.parse(portString);
+    var port = int.parse(portString);
+    var parser = ArgParser();
+    var usage = 'Usage: knowgo_vehicle_simulator [OPTIONS]...\n\nOptions:\n';
+
+    parser.addFlag('allow-unauthenticated',
+        abbr: 'u',
+        defaultsTo: true,
+        help: 'Allow unauthenticated REST API access');
+    parser.addOption('port',
+        abbr: 'p',
+        defaultsTo: '8086',
+        valueHelp: 'PORT',
+        help: 'Port to bind HTTP server to');
+    parser.addFlag('help',
+        abbr: 'h', negatable: false, help: 'Show usage information');
+
+    // Append indented parser generated usage information to usage text
+    usage += '    ' +
+        parser.usage.replaceAllMapped('\n', (match) {
+          return '\n    ';
+        });
+
+    try {
+      var results = parser.parse(arguments);
+      var settingsService = serviceLocator.get<SettingsService>();
+
+      if (results['help']) {
+        stdout.writeln(usage);
+        exit(0);
+      }
+
+      if (results['allow-unauthenticated'] != null) {
+        settingsService.allowUnauthenticated = results['allow-unauthenticated'];
+      }
+
+      if (results['port'] != null) {
+        port = int.parse(results['port']);
+      }
+    } on FormatException catch (e) {
+      stderr.writeln('Error: ${e.message}');
+      stderr.writeln(
+          'Try \'knowgo_vehicle_simulator --help\' for more information.');
+      exit(1);
+    }
 
     // Kick off the HTTP Server Isolate
     final simulatorHttpServer = SimulatorHttpServer(port);

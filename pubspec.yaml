@@ -42,6 +42,7 @@ dependencies:
   prometheus_client_shelf: ^0.4.1
   jaguar_jwt: ^2.1.6
   path_to_regexp: ^0.4.0
+  args: ^1.6.0
 
 dev_dependencies:
   flutter_test:
