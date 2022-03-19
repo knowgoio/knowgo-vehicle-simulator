@@ -202,5 +202,5 @@ Licensed under the terms of the MIT license, the full version of which
 can be found in the [LICENSE][license] file included in the distribution.
 
 [KnowGo Car]: https://knowgo.io
-[REST API]: https://knowgoio.github.io/knowgo-vehicle-simulator/rest-api/
+[REST API]: https://knowgoio.github.io/knowgo-vehicle-simulator/docs/rest-api/
 [license]: https://raw.githubusercontent.com/knowgoio/knowgo-vehicle-simulator/master/LICENSE
