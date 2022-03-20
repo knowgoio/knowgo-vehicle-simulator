@@ -1,5 +1,6 @@
 import 'dart:isolate';
 
+import 'package:knowgo/api.dart' as knowgo;
 import 'package:knowgo_vehicle_simulator/server/auth_middleware.dart';
 import 'package:knowgo_vehicle_simulator/server/cors_middleware.dart';
 import 'package:knowgo_vehicle_simulator/server/http_metrics_middleware.dart';
@@ -48,7 +49,9 @@ Future<void> runHttpServer(SendPort sendPort) async {
       vehicleSimulator.info = data[0];
       vehicleSimulator.state = data[1];
       if (data[2] != null) {
-        vehicleSimulator.journey.events = data[2];
+        var events = data[2] as List<knowgo.Event>;
+        vehicleSimulator.journey.events = events;
+        vehicleSimulator.streamController.sink.add(events.last);
       }
 
       // Add the vehicle to the ExVe model

@@ -73,6 +73,11 @@ class VehicleSimulator extends ChangeNotifier {
   // The current state of the Vehicle
   knowgo.Event state = knowgo.Event();
 
+  // Stream of generated vehicle events
+  final streamController = StreamController<knowgo.Event>.broadcast();
+  Stream<knowgo.Event> get eventStream =>
+      streamController.stream.asBroadcastStream();
+
   // Queued events to insert into simulation model
   Queue eventQueue = Queue();
 
@@ -179,6 +184,9 @@ class VehicleSimulator extends ChangeNotifier {
 
     // Add to event list
     journey.events.add(update);
+
+    // Push it out to any stream subscribers on the main isolate
+    streamController.sink.add(update);
 
     // Log event to console
     if (_settingsService.eventLoggingEnabled) {

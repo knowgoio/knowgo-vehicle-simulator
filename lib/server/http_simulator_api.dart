@@ -141,8 +141,13 @@ class VehicleSimulatorApi {
     if (exveModel != null) {
       final exveApi =
           ExVeAPI(vehicleSimulator: vehicleSimulator, exveModel: exveModel!);
-      router.mount(('/exve/'), exveApi.router);
+      router.mount('/exve/', exveApi.router);
     }
+
+    // Handle all /ws/ requests through the WebSocket API sub-router
+    final socketApi =
+        VehicleSimulatorSocketApi(vehicleSimulator: vehicleSimulator);
+    router.mount('/ws/', socketApi.router);
 
     // All other endpoints will return a 404
     router.all('/<ignored|.*>', (shelf.Request request) {
