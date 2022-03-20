@@ -11,7 +11,7 @@ import 'package:knowgo_vehicle_simulator/utils.dart';
 import 'package:knowgo_vehicle_simulator/views.dart';
 import 'package:provider/provider.dart';
 
-Future<void> main(List<String> arguments) async {
+Future<void> main([List<String>? arguments]) async {
   VehicleSimulator vehicleSimulator;
 
   // Kick off any supporting services

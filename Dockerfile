@@ -27,7 +27,7 @@ WORKDIR /app/
 RUN flutter build web --release --no-sound-null-safety
 
 # Generate web worker JS file
-RUN mkdir -p build/web/lib/simulator && dart2js --no-sound-null-safety lib/simulator/vehicle_event_worker.dart -o build/web/lib/simulator/vehicle_event_worker.js
+RUN mkdir -p build/web/lib/simulator && dart compile js --no-sound-null-safety lib/simulator/vehicle_event_worker.dart -o build/web/lib/simulator/vehicle_event_worker.js
 
 # Stage 2 - Create the run-time image
 FROM nginx:1.21.1-alpine
