@@ -1,10 +1,11 @@
 import 'dart:io';
 
+import 'package:flutter/widgets.dart';
 import 'package:knowgo/api.dart' as knowgo;
 import 'package:knowgo_vehicle_simulator/simulator.dart';
 import 'package:yaml/yaml.dart';
 
-class SettingsService {
+class SettingsService extends ChangeNotifier {
   File? _configFile;
 
   // User-defined auto configuration
@@ -130,6 +131,15 @@ class SettingsService {
     saveConfig();
   }
 
+  // Light or dark mode UI
+  bool _darkMode = false;
+  bool get darkMode => _darkMode;
+
+  set darkMode(bool value) {
+    _darkMode = value;
+    saveConfig();
+  }
+
   SettingsService([File? yamlConfig]) {
     if (yamlConfig != null) {
       _configFile = yamlConfig;
@@ -145,6 +155,10 @@ class SettingsService {
     }
 
     _configFile = yamlConfig;
+
+    if (doc['darkMode'] != null) {
+      _darkMode = doc['darkMode'];
+    }
 
     if (doc['sessionLogging'] != null) {
       _loggingEnabled = doc['sessionLogging'];
@@ -193,6 +207,7 @@ class SettingsService {
 
   Map<String, dynamic> configToJson() {
     final data = Map<String, dynamic>();
+    data['darkMode'] = _darkMode;
     data['sessionLogging'] = _loggingEnabled;
     data['eventLogging'] = _eventLoggingEnabled;
     data['allowUnauthenticated'] = _allowUnauthenticated;
@@ -268,6 +283,7 @@ class SettingsService {
   void saveConfig() {
     // Handle cases where the config file is not persisted, as in Flutter web.
     if (_configFile == null) {
+      notifyListeners();
       return;
     }
 
@@ -276,5 +292,7 @@ class SettingsService {
 
     // Write out new YAML document from JSON map
     writeMapToYamlFile(_configFile!, configToJson());
+
+    notifyListeners();
   }
 }

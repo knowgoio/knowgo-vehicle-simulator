@@ -92,6 +92,8 @@ Future<void> main(List<String> arguments) async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(
+            create: (_) => serviceLocator.get<SettingsService>()),
+        ChangeNotifierProvider(
             create: (_) => serviceLocator.get<ConsoleService>()),
         ChangeNotifierProvider.value(value: vehicleSimulator),
         ChangeNotifierProvider.value(value: vehicleSimulator.notificationModel),
@@ -107,8 +109,10 @@ Future<void> main(List<String> arguments) async {
 class VehicleSimulatorApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    var settingsService = context.watch<SettingsService>();
     return MaterialApp(
       title: 'KnowGo Vehicle Simulator',
+      themeMode: settingsService.darkMode ? ThemeMode.dark : ThemeMode.light,
       theme: ThemeData(
         primarySwatch: createMaterialColor(Color(0xff7ace56)),
         primaryColor: const Color(0xff7ace56),
@@ -123,6 +127,23 @@ class VehicleSimulatorApp extends StatelessWidget {
           secondary: const Color(0xff599942),
           onSecondary: Colors.white,
         ),
+        visualDensity: VisualDensity.adaptivePlatformDensity,
+      ),
+      darkTheme: ThemeData(
+        primarySwatch: createMaterialColor(Color(0xff599942)),
+        primaryColor: const Color(0xff599942),
+        brightness: Brightness.dark,
+        indicatorColor: Colors.white,
+        textTheme: TextTheme(
+          headline6: TextStyle(color: Colors.white),
+        ),
+        colorScheme: ColorScheme.dark(
+          primary: const Color(0xff599942),
+          onPrimary: Colors.white,
+          secondary: const Color(0xff50883e),
+          onSecondary: Colors.white,
+        ),
+        appBarTheme: AppBarTheme(color: const Color(0xff599942)),
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       debugShowCheckedModeBanner: false,

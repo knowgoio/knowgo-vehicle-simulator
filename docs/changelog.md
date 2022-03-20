@@ -2,6 +2,7 @@
 
 ## Latest
 
+- Add dark mode
 - Add initial WebSocket API
 
 ## 1.2.0

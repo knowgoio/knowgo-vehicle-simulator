@@ -37,7 +37,8 @@ class ConsoleLog extends StatelessWidget {
                 ),
                 TextSpan(
                   text: msg.message,
-                  style: TextStyle(color: Colors.black),
+                  style: TextStyle(
+                      color: Theme.of(context).colorScheme.onBackground),
                 ),
               ],
             ),

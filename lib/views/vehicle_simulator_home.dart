@@ -815,6 +815,17 @@ class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
                 ),
               ],
             ),
+            CheckboxListTile(
+              title: const Text('Dark Mode'),
+              value: settingsService.darkMode,
+              onChanged: (bool? value) {
+                if (value != null) {
+                  setState(() {
+                    settingsService.darkMode = value;
+                  });
+                }
+              },
+            ),
           ],
         ),
       ),
