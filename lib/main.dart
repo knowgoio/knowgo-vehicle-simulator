@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:args/args.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:knowgo_vehicle_simulator/server.dart';
 import 'package:knowgo_vehicle_simulator/services.dart';
@@ -9,6 +8,7 @@ import 'package:knowgo_vehicle_simulator/simulator.dart';
 import 'package:knowgo_vehicle_simulator/utils.dart';
 import 'package:knowgo_vehicle_simulator/views.dart';
 import 'package:provider/provider.dart';
+import 'package:universal_platform/universal_platform.dart';
 
 Future<void> main([List<String>? arguments]) async {
   VehicleSimulator vehicleSimulator;
@@ -18,7 +18,7 @@ Future<void> main([List<String>? arguments]) async {
   await serviceLocator.allReady();
 
   // In Flutter web instances, we do not expose the REST server
-  if (kIsWeb) {
+  if (UniversalPlatform.isWeb) {
     vehicleSimulator = VehicleSimulator();
   } else {
     const String portString = String.fromEnvironment(

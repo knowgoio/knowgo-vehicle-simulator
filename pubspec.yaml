@@ -44,6 +44,7 @@ dependencies:
   path_to_regexp: ^0.4.0
   args: ^1.6.0
   shelf_web_socket: ^0.2.4+1
+  universal_platform: ^1.0.0+1
 
 dev_dependencies:
   flutter_test:

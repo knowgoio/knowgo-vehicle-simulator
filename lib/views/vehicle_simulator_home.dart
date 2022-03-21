@@ -12,6 +12,7 @@ import 'package:knowgo_vehicle_simulator/simulator.dart';
 import 'package:knowgo_vehicle_simulator/views.dart';
 import 'package:knowgo_vehicle_simulator/widgets.dart';
 import 'package:provider/provider.dart';
+import 'package:universal_platform/universal_platform.dart';
 
 class VehicleSimulatorHome extends StatefulWidget {
   VehicleSimulatorHome({Key? key}) : super(key: key);
@@ -447,7 +448,7 @@ class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
             ),
             Visibility(
               // TODO: Re-enable for web once kafka support has migrated
-              visible: !kIsWeb,
+              visible: !UniversalPlatform.isWeb,
               child: CheckboxListTile(
                 title: const Text('Kafka Support'),
                 value: settingsService.kafkaEnabled,

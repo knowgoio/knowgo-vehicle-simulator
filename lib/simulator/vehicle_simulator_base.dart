@@ -16,6 +16,7 @@ import 'package:knowgo_vehicle_simulator/services.dart';
 import 'package:knowgo_vehicle_simulator/simulator.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
+import 'package:universal_platform/universal_platform.dart';
 
 enum VehicleSimulatorCommands {
   Start,
@@ -340,7 +341,7 @@ class VehicleSimulator extends ChangeNotifier {
       eventInjector.scheduleAll();
     }
 
-    if (kIsWeb) {
+    if (UniversalPlatform.isWeb) {
       return _startWebWorkers();
     }
 
@@ -379,7 +380,7 @@ class VehicleSimulator extends ChangeNotifier {
       webhookModel.processWebhooks(info, prevState, state);
     }
 
-    if (kIsWeb) {
+    if (UniversalPlatform.isWeb) {
       _stopWorkers();
     } else {
       _stopIsolates();

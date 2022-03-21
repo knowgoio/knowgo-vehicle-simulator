@@ -1,8 +1,8 @@
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:universal_platform/universal_platform.dart';
 
 import 'console_service.dart';
 import 'logging_service.dart';
@@ -13,7 +13,7 @@ final serviceLocator = GetIt.instance;
 void setupServices() {
   serviceLocator.registerSingletonAsync<SettingsService>(() async {
     // TODO: Investigate why this is crashing on the Pixel C tablet
-    if (kIsWeb || Platform.isAndroid) {
+    if (UniversalPlatform.isWeb || UniversalPlatform.isAndroid) {
       return SettingsService();
     } else {
       final configDir = await getApplicationDocumentsDirectory();
@@ -33,7 +33,7 @@ void setupServices() {
     }
   });
 
-  if (kIsWeb) {
+  if (UniversalPlatform.isWeb) {
     serviceLocator
         .registerSingleton<ConsoleService>(ConsoleServiceImplementation());
   } else {
