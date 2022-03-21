@@ -849,7 +849,7 @@ class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
                 ),
                 applicationName: 'KnowGo Vehicle Simulator',
                 applicationVersion: '1.2.0',
-                applicationLegalese: '© 2020-2021 Adaptant Solutions AG',
+                applicationLegalese: '© 2020-2022 Adaptant Solutions AG',
               );
             },
           ),

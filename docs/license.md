@@ -2,8 +2,8 @@
 
 ##  MIT License
 
-Copyright &copy; 2020-2021 Adaptant Solutions AG<br>
-Copyright &copy; 2020-2021 Adaptant Labs
+Copyright &copy; 2020-2022 Adaptant Solutions AG<br>
+Copyright &copy; 2020-2022 Adaptant Labs
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

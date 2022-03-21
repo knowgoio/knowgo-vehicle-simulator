@@ -93,7 +93,7 @@ BEGIN
             VALUE "FileDescription", "An interactive Connected Car simulator for generating and streaming realistic vehicle telemetry." "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
             VALUE "InternalName", "knowgo_vehicle_simulator" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2020-2021 Adaptant Solutions AG. All rights reserved." "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2020-2022 Adaptant Solutions AG. All rights reserved." "\0"
             VALUE "OriginalFilename", "knowgo_vehicle_simulator.exe" "\0"
             VALUE "ProductName", "KnowGo Vehicle Simulator" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
