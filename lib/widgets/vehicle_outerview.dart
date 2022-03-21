@@ -1,7 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
 import 'package:knowgo/api.dart';
 import 'package:knowgo_vehicle_simulator/simulator.dart';
 import 'package:knowgo_vehicle_simulator/widgets.dart';

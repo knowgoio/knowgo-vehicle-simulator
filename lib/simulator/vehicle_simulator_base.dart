@@ -17,10 +17,6 @@ import 'package:knowgo_vehicle_simulator/simulator.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
 
-import 'vehicle_data_generator.dart';
-import 'vehicle_event_loop.dart';
-import 'vehicle_state.dart';
-
 enum VehicleSimulatorCommands {
   Start,
   Stop,
