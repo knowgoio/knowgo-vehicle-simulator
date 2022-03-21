@@ -126,8 +126,8 @@ class VehicleSimulator extends ChangeNotifier {
 
     var hostPortPair = _settingsService.mqttBroker?.split(':');
 
-    mqttClient = MqttServerClient.withPort(hostPortPair?[0],
-        'knowgo-simulator-desktop', int.parse(hostPortPair![1]));
+    mqttClient = MqttServerClient.withPort(hostPortPair![0],
+        'knowgo-simulator-desktop', int.parse(hostPortPair[1]));
 
     try {
       var _status = await mqttClient?.connect();
@@ -216,7 +216,7 @@ class VehicleSimulator extends ChangeNotifier {
         mqttClient?.publishMessage(
             _settingsService.mqttTopic! + '/vehicle${update.autoID}/$key',
             MqttQos.exactlyOnce,
-            builder.payload,
+            builder.payload!,
             retain: false);
       });
     }
@@ -224,7 +224,7 @@ class VehicleSimulator extends ChangeNotifier {
     // Dispatch event to Kafka topic asynchronously
     if (kafkaProducer != null) {
       // Use the vehicle ID as the key
-      var record = ProducerRecord(_settingsService.kafkaTopic, 0,
+      var record = ProducerRecord(_settingsService.kafkaTopic!, 0,
           info.autoID.toString(), update.toJson().toString());
       kafkaProducer?.add(record);
     }

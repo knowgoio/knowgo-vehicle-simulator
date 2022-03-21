@@ -91,11 +91,13 @@ class WebhookModel extends ChangeNotifier {
   final List<EventTrigger> _triggers;
   final List<WebhookSubscription> _subscriptions = [];
 
-  final _numSubscriptions = Gauge('simulator_webhook_subscriptions_total',
-      'Total number of active webhook subscriptions.')
+  final _numSubscriptions = Gauge(
+      name: 'simulator_webhook_subscriptions_total',
+      help: 'Total number of active webhook subscriptions.')
     ..register();
-  final _numWebhooksFired = Counter('simulator_webhooks_fired_total',
-      'Total number of webhooks that have been fired.')
+  final _numWebhooksFired = Counter(
+      name: 'simulator_webhooks_fired_total',
+      help: 'Total number of webhooks that have been fired.')
     ..register();
 
   static final _singleton = WebhookModel._internal();

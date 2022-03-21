@@ -17,8 +17,9 @@ class VehicleNotification {
 
 class VehicleNotificationModel extends ChangeNotifier {
   final List<VehicleNotification> _notifications = [];
-  final _numNotificationsSent = Counter('simulator_notifications_sent_total',
-      'Total number of notifications sent to the simulator.')
+  final _numNotificationsSent = Counter(
+      name: 'simulator_notifications_sent_total',
+      help: 'Total number of notifications sent to the simulator.')
     ..register();
 
   static final _singleton = VehicleNotificationModel._internal();

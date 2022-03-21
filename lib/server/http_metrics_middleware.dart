@@ -2,12 +2,12 @@ import 'package:prometheus_client/prometheus_client.dart';
 import 'package:shelf/shelf.dart';
 
 Middleware registerHttpMetrics([CollectorRegistry? registry]) {
-  final http_requests_total =
-      Counter('http_requests_total', 'Total number of HTTP requests.');
+  final http_requests_total = Counter(
+      name: 'http_requests_total', help: 'Total number of HTTP requests.');
 
   final http_endpoint_requests = Counter(
-    'http_endpoint_requests_total',
-    'Total number of endpoint-specific HTTP requests.',
+    name: 'http_endpoint_requests_total',
+    help: 'Total number of endpoint-specific HTTP requests.',
     labelNames: ['method', 'path'],
   );
 

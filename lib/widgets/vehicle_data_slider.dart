@@ -40,7 +40,7 @@ class VehicleDataSlider extends StatelessWidget {
             maxLines: 1,
             group: this.textGroup,
             minFontSize: 8,
-            overflowReplacement: AutoSizeText(this.overflowTitle,
+            overflowReplacement: AutoSizeText(this.overflowTitle!,
                 textAlign: TextAlign.center,
                 maxLines: 1,
                 group: this.textGroup,

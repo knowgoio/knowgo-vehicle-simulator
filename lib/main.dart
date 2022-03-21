@@ -46,27 +46,30 @@ Future<void> main([List<String>? arguments]) async {
           return '\n    ';
         });
 
-    try {
-      var results = parser.parse(arguments);
-      var settingsService = serviceLocator.get<SettingsService>();
+    if (arguments != null) {
+      try {
+        var results = parser.parse(arguments);
+        var settingsService = serviceLocator.get<SettingsService>();
 
-      if (results['help']) {
-        stdout.writeln(usage);
-        exit(0);
-      }
+        if (results['help']) {
+          stdout.writeln(usage);
+          exit(0);
+        }
 
-      if (results['allow-unauthenticated'] != null) {
-        settingsService.allowUnauthenticated = results['allow-unauthenticated'];
-      }
+        if (results['allow-unauthenticated'] != null) {
+          settingsService.allowUnauthenticated =
+              results['allow-unauthenticated'];
+        }
 
-      if (results['port'] != null) {
-        port = int.parse(results['port']);
+        if (results['port'] != null) {
+          port = int.parse(results['port']);
+        }
+      } on FormatException catch (e) {
+        stderr.writeln('Error: ${e.message}');
+        stderr.writeln(
+            'Try \'knowgo_vehicle_simulator --help\' for more information.');
+        exit(1);
       }
-    } on FormatException catch (e) {
-      stderr.writeln('Error: ${e.message}');
-      stderr.writeln(
-          'Try \'knowgo_vehicle_simulator --help\' for more information.');
-      exit(1);
     }
 
     // Kick off the HTTP Server Isolate

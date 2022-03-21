@@ -16,41 +16,40 @@ dependencies:
     sdk: flutter
   intl: ^0.17.0
   provider: ^6.0.1
-  vin_decoder: ^0.1.3
+  vin_decoder: ^0.2.1-nullsafety
   random_string: ^2.1.0
   vector_math: ^2.0.8
-  uuid: ^2.1.0
+  uuid: ^3.0.6
   get_it: ^7.2.0
   js: ^0.6.3
-  font_awesome_flutter: ^9.1.0
-  yaml: ^2.2.1
-  auto_size_text: ^2.1.0
-  mqtt_client: ^8.1.0
-  shelf_router: ^0.7.4
-  http: ^0.12.2
+  font_awesome_flutter: ^10.0.0
+  yaml: ^3.1.0
+  auto_size_text: ^3.0.0
+  mqtt_client: ^9.6.5
+  shelf_router: ^1.1.2
+  http: ^0.13.3
   path_provider: ^2.0.2
-  # Kafka is presently holding back null safety
   kafka:
     git:
-      url: https://github.com/dart-kafka/kafka
-      ref: kafka-0.10
+      url: https://github.com/adaptant-labs/kafka
+      ref: kafka-0.10-nullsafety
   knowgo:
     git:
       url: https://github.com/knowgoio/knowgo-client-dart
   csv: ^5.0.0
   flutter_picker: ^2.0.0
-  prometheus_client_shelf: ^0.4.1
-  jaguar_jwt: ^2.1.6
+  prometheus_client_shelf: ^1.0.0
+  jaguar_jwt: ^3.0.0
   path_to_regexp: ^0.4.0
-  args: ^1.6.0
-  shelf_web_socket: ^0.2.4+1
+  args: ^2.3.0
+  shelf_web_socket: ^1.0.1
   universal_platform: ^1.0.0+1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  msix: ^0.1.19
-  flutter_native_splash: ^0.3.2
+  msix: ^3.4.0
+  flutter_native_splash: ^2.0.4
 
 flutter:
   uses-material-design: true
