@@ -263,210 +263,221 @@ class ExVeAPI {
           ];
           break;
         case 'acceleratorPedalPositions':
-          if (vehicleSimulator.journey.events.isNotEmpty) {
+          if (vehicleSimulator.journey.events != null &&
+              vehicleSimulator.journey.events!.isNotEmpty) {
             // Cache the previous reading to avoid issuing unchanged readings
             num lastReading = 0;
 
-            vehicleSimulator.journey.events.forEach((event) {
+            vehicleSimulator.journey.events!.forEach((event) {
               Map<String, dynamic> reading = {};
               var acceleratorPedalPosition =
-                  event.acceleratorPedalPosition.floor();
+                  event.acceleratorPedalPosition?.floor();
               if (acceleratorPedalPosition != lastReading) {
-                lastReading = acceleratorPedalPosition;
+                lastReading = acceleratorPedalPosition!;
                 reading['value'] = acceleratorPedalPosition;
                 reading['units'] = "percent";
-                reading['timestamp'] = event.timestamp.toIso8601String();
+                reading['timestamp'] = event.timestamp?.toIso8601String();
                 data.add(reading);
               }
             });
           }
           break;
         case 'automationLevels':
-          if (vehicleSimulator.journey.events.isNotEmpty) {
+          if (vehicleSimulator.journey.events != null &&
+              vehicleSimulator.journey.events!.isNotEmpty) {
             // Cache the previous reading to avoid issuing unchanged readings
             int lastReading = 0;
 
-            vehicleSimulator.journey.events.forEach((event) {
+            vehicleSimulator.journey.events!.forEach((event) {
               Map<String, dynamic> reading = {};
               var automationLevel = event.automationLevel;
               if (automationLevel != lastReading) {
-                lastReading = automationLevel;
+                lastReading = automationLevel!;
                 reading['level'] = automationLevel;
-                reading['timestamp'] = event.timestamp.toIso8601String();
+                reading['timestamp'] = event.timestamp?.toIso8601String();
                 data.add(reading);
               }
             });
           }
           break;
         case 'brakePedalPositions':
-          if (vehicleSimulator.journey.events.isNotEmpty) {
+          if (vehicleSimulator.journey.events != null &&
+              vehicleSimulator.journey.events!.isNotEmpty) {
             // Cache the previous reading to avoid issuing unchanged readings
             num lastReading = 0;
 
-            vehicleSimulator.journey.events.forEach((event) {
+            vehicleSimulator.journey.events!.forEach((event) {
               Map<String, dynamic> reading = {};
-              var brakePedalPosition = event.brakePedalPosition.floor();
+              var brakePedalPosition = event.brakePedalPosition?.floor();
               if (brakePedalPosition != lastReading) {
-                lastReading = brakePedalPosition;
+                lastReading = brakePedalPosition!;
                 reading['value'] = brakePedalPosition;
                 reading['units'] = "percent";
-                reading['timestamp'] = event.timestamp.toIso8601String();
+                reading['timestamp'] = event.timestamp?.toIso8601String();
                 data.add(reading);
               }
             });
           }
           break;
         case 'doorStatuses':
-          if (vehicleSimulator.journey.events.isNotEmpty) {
+          if (vehicleSimulator.journey.events != null &&
+              vehicleSimulator.journey.events!.isNotEmpty) {
             // Cache the previous reading to avoid issuing unchanged readings
             String? lastReading;
 
-            vehicleSimulator.journey.events.forEach((event) {
+            vehicleSimulator.journey.events!.forEach((event) {
               Map<String, dynamic> reading = {};
-              var doorStatus = describeEnum(event.doorStatus);
+              var doorStatus = describeEnum(event.doorStatus!);
               if (doorStatus != lastReading) {
                 lastReading = doorStatus;
                 reading['value'] = doorStatus;
-                reading['timestamp'] = event.timestamp.toIso8601String();
+                reading['timestamp'] = event.timestamp?.toIso8601String();
                 data.add(reading);
               }
             });
           }
           break;
         case 'fuelLevels':
-          if (vehicleSimulator.journey.events.isNotEmpty) {
+          if (vehicleSimulator.journey.events != null &&
+              vehicleSimulator.journey.events!.isNotEmpty) {
             // Cache the previous reading to avoid issuing unchanged readings
             num lastReading = 0;
 
-            vehicleSimulator.journey.events.forEach((event) {
+            vehicleSimulator.journey.events!.forEach((event) {
               Map<String, dynamic> reading = {};
-              var fuelLevel = event.fuelLevel.floor();
+              var fuelLevel = event.fuelLevel?.floor();
               if (fuelLevel != lastReading) {
-                lastReading = fuelLevel;
+                lastReading = fuelLevel!;
                 reading['value'] = fuelLevel;
                 reading['units'] = "percent";
-                reading['timestamp'] = event.timestamp.toIso8601String();
+                reading['timestamp'] = event.timestamp?.toIso8601String();
                 data.add(reading);
               }
             });
           }
           break;
         case 'headlampStatuses':
-          if (vehicleSimulator.journey.events.isNotEmpty) {
+          if (vehicleSimulator.journey.events != null &&
+              vehicleSimulator.journey.events!.isNotEmpty) {
             // Cache the previous reading to avoid issuing unchanged readings
             bool? lastReading;
 
-            vehicleSimulator.journey.events.forEach((event) {
+            vehicleSimulator.journey.events!.forEach((event) {
               Map<String, dynamic> reading = {};
               var headlampStatus = event.headlampStatus;
               if (headlampStatus != lastReading) {
                 lastReading = headlampStatus;
                 reading['value'] = headlampStatus;
-                reading['timestamp'] = event.timestamp.toIso8601String();
+                reading['timestamp'] = event.timestamp?.toIso8601String();
                 data.add(reading);
               }
             });
           }
           break;
         case 'highBeamStatuses':
-          if (vehicleSimulator.journey.events.isNotEmpty) {
+          if (vehicleSimulator.journey.events != null &&
+              vehicleSimulator.journey.events!.isNotEmpty) {
             // Cache the previous reading to avoid issuing unchanged readings
             bool? lastReading;
 
-            vehicleSimulator.journey.events.forEach((event) {
+            vehicleSimulator.journey.events!.forEach((event) {
               Map<String, dynamic> reading = {};
               var highBeamStatus = event.highBeamStatus;
               if (highBeamStatus != lastReading) {
                 lastReading = highBeamStatus;
                 reading['value'] = highBeamStatus;
-                reading['timestamp'] = event.timestamp.toIso8601String();
+                reading['timestamp'] = event.timestamp?.toIso8601String();
                 data.add(reading);
               }
             });
           }
           break;
         case 'ignitionStatuses':
-          if (vehicleSimulator.journey.events.isNotEmpty) {
+          if (vehicleSimulator.journey.events != null &&
+              vehicleSimulator.journey.events!.isNotEmpty) {
             // Cache the previous reading to avoid issuing unchanged readings
             String? lastReading;
 
-            vehicleSimulator.journey.events.forEach((event) {
+            vehicleSimulator.journey.events!.forEach((event) {
               Map<String, dynamic> reading = {};
-              var ignitionStatus = describeEnum(event.ignitionStatus);
+              var ignitionStatus = describeEnum(event.ignitionStatus!);
               if (ignitionStatus != lastReading) {
                 lastReading = ignitionStatus;
                 reading['value'] = ignitionStatus;
-                reading['timestamp'] = event.timestamp.toIso8601String();
+                reading['timestamp'] = event.timestamp?.toIso8601String();
                 data.add(reading);
               }
             });
           }
           break;
         case 'locations':
-          vehicleSimulator.journey.events.forEach((event) {
+          vehicleSimulator.journey.events!.forEach((event) {
             Map<String, dynamic> reading = {};
             reading['latitude'] = event.latitude;
             reading['longitude'] = event.longitude;
             reading['bearing'] = event.bearing;
-            reading['timestamp'] = event.timestamp.toIso8601String();
+            reading['timestamp'] = event.timestamp?.toIso8601String();
             data.add(reading);
           });
           break;
         case 'odometers':
-          if (vehicleSimulator.journey.events.isNotEmpty) {
+          if (vehicleSimulator.journey.events != null &&
+              vehicleSimulator.journey.events!.isNotEmpty) {
             num lastReading = 0.00;
 
             // If the simulator is running, fetch the odometer values from the
             // event list
-            vehicleSimulator.journey.events.forEach((event) {
+            vehicleSimulator.journey.events!.forEach((event) {
               Map<String, dynamic> reading = {};
-              var odometer = event.odometer.toPrecision(2);
+              var odometer = event.odometer!.toPrecision(2);
               if (odometer != lastReading) {
                 lastReading = odometer;
                 reading['value'] = odometer;
                 reading['units'] = "km";
-                reading['timestamp'] = event.timestamp.toIso8601String();
+                reading['timestamp'] = event.timestamp?.toIso8601String();
                 data.add(reading);
               }
             });
           } else {
             // If not, obtain the last odometer value from the vehicle state
             Map<String, dynamic> reading = {};
-            reading['value'] = vehicleSimulator.info.odometer.toPrecision(2);
+            reading['value'] = vehicleSimulator.info.odometer!.toPrecision(2);
             reading['units'] = "km";
             reading['timestamp'] = DateTime.now().toIso8601String();
             data.add(reading);
           }
           break;
         case 'parkingBrakeStatuses':
-          if (vehicleSimulator.journey.events.isNotEmpty) {
+          if (vehicleSimulator.journey.events != null &&
+              vehicleSimulator.journey.events!.isNotEmpty) {
             // Cache the previous reading to avoid issuing unchanged readings
             bool? lastReading;
 
-            vehicleSimulator.journey.events.forEach((event) {
+            vehicleSimulator.journey.events!.forEach((event) {
               Map<String, dynamic> reading = {};
               var parkingBrakeStatus = event.parkingBrakeStatus;
               if (parkingBrakeStatus != lastReading) {
                 lastReading = parkingBrakeStatus;
                 reading['value'] = parkingBrakeStatus;
-                reading['timestamp'] = event.timestamp.toIso8601String();
+                reading['timestamp'] = event.timestamp?.toIso8601String();
                 data.add(reading);
               }
             });
           }
           break;
         case 'windshieldWiperStatuses':
-          if (vehicleSimulator.journey.events.isNotEmpty) {
+          if (vehicleSimulator.journey.events != null &&
+              vehicleSimulator.journey.events!.isNotEmpty) {
             // Cache the previous reading to avoid issuing unchanged readings
             bool? lastReading;
 
-            vehicleSimulator.journey.events.forEach((event) {
+            vehicleSimulator.journey.events!.forEach((event) {
               Map<String, dynamic> reading = {};
               var windshieldWiperStatus = event.windshieldWiperStatus;
               if (windshieldWiperStatus != lastReading) {
                 lastReading = windshieldWiperStatus;
                 reading['value'] = windshieldWiperStatus;
-                reading['timestamp'] = event.timestamp.toIso8601String();
+                reading['timestamp'] = event.timestamp?.toIso8601String();
                 data.add(reading);
               }
             });

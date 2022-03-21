@@ -33,7 +33,7 @@ void initVehicleInfo(knowgo.Auto auto) {
     auto.licensePlate = generator.licensePlate();
   }
 
-  auto.year = VIN(number: auto.VIN).getYear();
+  auto.year = VIN(number: auto.VIN!).getYear();
 
   if (autoConfig.odometer != null) {
     auto.odometer = autoConfig.odometer;

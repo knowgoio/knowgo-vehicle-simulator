@@ -100,7 +100,7 @@ class _VehicleOuterViewState extends State<VehicleOuterView>
           left: wiperChipLeftPosition,
           child: VehicleInfoChip(
             label: 'wipers',
-            value: state.windshieldWiperStatus ? 'on' : 'off',
+            value: state.windshieldWiperStatus! ? 'on' : 'off',
           ),
         ),
         Positioned(
@@ -108,7 +108,7 @@ class _VehicleOuterViewState extends State<VehicleOuterView>
           left: doorChipLeftPosition,
           child: VehicleInfoChip(
             label: 'doors',
-            value: describeEnum(state.doorStatus),
+            value: describeEnum(state.doorStatus!),
           ),
         ),
         Positioned(
@@ -116,7 +116,7 @@ class _VehicleOuterViewState extends State<VehicleOuterView>
           left: headlampChipLeftPosition,
           child: VehicleInfoChip(
             label: 'headlamp',
-            value: state.headlampStatus ? 'on' : 'off',
+            value: state.headlampStatus! ? 'on' : 'off',
           ),
         ),
         Positioned(
@@ -124,7 +124,7 @@ class _VehicleOuterViewState extends State<VehicleOuterView>
           left: gearChipLeftPosition,
           child: VehicleInfoChip(
             label: 'gear',
-            value: state.transmissionGearPosition.gearNumber.toString(),
+            value: state.transmissionGearPosition!.gearNumber.toString(),
           ),
         ),
       ],

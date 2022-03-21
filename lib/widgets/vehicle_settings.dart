@@ -42,10 +42,10 @@ class _VehicleSettingsState extends State<VehicleSettings> {
             var update = vehicleSimulator.state;
             var prevGear = update.transmissionGearPosition;
             update.transmissionGearPosition = calculator
-                .nextGear(vehicleSimulator.state.transmissionGearPosition);
+                .nextGear(vehicleSimulator.state.transmissionGearPosition!);
             if (prevGear != update.transmissionGearPosition) {
               _consoleService.write(
-                  'Shifting up to ${describeEnum(update.transmissionGearPosition)}');
+                  'Shifting up to ${describeEnum(update.transmissionGearPosition!)}');
               await vehicleSimulator.update(update);
             }
           },
@@ -71,10 +71,10 @@ class _VehicleSettingsState extends State<VehicleSettings> {
             var update = vehicleSimulator.state;
             var prevGear = update.transmissionGearPosition;
             update.transmissionGearPosition =
-                vehicleSimulator.state.transmissionGearPosition.prevGear;
+                vehicleSimulator.state.transmissionGearPosition!.prevGear;
             if (prevGear != update.transmissionGearPosition) {
               _consoleService.write(
-                  'Shifting down to ${describeEnum(update.transmissionGearPosition)}');
+                  'Shifting down to ${describeEnum(update.transmissionGearPosition!)}');
               await vehicleSimulator.update(update);
             }
           },
@@ -311,7 +311,7 @@ class _VehicleSettingsState extends State<VehicleSettings> {
                     fit: BoxFit.scaleDown,
                     child: DropdownButton(
                       value: automationLevelsDesc[
-                              vehicleSimulator.state.automationLevel]
+                              vehicleSimulator.state.automationLevel!]
                           .toString(),
                       underline: Container(
                           height: 2, color: Theme.of(context).primaryColor),

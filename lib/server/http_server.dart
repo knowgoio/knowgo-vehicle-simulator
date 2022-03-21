@@ -55,7 +55,7 @@ Future<void> runHttpServer(SendPort sendPort) async {
       }
 
       // Add the vehicle to the ExVe model
-      exveModel.addVehicle(vehicleSimulator.info.autoID);
+      exveModel.addVehicle(vehicleSimulator.info.autoID!);
 
       // And a fleet
       final fleet = Fleet.generate(vehicles: [vehicleSimulator.info.autoID]);

@@ -56,7 +56,7 @@ class VehicleDataCalculator {
       return 0;
     }
 
-    return int.parse(auto.fuelCapacity.replaceAll(RegExp('[^0-9]'), ''));
+    return int.parse(auto.fuelCapacity!.replaceAll(RegExp('[^0-9]'), ''));
   }
 
   double engineSpeed(knowgo.Event state) {
@@ -66,8 +66,8 @@ class VehicleDataCalculator {
     }
 
     return 16382 *
-        state.vehicleSpeed /
-        (100.0 * state.transmissionGearPosition.gearNumber);
+        state.vehicleSpeed! /
+        (100.0 * state.transmissionGearPosition!.gearNumber);
   }
 
   double vehicleSpeed(knowgo.Auto auto, knowgo.Event state) {
@@ -76,10 +76,10 @@ class VehicleDataCalculator {
     const brakeConstant = 0.1;
     const engineV0Force = 20;
 
-    var airDrag = (state.vehicleSpeed * 3) * airDragCoeff;
-    var engineDrag = state.engineSpeed * engineDragCoeff;
+    var airDrag = (state.vehicleSpeed! * 3) * airDragCoeff;
+    var engineDrag = state.engineSpeed! * engineDragCoeff;
     var engineForce = 0.0;
-    var gear = state.transmissionGearPosition.gearNumber;
+    var gear = state.transmissionGearPosition!.gearNumber;
 
     if (auto.transmission == 'manual' &&
         state.transmissionGearPosition ==
@@ -91,25 +91,25 @@ class VehicleDataCalculator {
         state.transmissionGearPosition !=
             knowgo.TransmissionGearPosition.neutral) {
       engineForce =
-          (engineV0Force * state.acceleratorPedalPosition / (50 * gear));
+          (engineV0Force * state.acceleratorPedalPosition! / (50 * gear));
     }
 
     var acceleration = engineForce -
         airDrag -
         engineDrag -
-        (state.brakePedalPosition * brakeConstant);
+        (state.brakePedalPosition! * brakeConstant);
 
-    if ((acceleration + state.vehicleSpeed) < 0.0) {
-      acceleration = -state.vehicleSpeed;
+    if ((acceleration + state.vehicleSpeed!) < 0.0) {
+      acceleration = -state.vehicleSpeed!;
     }
 
-    var speed = state.vehicleSpeed + acceleration;
+    var speed = state.vehicleSpeed! + acceleration;
 
     // Cap speed per gear for manual transmission type
     if (auto.transmission == 'manual') {
       // TODO: Implement a smooth deceleration curve
-      if (speed > state.transmissionGearPosition.maxSpeed) {
-        return min(speed, state.transmissionGearPosition.maxSpeed.toDouble());
+      if (speed > state.transmissionGearPosition!.maxSpeed) {
+        return min(speed, state.transmissionGearPosition!.maxSpeed.toDouble());
       }
     }
 
@@ -136,16 +136,16 @@ class VehicleDataCalculator {
       knowgo.Auto auto, knowgo.Event event, double newSpeed) {
     if (auto.transmission == 'manual') {
       // Stay in the current gear on manual transmissions
-      return event.transmissionGearPosition;
+      return event.transmissionGearPosition!;
     } else {
-      final bool upshifting = event.vehicleSpeed < newSpeed;
+      final bool upshifting = event.vehicleSpeed! < newSpeed;
       return GearSpeedRange.matchGear(newSpeed, upshifting);
     }
   }
 
   double odometer(knowgo.Event state) {
     var kphToKps = 60 * 60;
-    return state.odometer + (state.vehicleSpeed / kphToKps);
+    return state.odometer! + (state.vehicleSpeed! / kphToKps);
   }
 
   double fuelConsumed(knowgo.Event state) {
@@ -156,26 +156,26 @@ class VehicleDataCalculator {
       return 0.0;
     }
 
-    return state.fuelConsumedSinceRestart +
+    return state.fuelConsumedSinceRestart! +
         idleFuelConsumption +
-        (maxFuelConsumption * (state.acceleratorPedalPosition / 100));
+        (maxFuelConsumption * (state.acceleratorPedalPosition! / 100));
   }
 
   double fuelLevel(knowgo.Auto auto, knowgo.Event state) {
     final capacity = _tankCapacity(auto);
-    return 100 * ((capacity - state.fuelConsumedSinceRestart) / capacity);
+    return 100 * ((capacity - state.fuelConsumedSinceRestart!) / capacity);
   }
 
   double torque(knowgo.Event state) {
     const engineToTorque = 500.0 / 16382.0;
-    var gear = state.transmissionGearPosition.prevGear;
+    var gear = state.transmissionGearPosition!.prevGear;
     if (gear == knowgo.TransmissionGearPosition.neutral) {
       gear = knowgo.TransmissionGearPosition.first;
     }
 
     var ratio = 1 - (gear.gearNumber * .1);
-    var drag = state.engineSpeed * engineToTorque;
-    var power = state.acceleratorPedalPosition * 15 * ratio;
+    var drag = state.engineSpeed! * engineToTorque;
+    var power = state.acceleratorPedalPosition! * 15 * ratio;
 
     if (state.ignitionStatus == knowgo.IgnitionStatus.run) {
       return power - drag;
@@ -187,13 +187,13 @@ class VehicleDataCalculator {
   double heading(knowgo.Event state) {
     // Stay on the present heading if the wheel angle is 0
     if (state.steeringWheelAngle == 0) {
-      return state.bearing;
+      return state.bearing!;
     }
 
     // The ratio of steering wheel degrees to wheel degrees, typically in the
     // range of 12-20 for passenger vehicles.
     const steeringRatio = 12;
-    var wheelAngle = state.steeringWheelAngle / steeringRatio;
+    var wheelAngle = state.steeringWheelAngle! / steeringRatio;
     var wheelAngleRadians = radians(wheelAngle);
     var calcAngle = -wheelAngleRadians;
 
@@ -204,9 +204,9 @@ class VehicleDataCalculator {
     }
 
     var turningCircumference = 0.028 * tan(calcAngle);
-    var distance = state.vehicleSpeed / 3600;
+    var distance = state.vehicleSpeed! / 3600;
     var delta = (distance / turningCircumference) * 2 * pi;
-    var heading = radians(state.bearing) + delta;
+    var heading = radians(state.bearing!) + delta;
 
     while (heading >= (2 * pi)) {
       heading -= (2 * pi);
@@ -222,22 +222,22 @@ class VehicleDataCalculator {
     const earthMeridionalCircumferenceKm = 40008.0;
     const kmPerDegree = earthMeridionalCircumferenceKm / 360.0;
 
-    var distance = state.vehicleSpeed / 3600;
-    var northSouthDistance = distance * cos(state.bearing);
+    var distance = state.vehicleSpeed! / 3600;
+    var northSouthDistance = distance * cos(state.bearing!);
 
     var delta = northSouthDistance / kmPerDegree;
 
-    return state.latitude + delta;
+    return state.latitude! + delta;
   }
 
   double longitude(knowgo.Event state) {
     const earthEquatorialCircumferenceKm = 40075.0;
     const kmPerDegreeEquator = earthEquatorialCircumferenceKm / 360.0;
 
-    var distance = state.vehicleSpeed / 3600;
-    var eastWestDistance = distance * sin(state.bearing);
+    var distance = state.vehicleSpeed! / 3600;
+    var eastWestDistance = distance * sin(state.bearing!);
 
-    var latRadians = radians(state.latitude);
+    var latRadians = radians(state.latitude!);
     var kmPerDegree = (kmPerDegreeEquator * sin(latRadians)).abs();
     var delta = eastWestDistance;
 
@@ -245,7 +245,7 @@ class VehicleDataCalculator {
       delta /= kmPerDegree;
     }
 
-    var adjusted = state.longitude + delta;
+    var adjusted = state.longitude! + delta;
 
     while (adjusted >= 180.0) {
       adjusted -= 360;

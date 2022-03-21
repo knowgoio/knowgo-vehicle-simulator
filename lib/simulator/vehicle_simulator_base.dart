@@ -157,11 +157,11 @@ class VehicleSimulator extends ChangeNotifier {
     }
 
     // Synchronize vehicle state
-    info.odometer = num.parse((update.odometer).toStringAsFixed(2)).toDouble();
+    info.odometer = num.parse((update.odometer)!.toStringAsFixed(2)).toDouble();
 
     // Process any webhooks
-    if (journey.events.length > 0) {
-      webhookModel.processWebhooks(info, journey.events.last, update);
+    if (journey.events != null && journey.events!.length > 0) {
+      webhookModel.processWebhooks(info, journey.events!.last, update);
     } else {
       webhookModel.processWebhooks(info, state, update);
     }
@@ -180,7 +180,7 @@ class VehicleSimulator extends ChangeNotifier {
     }
 
     // Add to event list
-    journey.events.add(update);
+    journey.events!.add(update);
 
     // Push it out to any stream subscribers on the main isolate
     streamController.sink.add(update);
@@ -231,7 +231,7 @@ class VehicleSimulator extends ChangeNotifier {
 
     // Auto-stop the vehicle if the current event would render the vehicle
     // out of fuel.
-    if (state.fuelLevel <= 0) {
+    if (state.fuelLevel! <= 0) {
       _writeConsoleMessage('Vehicle is out of fuel, stopping..');
       stop();
     }
@@ -305,9 +305,10 @@ class VehicleSimulator extends ChangeNotifier {
 
     // Init API client connection
     if (_settingsService.knowgoServer != null) {
-      apiClient = knowgo.ApiClient(basePath: _settingsService.knowgoServer);
+      apiClient = knowgo.ApiClient(basePath: _settingsService.knowgoServer!);
       if (_settingsService.knowgoApiKey != null) {
-        apiClient?.addDefaultHeader('X-API-Key', _settingsService.knowgoApiKey);
+        apiClient?.addDefaultHeader(
+            'X-API-Key', _settingsService.knowgoApiKey!);
       }
     }
 

@@ -92,7 +92,7 @@ void main() {
       event.fuelConsumedSinceRestart = calculator.fuelConsumed(state);
       event.fuelLevel = calculator.fuelLevel(info, state);
       event.transmissionGearPosition =
-          calculator.gearPosition(info, state, event.vehicleSpeed);
+          calculator.gearPosition(info, state, event.vehicleSpeed!);
       event.autoID = info.autoID;
       event.eventID = eventId++;
       event.odometer = calculator.odometer(state);

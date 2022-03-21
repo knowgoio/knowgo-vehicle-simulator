@@ -77,8 +77,6 @@ add_custom_command(
   OUTPUT ${FLUTTER_LIBRARY} ${FLUTTER_LIBRARY_HEADERS}
     ${CMAKE_CURRENT_BINARY_DIR}/_phony_
   COMMAND ${CMAKE_COMMAND} -E env
-    # Temporarily disable null safety checks until all packages have migrated
-    EXTRA_FRONT_END_OPTIONS=--no-sound-null-safety
     ${FLUTTER_TOOL_ENVIRONMENT}
     "${FLUTTER_ROOT}/packages/flutter_tools/bin/tool_backend.sh"
       ${FLUTTER_TARGET_PLATFORM} ${CMAKE_BUILD_TYPE}

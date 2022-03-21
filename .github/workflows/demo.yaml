@@ -16,11 +16,11 @@ jobs:
         shell: bash
       - run: flutter pub get
         shell: bash
-      - run: flutter build web --release --no-sound-null-safety
+      - run: flutter build web --release
         shell: bash
       - run: mkdir -p build/web/lib/simulator
         shell: bash
-      - run: dart compile js --no-sound-null-safety lib/simulator/vehicle_event_worker.dart -o build/web/lib/simulator/vehicle_event_worker.js
+      - run: dart compile js lib/simulator/vehicle_event_worker.dart -o build/web/lib/simulator/vehicle_event_worker.js
         shell: bash
       - run: git config user.name github-actions
         shell: bash

@@ -2,8 +2,9 @@
 
 ## Latest
 
-- Add dark mode
-- Add initial WebSocket API
+- Convert to sound null safety.
+- Add dark mode.
+- Add initial WebSocket API.
 
 ## 1.2.0
 

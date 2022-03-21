@@ -19,7 +19,7 @@ class _VehicleStatsState extends State<VehicleStats> {
     var fuelLevel = 100.0;
 
     if (vehicleSimulator.state.fuelLevel != null) {
-      fuelLevel = vehicleSimulator.state.fuelLevel / 100.0;
+      fuelLevel = vehicleSimulator.state.fuelLevel! / 100.0;
     }
 
     return LinearProgressIndicator(
@@ -30,7 +30,7 @@ class _VehicleStatsState extends State<VehicleStats> {
 
   Widget fuelConsumptionIndicator(VehicleSimulator vehicleSimulator) {
     return LinearProgressIndicator(
-      value: (1 - (vehicleSimulator.state.fuelLevel / 100)),
+      value: (1 - (vehicleSimulator.state.fuelLevel! / 100)),
       backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.24),
     );
   }
@@ -39,8 +39,8 @@ class _VehicleStatsState extends State<VehicleStats> {
     if (vehicleSimulator.journey.odometerBegin == null) {
       return AutoSizeText('Waiting for simulator to start..', group: group);
     } else {
-      var distanceTraveled = vehicleSimulator.state.odometer -
-          vehicleSimulator.journey.odometerBegin;
+      var distanceTraveled = vehicleSimulator.state.odometer! -
+          vehicleSimulator.journey.odometerBegin!;
       if (distanceTraveled < 0.0) {
         distanceTraveled = 0.0;
       }
@@ -55,13 +55,13 @@ class _VehicleStatsState extends State<VehicleStats> {
             minFontSize: minFontSize,
           ),
           AutoSizeText(
-            'Odometer: ${vehicleSimulator.state.odometer.toStringAsFixed(2)} km',
+            'Odometer: ${vehicleSimulator.state.odometer!.toStringAsFixed(2)} km',
             group: group,
             maxLines: 1,
             minFontSize: minFontSize,
           ),
           AutoSizeText(
-            'Lat: ${vehicleSimulator.state.latitude.toStringAsPrecision(6)}, Lng: ${vehicleSimulator.state.longitude.toStringAsPrecision(6)}, Heading: ${vehicleSimulator.state.bearing.toInt()}°',
+            'Lat: ${vehicleSimulator.state.latitude!.toStringAsPrecision(6)}, Lng: ${vehicleSimulator.state.longitude!.toStringAsPrecision(6)}, Heading: ${vehicleSimulator.state.bearing!.toInt()}°',
             group: group,
             minFontSize: minFontSize,
           ),
@@ -72,13 +72,13 @@ class _VehicleStatsState extends State<VehicleStats> {
             minFontSize: minFontSize,
           ),
           AutoSizeText(
-            'Vehicle Speed: ${vehicleSimulator.state.vehicleSpeed.toStringAsFixed(2)} km/h',
+            'Vehicle Speed: ${vehicleSimulator.state.vehicleSpeed!.toStringAsFixed(2)} km/h',
             group: group,
             maxLines: 1,
             minFontSize: minFontSize,
           ),
           AutoSizeText(
-            'Engine Speed: ${vehicleSimulator.state.engineSpeed.toInt()} RPMs',
+            'Engine Speed: ${vehicleSimulator.state.engineSpeed!.toInt()} RPMs',
             group: group,
             maxLines: 1,
             minFontSize: minFontSize,

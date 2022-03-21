@@ -88,8 +88,6 @@ add_custom_command(
     ${CPP_WRAPPER_SOURCES_APP}
     ${PHONY_OUTPUT}
   COMMAND ${CMAKE_COMMAND} -E env
-    # Temporarily disable null safety checks until all packages have migrated
-    EXTRA_FRONT_END_OPTIONS=--no-sound-null-safety
     ${FLUTTER_TOOL_ENVIRONMENT}
     "${FLUTTER_ROOT}/packages/flutter_tools/bin/tool_backend.bat"
       windows-x64 $<CONFIG>

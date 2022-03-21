@@ -156,7 +156,7 @@ class WebhookModel extends ChangeNotifier {
       nested['vehicleId'] = info.autoID;
       nested['old_driverId'] = prevState.driverID;
       nested['new_driverId'] = newState.driverID;
-      nested['timestamp'] = newState.timestamp.toIso8601String();
+      nested['timestamp'] = newState.timestamp?.toIso8601String();
       payload['driver_changed'] = nested;
       http.post(url,
           headers: {'Content-Type': 'application/json'},
@@ -176,9 +176,9 @@ class WebhookModel extends ChangeNotifier {
       nested['vehicleId'] = info.autoID;
       nested['driverId'] = newState.driverID;
       nested['pedal_start_position'] =
-          prevState.acceleratorPedalPosition.floor();
-      nested['pedal_end_position'] = newState.acceleratorPedalPosition.floor();
-      nested['timestamp'] = newState.timestamp.toIso8601String();
+          prevState.acceleratorPedalPosition!.floor();
+      nested['pedal_end_position'] = newState.acceleratorPedalPosition!.floor();
+      nested['timestamp'] = newState.timestamp?.toIso8601String();
       payload['harsh_acceleration'] = nested;
       http.post(url,
           headers: {'Content-Type': 'application/json'},
@@ -197,9 +197,9 @@ class WebhookModel extends ChangeNotifier {
       Map<String, dynamic> nested = {};
       nested['vehicleId'] = info.autoID;
       nested['driverId'] = info.driverID;
-      nested['pedal_start_position'] = prevState.brakePedalPosition.floor();
-      nested['pedal_end_position'] = newState.brakePedalPosition.floor();
-      nested['timestamp'] = newState.timestamp.toIso8601String();
+      nested['pedal_start_position'] = prevState.brakePedalPosition!.floor();
+      nested['pedal_end_position'] = newState.brakePedalPosition!.floor();
+      nested['timestamp'] = newState.timestamp?.toIso8601String();
       payload['harsh_braking'] = nested;
       http.post(url,
           headers: {'Content-Type': 'application/json'},
@@ -218,9 +218,9 @@ class WebhookModel extends ChangeNotifier {
       Map<String, dynamic> nested = {};
       nested['vehicleId'] = info.autoID;
       nested['driverId'] = newState.driverID;
-      nested['ignition_start_state'] = describeEnum(prevState.ignitionStatus);
-      nested['ignition_end_state'] = describeEnum(newState.ignitionStatus);
-      nested['timestamp'] = newState.timestamp.toIso8601String();
+      nested['ignition_start_state'] = describeEnum(prevState.ignitionStatus!);
+      nested['ignition_end_state'] = describeEnum(newState.ignitionStatus!);
+      nested['timestamp'] = newState.timestamp?.toIso8601String();
       payload['ignition_changed'] = nested;
       http.post(url,
           headers: {'Content-Type': 'application/json'},
@@ -240,8 +240,8 @@ class WebhookModel extends ChangeNotifier {
       nested['driverId'] = event.driverID;
       nested['latitude'] = event.latitude;
       nested['longitude'] = event.longitude;
-      nested['bearing'] = event.bearing.toInt();
-      nested['timestamp'] = event.timestamp.toIso8601String();
+      nested['bearing'] = event.bearing!.toInt();
+      nested['timestamp'] = event.timestamp?.toIso8601String();
       payload['journey_begin'] = nested;
       http.post(url,
           headers: {'Content-Type': 'application/json'},
@@ -261,8 +261,8 @@ class WebhookModel extends ChangeNotifier {
       nested['driverId'] = event.driverID;
       nested['latitude'] = event.latitude;
       nested['longitude'] = event.longitude;
-      nested['bearing'] = event.bearing.toInt();
-      nested['timestamp'] = event.timestamp.toIso8601String();
+      nested['bearing'] = event.bearing!.toInt();
+      nested['timestamp'] = event.timestamp?.toIso8601String();
       payload['journey_end'] = nested;
       http.post(url,
           headers: {'Content-Type': 'application/json'},
@@ -281,8 +281,8 @@ class WebhookModel extends ChangeNotifier {
       nested['vehicleId'] = info.autoID;
       nested['longitude'] = event.longitude;
       nested['latitude'] = event.latitude;
-      nested['bearing'] = event.bearing.toInt();
-      nested['timestamp'] = event.timestamp.toIso8601String();
+      nested['bearing'] = event.bearing!.toInt();
+      nested['timestamp'] = event.timestamp?.toIso8601String();
       payload['location_changed'] = nested;
       http.post(url,
           headers: {'Content-Type': 'application/json'},
@@ -302,7 +302,7 @@ class WebhookModel extends ChangeNotifier {
       nested['vehicleId'] = info.autoID;
       nested['old_level'] = prevState.automationLevel;
       nested['new_level'] = newState.automationLevel;
-      nested['timestamp'] = newState.timestamp.toIso8601String();
+      nested['timestamp'] = newState.timestamp?.toIso8601String();
       payload['automation_level_changed'] = nested;
       http.post(url,
           headers: {'Content-Type': 'application/json'},
@@ -339,13 +339,13 @@ class WebhookModel extends ChangeNotifier {
       }
     }
 
-    if ((newState.acceleratorPedalPosition -
-            prevState.acceleratorPedalPosition) >=
+    if ((newState.acceleratorPedalPosition! -
+            prevState.acceleratorPedalPosition!) >=
         65) {
       _processHarshAcceleration(info, prevState, newState);
     }
 
-    if ((newState.brakePedalPosition - prevState.brakePedalPosition) >= 65) {
+    if ((newState.brakePedalPosition! - prevState.brakePedalPosition!) >= 65) {
       _processHarshBraking(info, prevState, newState);
     }
   }
