@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
 class FileDownloader {
@@ -15,7 +16,7 @@ class FileDownloader {
     if (this._baseDir == null) {
       return null;
     } else {
-      final path = this._baseDir! + '/$filename';
+      final path = this._baseDir! + p.separator + filename;
       final File file = File(path);
       file.writeAsBytesSync(bytes);
       return path;
