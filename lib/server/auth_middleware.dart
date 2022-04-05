@@ -5,6 +5,10 @@ Middleware registerAuthMiddleware({bool allowUnauthenticated = false}) {
   return (innerHandler) {
     return (request) {
       return Future.sync(() => innerHandler(request)).then((response) {
+        if (allowUnauthenticated) {
+          return response;
+        }
+
         final String? token = request.headers['Authorization'];
         // Authorization: Bearer <JWT token>
         final String? apiKey = token?.split(' ')[1];
@@ -18,11 +22,7 @@ Middleware registerAuthMiddleware({bool allowUnauthenticated = false}) {
           }
         }
 
-        if (allowUnauthenticated) {
-          return response;
-        } else {
-          return Response.forbidden('Access denied');
-        }
+        return Response.forbidden('Access denied');
       });
     };
   };
