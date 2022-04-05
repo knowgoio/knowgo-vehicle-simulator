@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:isolate';
 
 import 'package:knowgo/api.dart' as knowgo;
@@ -78,7 +79,7 @@ Future<void> runHttpServer(SendPort sendPort) async {
         .addHandler(vehicleSimulatorApi.router);
 
     vehicleSimulator.httpServer =
-        await shelf_io.serve(handler, 'localhost', port);
+        await shelf_io.serve(handler, 'localhost', port, shared: true);
 
     print(
         'Vehicle Simulator listening on ${vehicleSimulator.httpServer!.address.host}:${vehicleSimulator.httpServer!.port}...');
@@ -88,6 +89,8 @@ Future<void> runHttpServer(SendPort sendPort) async {
 class SimulatorHttpServer {
   Isolate? _serverIsolate;
   ReceivePort? _simulatorPort;
+  late ReceivePort _serverIsolateExitPort;
+  late Completer _serverIsolateCompletion;
   final notificationModel = VehicleNotificationModel();
   final _settingsService = serviceLocator.get<SettingsService>();
   final int port;
@@ -98,8 +101,13 @@ class SimulatorHttpServer {
     final receivePort = ReceivePort();
     SendPort _sendPort;
 
+    _serverIsolateCompletion = Completer();
+    _serverIsolateExitPort = ReceivePort();
     _simulatorPort = _simulatorReceivePort;
     _serverIsolate = await Isolate.spawn(runHttpServer, receivePort.sendPort);
+
+    _serverIsolate!.addOnExitListener(_serverIsolateExitPort.sendPort);
+    _serverIsolateExitPort.listen((_) => _serverIsolateCompletion.complete());
 
     // Wait for the simulator to open up its ReceivePort
     receivePort.listen((data) {
@@ -116,12 +124,10 @@ class SimulatorHttpServer {
     });
   }
 
-  void stop() {
+  Future<void> stop() async {
     _serverIsolate?.kill(priority: Isolate.immediate);
+    return _serverIsolateCompletion.future;
   }
 
-  Future<void> restart() async {
-    stop();
-    await start(_simulatorPort!);
-  }
+  Future<void> restart() async => stop().then((_) => start(_simulatorPort!));
 }
