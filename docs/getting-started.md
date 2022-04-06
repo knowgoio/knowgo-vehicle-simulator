@@ -95,5 +95,6 @@ Environment Variable | Description | Default value
 :-------------------|:-----------|:-------------
 *KNOWGO_VEHICLE_SIMULATOR_CONFIG* | Path to config file | `<appDocDir>/knowgo_vehicle_simulator/config.yaml`
 *KNOWGO_VEHICLE_SIMULATOR_LOGS* | Path to log directory | `<appDocDir>/knowgo_vehicle_simulator/logs`
+*KNOWGO_VEHICLE_SIMULATOR_IP* | IP address to bind for REST API | 0.0.0.0
 *KNOWGO_VEHICLE_SIMULATOR_PORT* | HTTP port to bind for REST API | 8086
 *KNOWGO_SIGNING_KEY* | Signing and validation secret for API keys | secret-key

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:isolate';
 
 import 'package:knowgo/api.dart' as knowgo;
@@ -29,9 +30,10 @@ Future<void> runHttpServer(SendPort sendPort) async {
   var webhookModel = WebhookModel();
 
   commPort.listen((data) async {
-    var port = data[0];
-    var allowUnauthenticated = data[1];
-    var simulatorSendPort = data[2];
+    var host = data[0];
+    var port = data[1];
+    var allowUnauthenticated = data[2];
+    var simulatorSendPort = data[3];
 
     simulatorSendPort.send(simulatorCommPort.sendPort);
 
@@ -78,7 +80,7 @@ Future<void> runHttpServer(SendPort sendPort) async {
         .addHandler(vehicleSimulatorApi.router);
 
     vehicleSimulator.httpServer =
-        await shelf_io.serve(handler, 'localhost', port);
+        await shelf_io.serve(handler, host, port, shared: true);
 
     print(
         'Vehicle Simulator listening on ${vehicleSimulator.httpServer!.address.host}:${vehicleSimulator.httpServer!.port}...');
@@ -88,24 +90,33 @@ Future<void> runHttpServer(SendPort sendPort) async {
 class SimulatorHttpServer {
   Isolate? _serverIsolate;
   ReceivePort? _simulatorPort;
+  late ReceivePort _serverIsolateExitPort;
+  late Completer _serverIsolateCompletion;
   final notificationModel = VehicleNotificationModel();
   final _settingsService = serviceLocator.get<SettingsService>();
+  final String host;
   final int port;
 
-  SimulatorHttpServer(this.port);
+  SimulatorHttpServer(this.host, this.port);
 
   Future<void> start(ReceivePort _simulatorReceivePort) async {
     final receivePort = ReceivePort();
     SendPort _sendPort;
 
+    _serverIsolateCompletion = Completer();
+    _serverIsolateExitPort = ReceivePort();
     _simulatorPort = _simulatorReceivePort;
     _serverIsolate = await Isolate.spawn(runHttpServer, receivePort.sendPort);
+
+    _serverIsolate!.addOnExitListener(_serverIsolateExitPort.sendPort);
+    _serverIsolateExitPort.listen((_) => _serverIsolateCompletion.complete());
 
     // Wait for the simulator to open up its ReceivePort
     receivePort.listen((data) {
       if (data is SendPort) {
         _sendPort = data;
         _sendPort.send([
+          host,
           port,
           _settingsService.allowUnauthenticated,
           _simulatorReceivePort.sendPort
@@ -116,12 +127,10 @@ class SimulatorHttpServer {
     });
   }
 
-  void stop() {
+  Future<void> stop() async {
     _serverIsolate?.kill(priority: Isolate.immediate);
+    return _serverIsolateCompletion.future;
   }
 
-  Future<void> restart() async {
-    stop();
-    await start(_simulatorPort!);
-  }
+  Future<void> restart() async => stop().then((_) => start(_simulatorPort!));
 }

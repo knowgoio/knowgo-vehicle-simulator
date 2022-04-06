@@ -4,6 +4,7 @@ import 'package:csv/csv.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 import 'package:knowgo_vehicle_simulator/compat/file_downloader.dart';
 import 'package:knowgo_vehicle_simulator/icons.dart';
 import 'package:knowgo_vehicle_simulator/server/auth.dart';
@@ -121,7 +122,12 @@ class _VehicleSimulatorHomeState extends State<VehicleSimulatorHome> {
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
-        final csvFile = 'Simulator-${DateTime.now()}.csv';
+        final timestamp = DateTime.now();
+        // Avoid illegal characters in Windows filenames
+        final timestampStr = UniversalPlatform.isWindows
+            ? DateFormat('yyyy-MM-dd HH-mm-ss').format(timestamp)
+            : timestamp.toString();
+        final csvFile = 'Simulator-$timestampStr.csv';
         final csvData = _generateCsvData();
         String? path = null;
 
