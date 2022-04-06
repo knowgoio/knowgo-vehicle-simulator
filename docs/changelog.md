@@ -5,6 +5,7 @@
 - Convert to sound null safety.
 - Add dark mode.
 - Add initial WebSocket API.
+- Fix server socket binding on Android (reported by @omarzia88, issue #6).
 - Fix CSV export on Windows (reported by @omarzia88, issue #7).
 
 ## 1.2.0

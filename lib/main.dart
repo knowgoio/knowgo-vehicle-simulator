@@ -21,9 +21,13 @@ Future<void> main([List<String>? arguments]) async {
   if (UniversalPlatform.isWeb) {
     vehicleSimulator = VehicleSimulator();
   } else {
+    const String ipString = String.fromEnvironment(
+        'KNOWGO_VEHICLE_SIMULATOR_IP',
+        defaultValue: '0.0.0.0');
     const String portString = String.fromEnvironment(
         'KNOWGO_VEHICLE_SIMULATOR_PORT',
         defaultValue: '8086');
+    var host = ipString;
     var port = int.parse(portString);
     var parser = ArgParser();
     var usage = 'Usage: knowgo_vehicle_simulator [OPTIONS]...\n\nOptions:\n';
@@ -32,9 +36,14 @@ Future<void> main([List<String>? arguments]) async {
         abbr: 'u',
         defaultsTo: true,
         help: 'Allow unauthenticated REST API access');
+    parser.addOption('ip',
+        abbr: 'i',
+        defaultsTo: ipString,
+        valueHelp: 'IP Address',
+        help: 'IP Address to bind HTTP server to');
     parser.addOption('port',
         abbr: 'p',
-        defaultsTo: '8086',
+        defaultsTo: portString,
         valueHelp: 'PORT',
         help: 'Port to bind HTTP server to');
     parser.addFlag('help',
@@ -61,6 +70,10 @@ Future<void> main([List<String>? arguments]) async {
               results['allow-unauthenticated'];
         }
 
+        if (results['ip'] != null) {
+          host = results['ip'];
+        }
+
         if (results['port'] != null) {
           port = int.parse(results['port']);
         }
@@ -73,7 +86,7 @@ Future<void> main([List<String>? arguments]) async {
     }
 
     // Kick off the HTTP Server Isolate
-    final simulatorHttpServer = SimulatorHttpServer(port);
+    final simulatorHttpServer = SimulatorHttpServer(host, port);
 
     // Instantiate the Vehicle Simulator, with linkage to the HTTP Server
     vehicleSimulator =
