@@ -339,14 +339,21 @@ class WebhookModel extends ChangeNotifier {
       }
     }
 
-    if ((newState.acceleratorPedalPosition! -
-            prevState.acceleratorPedalPosition!) >=
-        65) {
-      _processHarshAcceleration(info, prevState, newState);
+    if (newState.acceleratorPedalPosition != null &&
+        prevState.acceleratorPedalPosition != null) {
+      if ((newState.acceleratorPedalPosition! -
+              prevState.acceleratorPedalPosition!) >=
+          65) {
+        _processHarshAcceleration(info, prevState, newState);
+      }
     }
 
-    if ((newState.brakePedalPosition! - prevState.brakePedalPosition!) >= 65) {
-      _processHarshBraking(info, prevState, newState);
+    if (newState.brakePedalPosition != null &&
+        prevState.brakePedalPosition != null) {
+      if ((newState.brakePedalPosition! - prevState.brakePedalPosition!) >=
+          65) {
+        _processHarshBraking(info, prevState, newState);
+      }
     }
   }
 }
